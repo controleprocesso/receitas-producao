@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#185FA5">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Finepack">
+<title>Finepack — Receitas de Produto</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#F5F5F3;--card:#FFFFFF;--border:#E5E4DF;--border2:#D0CFC8;
+  --text:#1A1A18;--text2:#6B6A65;--text3:#9B9A95;
+  --blue:#185FA5;--blue-light:#E6F1FB;
+  --green:#3B6D11;--green-light:#EAF3DE;
+  --purple:#534AB7;--purple-light:#EEEDFE;
+  --amber:#633806;--amber-light:#FAEEDA;
+  --teal:#0F6E56;--teal-light:#E1F5EE;
+  --coral:#993C1D;--coral-light:#FAECE7;
+  --rad:10px;--rad-lg:14px;
+  --font:'SF Pro Display',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh}
+.app{max-width:430px;margin:0 auto;background:var(--bg);min-height:100vh;display:flex;flex-direction:column}
+.topbar{background:var(--card);border-bottom:0.5px solid var(--border);padding:16px 16px 12px}
+.logo{display:flex;align-items:center;gap:10px}
+.logo-icon{width:36px;height:36px;background:var(--blue);border-radius:var(--rad);display:flex;align-items:center;justify-content:center}
+.logo-icon i{font-size:20px;color:#fff}
+.logo-text{font-size:17px;font-weight:600;color:var(--text)}
+.logo-sub{font-size:12px;color:var(--text2);margin-top:1px}
+.content{padding:16px;flex:1}
+.greeting{margin-bottom:20px}
+.greeting-title{font-size:20px;font-weight:600;color:var(--text);margin-bottom:4px}
+.greeting-sub{font-size:13px;color:var(--text2);line-height:1.5}
+.section-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);margin-bottom:10px}
+.op-card{background:var(--card);border:0.5px solid var(--border);border-radius:var(--rad-lg);padding:16px;margin-bottom:10px;display:flex;align-items:center;gap:14px;cursor:pointer;text-decoration:none;transition:opacity .15s}
+.op-card:active{opacity:.75}
+.op-icon{width:48px;height:48px;border-radius:var(--rad);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.op-icon i{font-size:24px}
+.op-body{flex:1;min-width:0}
+.op-title{font-size:14px;font-weight:600;color:var(--text)}
+.op-sub{font-size:12px;color:var(--text2);margin-top:2px;line-height:1.4}
+.op-machines{font-size:11px;color:var(--text3);margin-top:4px}
+.op-arrow{color:var(--text3);flex-shrink:0}
+.op-badge{font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;white-space:nowrap;flex-shrink:0;margin-left:auto}
+.badge-active{background:var(--green-light);color:var(--green)}
+.badge-soon{background:var(--bg);color:var(--text3);border:0.5px solid var(--border2)}
+.divider{height:0.5px;background:var(--border);margin:16px 0}
+.info-card{background:var(--blue-light);border-radius:var(--rad-lg);padding:14px 16px;display:flex;align-items:flex-start;gap:10px;margin-bottom:16px}
+.info-card i{font-size:18px;color:var(--blue);flex-shrink:0;margin-top:1px}
+.info-text{font-size:12px;color:#0C447C;line-height:1.6}
+.footer{padding:16px;text-align:center;font-size:11px;color:var(--text3);border-top:0.5px solid var(--border)}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <div class="logo">
+      <div class="logo-icon"><i class="ti ti-file-text" aria-hidden="true"></i></div>
+      <div>
+        <div class="logo-text">Finepack</div>
+        <div class="logo-sub">Receitas de Produto</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="greeting">
+      <div class="greeting-title">Selecione a operação</div>
+      <div class="greeting-sub">Acesse a receita de produto da operação desejada para consultar parâmetros ou registrar uma repetição.</div>
+    </div>
+
+    <div class="info-card">
+      <i class="ti ti-info-circle" aria-hidden="true"></i>
+      <div class="info-text">Cada operação tem sua própria tela de receitas, histórico e pendências. Toque na operação desejada para acessar.</div>
+    </div>
+
+    <div class="section-label">Impressão</div>
+
+    <a class="op-card" href="/finepack-receitas/roto/index.html">
+      <div class="op-icon" style="background:#E6F1FB">
+        <i class="ti ti-printer" style="color:#185FA5" aria-hidden="true"></i>
+      </div>
+      <div class="op-body">
+        <div class="op-title">Rotogravura</div>
+        <div class="op-sub">Receitas de impressão em rotogravura</div>
+        <div class="op-machines">Heliostar 1 · Heliostar 2</div>
+      </div>
+      <span class="op-badge badge-active">Ativo</span>
+    </a>
+
+    <a class="op-card" href="/finepack-receitas/flexo/index.html">
+      <div class="op-icon" style="background:#EEEDFE">
+        <i class="ti ti-printer" style="color:#534AB7" aria-hidden="true"></i>
+      </div>
+      <div class="op-body">
+        <div class="op-title">Flexografia</div>
+        <div class="op-sub">Receitas de impressão em flexografia</div>
+        <div class="op-machines">Miraflex 1 · Miraflex 2 · Primaflex</div>
+      </div>
+      <span class="op-badge badge-active">Ativo</span>
+    </a>
+
+    <div class="divider"></div>
+    <div class="section-label">Laminação</div>
+
+    <a class="op-card" href="/finepack-receitas/laminacao/index.html">
+      <div class="op-icon" style="background:#E1F5EE">
+        <i class="ti ti-layers-subtract" style="color:#0F6E56" aria-hidden="true"></i>
+      </div>
+      <div class="op-body">
+        <div class="op-title">Laminação</div>
+        <div class="op-sub">Base Solvente · Solvente Less · Monocomponente</div>
+        <div class="op-machines">Simplex 1/2 · Supercombi 3000/4000 · Flexotech · Comexi</div>
+      </div>
+      <span class="op-badge badge-active">Ativo</span>
+    </a>
+
+    <div class="divider"></div>
+    <div class="section-label">Acabamento</div>
+
+    <div class="op-card" style="opacity:.5;cursor:default">
+      <div class="op-icon" style="background:#F5F5F3">
+        <i class="ti ti-droplet" style="color:#9B9A95" aria-hidden="true"></i>
+      </div>
+      <div class="op-body">
+        <div class="op-title">Aplicação de Verniz</div>
+        <div class="op-sub">Supercombi 3000/4000 · Flexotech</div>
+      </div>
+      <span class="op-badge badge-soon">Em breve</span>
+    </div>
+
+    <div class="op-card" style="opacity:.5;cursor:default">
+      <div class="op-icon" style="background:#F5F5F3">
+        <i class="ti ti-refresh" style="color:#9B9A95" aria-hidden="true"></i>
+      </div>
+      <div class="op-body">
+        <div class="op-title">Rebobinamento</div>
+        <div class="op-sub">Titan · Compack · Permaco · Rotobras · Exitus · Novigrade</div>
+      </div>
+      <span class="op-badge badge-soon">Em breve</span>
+    </div>
+
+    <div class="op-card" style="opacity:.5;cursor:default">
+      <div class="op-icon" style="background:#F5F5F3">
+        <i class="ti ti-ripple" style="color:#9B9A95" aria-hidden="true"></i>
+      </div>
+      <div class="op-body">
+        <div class="op-title">Laser · Microperfuração</div>
+        <div class="op-sub">Permaco · Exitus</div>
+      </div>
+      <span class="op-badge badge-soon">Em breve</span>
+    </div>
+
+    <div class="op-card" style="opacity:.5;cursor:default">
+      <div class="op-icon" style="background:#F5F5F3">
+        <i class="ti ti-cut" style="color:#9B9A95" aria-hidden="true"></i>
+      </div>
+      <div class="op-body">
+        <div class="op-title">Formatação</div>
+        <div class="op-sub">Totani 1 · Totani 2 · Totani 3 · Totani 4 · VM500</div>
+      </div>
+      <span class="op-badge badge-soon">Em breve</span>
+    </div>
+
+    <div style="height:16px"></div>
+  </div>
+
+  <div class="footer">Finepack · Receitas de Produto · v2.0</div>
+</div>
+</body>
+</html>
