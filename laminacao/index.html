@@ -1,0 +1,1194 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0F6E56">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Finepack Laminação">
+<title>Finepack — Receitas Laminação</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#F5F5F3;--card:#FFFFFF;--border:#E5E4DF;--border2:#D0CFC8;
+  --text:#1A1A18;--text2:#6B6A65;--text3:#9B9A95;
+  --blue:#0F6E56;--blue-light:#E1F5EE;--blue-mid:#7FC9B3;
+  --green:#3B6D11;--green-light:#EAF3DE;
+  --red:#A32D2D;--red-light:#FCEBEB;--red-mid:#E24B4A;
+  --amber:#633806;--amber-light:#FAEEDA;
+  --rad:10px;--rad-lg:14px;
+  --font-sans:'SF Pro Display',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+}
+body{font-family:var(--font-sans);background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+.app{max-width:430px;margin:0 auto;background:var(--bg);min-height:100vh;position:relative;display:flex;flex-direction:column}
+.topbar{background:var(--card);border-bottom:0.5px solid var(--border);padding:14px 16px 10px;position:sticky;top:0;z-index:100;flex-shrink:0}
+.tpr{display:flex;justify-content:space-between;align-items:center}
+.tpt{font-size:16px;font-weight:600;color:var(--text)}
+.tps{font-size:12px;color:var(--text2);margin-top:2px}
+.content{padding:12px;flex:1;overflow-y:auto}
+.sc{display:none}.sc.active{display:block}
+.card{background:var(--card);border:0.5px solid var(--border);border-radius:var(--rad-lg);padding:14px;margin-bottom:10px}
+.sl{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);margin-bottom:10px}
+.bb{display:flex;align-items:center;gap:6px;background:transparent;border:none;cursor:pointer;color:var(--blue);font-size:13px;padding:0;margin-bottom:12px;font-family:var(--font-sans)}
+.bp{width:100%;background:var(--blue);color:#fff;border:none;border-radius:var(--rad);padding:14px;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:8px;font-family:var(--font-sans);transition:opacity .15s}
+.bp:active{opacity:.85}.bp:disabled{opacity:.4;pointer-events:none}
+.nr{display:flex;gap:8px;margin-top:4px;margin-bottom:16px}
+.bnp{flex:1;border:0.5px solid var(--border2);border-radius:var(--rad);padding:12px;font-size:13px;color:var(--text2);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;font-family:var(--font-sans)}
+.bnn{flex:2;background:var(--blue);color:#fff;border:none;border-radius:var(--rad);padding:12px;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;font-family:var(--font-sans)}
+.bnn:disabled{opacity:.4;pointer-events:none}
+input[type=text],input[type=number],select,textarea{font-size:13px;color:var(--text);background:var(--card);border:0.5px solid var(--border2);border-radius:var(--rad);padding:9px 11px;outline:none;font-family:var(--font-sans);transition:border-color .15s}
+input:focus,select:focus,textarea:focus{border-color:var(--blue)}
+textarea{resize:none;line-height:1.5;width:100%}
+.sw{display:flex;gap:8px;align-items:center;background:var(--card);border:0.5px solid var(--border2);border-radius:var(--rad);padding:0 12px;margin-bottom:10px}
+.sw input{border:none;background:transparent;font-size:14px;padding:10px 0;flex:1;color:var(--text);outline:none}
+.li{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:0.5px solid var(--border);cursor:pointer;transition:opacity .15s}
+.li:last-child{border-bottom:none}.li:active{opacity:.7}
+.lic{width:38px;height:38px;background:var(--blue-light);border-radius:var(--rad);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.lic i{font-size:19px;color:var(--blue)}
+.lb{flex:1;min-width:0}
+.lt{font-size:13px;font-weight:600;color:var(--text)}
+.ls{font-size:11px;color:var(--text3);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lam-badge{font-size:10px;padding:2px 8px;border-radius:20px;white-space:nowrap;flex-shrink:0;font-weight:600}
+.lb-bs{background:var(--amber-light);color:var(--amber)}
+.lb-sl{background:var(--blue-light);color:var(--blue)}
+.lb-mc{background:#EEEDFE;color:#534AB7}
+.bok{font-size:10px;padding:2px 8px;border-radius:20px;white-space:nowrap;flex-shrink:0;background:var(--green-light);color:var(--green);font-weight:600}
+.hg{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.fl{font-size:11px;color:var(--text3)}
+.fv{font-size:13px;font-weight:600;color:var(--text);margin-top:3px}
+.fvac{color:var(--blue)}
+.pb{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+.pbox{background:var(--bg);border-radius:var(--rad);padding:10px 12px;border:0.5px solid var(--border)}
+.pl{font-size:11px;color:var(--text3);line-height:1.3}
+.pv{font-size:15px;font-weight:600;color:var(--text);margin-top:3px;line-height:1}
+.fd{margin-bottom:10px}.fd:last-child{margin-bottom:0}
+.fdl{font-size:12px;color:var(--text2);margin-bottom:5px;font-weight:500}
+.fd input,.fd select{width:100%}
+.fr{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:10px}
+.fr .fd{margin-bottom:0}
+.seg{display:flex;gap:6px;flex-wrap:wrap}
+.seg-btn{flex:1;min-width:90px;padding:10px;border-radius:var(--rad);font-size:12px;font-weight:600;cursor:pointer;text-align:center;border:1.5px solid var(--border2);background:var(--card);color:var(--text2);font-family:var(--font-sans);transition:all .15s}
+.seg-btn.sel{border-color:var(--blue);background:var(--blue-light);color:var(--blue)}
+.num-seg{display:flex;gap:6px}
+.num-btn{flex:1;padding:12px 0;border-radius:var(--rad);font-size:15px;font-weight:700;cursor:pointer;text-align:center;border:1.5px solid var(--border2);background:var(--card);color:var(--text2);font-family:var(--font-sans);transition:all .15s}
+.num-btn.sel{border-color:var(--blue);background:var(--blue-light);color:var(--blue)}
+.stb{display:flex;align-items:center;padding:10px 16px;background:var(--card);border-bottom:0.5px solid var(--border)}
+.si2{display:flex;align-items:center;gap:5px;flex:1}
+.scc{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0}
+.scd{background:var(--green-light);color:var(--green)}.sca{background:var(--blue);color:#fff}.sci{background:var(--bg);color:var(--text3);border:0.5px solid var(--border2)}
+.slb{font-size:11px;color:var(--text3)}.slba{color:var(--blue);font-weight:600}
+.sse{height:0.5px;width:10px;background:var(--border2);flex-shrink:0}
+.param-row{padding:9px 0;border-bottom:0.5px solid var(--border)}
+.param-row:last-child{border-bottom:none;padding-bottom:0}.param-row:first-child{padding-top:0}
+.param-top{display:flex;align-items:center;gap:10px}
+.param-lbl{font-size:12px;color:var(--text);line-height:1.3;flex:1}
+.param-inp{width:100px;font-size:13px;padding:7px 10px;border:0.5px solid var(--border2);border-radius:var(--rad);background:var(--card);color:var(--text);text-align:center;outline:none}
+.param-inp:focus{border-color:var(--blue)}
+.param-inp.dv{border-color:var(--red-mid);background:var(--red-light);color:var(--red)}
+.just-inp{margin-top:6px}
+.just-inp label{font-size:11px;color:var(--red);font-weight:600;display:flex;align-items:center;gap:4px;margin-bottom:4px}
+.just-inp textarea{font-size:12px;padding:7px 9px;border:0.5px solid var(--red-mid);background:#FFF8F8}
+.spp{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;background:var(--green-light);color:var(--green)}
+.spd{width:6px;height:6px;border-radius:50%;background:var(--green)}
+.rev-row{padding:8px 0;border-bottom:0.5px solid var(--border)}
+.rev-row:last-child{border-bottom:none}
+.rev-row-top{display:flex;align-items:flex-start;gap:8px}
+.rev-lbl{flex:1;font-size:12px;color:var(--text2);line-height:1.3}
+.rev-right{display:flex;flex-direction:column;align-items:flex-end;gap:2px;flex-shrink:0;max-width:150px}
+.rev-real{font-size:13px;font-weight:600;color:var(--text);display:flex;align-items:center;gap:4px;flex-wrap:wrap;justify-content:flex-end}
+.rev-real.dv{color:var(--red)}
+.rev-dv-pill{font-size:10px;padding:1px 6px;border-radius:20px;background:var(--red-light);color:var(--red);white-space:nowrap;font-weight:600}
+.rev-just{background:#FFF8F8;border:0.5px solid #F09595;border-radius:var(--rad);padding:6px 8px;margin-top:4px;font-size:12px;color:var(--amber);line-height:1.4;width:100%}
+.rev-just-lbl{font-size:10px;color:var(--red);font-weight:600;margin-bottom:2px}
+.alt-opts{display:flex;gap:6px;margin-top:8px}
+.alt-btn{flex:1;padding:8px;border-radius:var(--rad);font-size:11px;font-weight:600;cursor:pointer;text-align:center;border:1.5px solid var(--border2);background:var(--card);color:var(--text2);line-height:1.3;font-family:var(--font-sans)}
+.alt-btn i{display:block;font-size:15px;margin-bottom:3px}
+.alt-btn.sel-pont{border-color:var(--green);background:var(--green-light);color:var(--green)}
+.alt-btn.sel-rec{border-color:var(--blue);background:var(--blue-light);color:var(--blue)}
+.rev-dv-banner{background:var(--red-light);border-radius:var(--rad);padding:10px 12px;margin-bottom:10px;display:flex;align-items:center;gap:8px;border:0.5px solid #F09595}
+.alt-banner{background:var(--blue-light);border-radius:var(--rad);padding:10px 12px;margin-bottom:10px;display:flex;align-items:center;gap:8px;border:0.5px solid var(--blue-mid)}
+.ibox{border-radius:var(--rad);padding:12px 14px;margin-bottom:10px;display:flex;align-items:center;gap:10px}
+.ibic{width:34px;height:34px;border-radius:var(--rad);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ibic i{font-size:17px}
+.ibinp{font-size:14px;font-weight:600;border:none;background:transparent;outline:none;width:100%;font-family:var(--font-sans)}
+.prg{height:4px;background:var(--bg);border-radius:2px;margin-bottom:12px;overflow:hidden;border:0.5px solid var(--border)}
+.prf{height:100%;background:var(--blue);border-radius:2px;transition:width .3s}
+.fcs{display:flex;gap:6px;margin-bottom:10px;overflow-x:auto;padding-bottom:2px}
+.fc{font-size:12px;font-weight:600;padding:5px 14px;border-radius:20px;white-space:nowrap;cursor:pointer;border:0.5px solid var(--border2);background:var(--card);color:var(--text2);font-family:var(--font-sans)}
+.fc.fca{background:var(--blue);color:#fff;border-color:var(--blue)}
+.hist-card{background:var(--card);border:0.5px solid var(--border);border-radius:var(--rad-lg);margin-bottom:10px;overflow:hidden}
+.hist-hdr{padding:12px 14px;border-bottom:0.5px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.hist-v{font-size:13px;font-weight:700;color:var(--text)}
+.hist-vb{font-size:10px;padding:2px 8px;border-radius:20px;font-weight:600}
+.hist-vb-a{background:var(--blue-light);color:var(--blue)}.hist-vb-o{background:var(--bg);color:var(--text3);border:0.5px solid var(--border2)}
+.trr{display:flex;justify-content:space-between;padding:5px 0;font-size:12px;border-bottom:0.5px solid var(--border)}
+.trr:last-child{border-bottom:none}
+.trl{color:var(--text3)}.trv{color:var(--text);font-weight:600}
+.pend-card{background:var(--card);border:0.5px solid var(--border);border-radius:var(--rad-lg);margin-bottom:10px;overflow:hidden}
+.pend-hdr{padding:12px 14px;display:flex;align-items:flex-start;gap:10px}
+.pend-ic{width:38px;height:38px;background:var(--blue-light);border-radius:var(--rad);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.pend-ic i{font-size:19px;color:var(--blue)}
+.pend-bd{flex:1;min-width:0}
+.pend-title{font-size:13px;font-weight:600;color:var(--text)}
+.pend-sub{font-size:11px;color:var(--text3);margin-top:2px}
+.pend-badge{font-size:10px;padding:2px 8px;border-radius:20px;background:var(--amber-light);color:var(--amber);font-weight:600;white-space:nowrap;flex-shrink:0}
+.pend-body{border-top:0.5px solid var(--border);padding:10px 14px}
+.pend-row{display:flex;align-items:flex-start;gap:8px;padding:7px 0;border-bottom:0.5px solid var(--border)}
+.pend-row:last-child{border-bottom:none}
+.pend-lbl{flex:1;font-size:12px;color:var(--text2)}
+.pend-vals{display:flex;flex-direction:column;align-items:flex-end;gap:2px;flex-shrink:0}
+.pend-de{font-size:11px;color:var(--text3)}
+.pend-para{font-size:13px;font-weight:600;color:var(--blue)}
+.pend-just{background:var(--blue-light);border-radius:5px;padding:4px 8px;margin-top:3px;font-size:11px;color:var(--blue);line-height:1.4;text-align:right;max-width:180px}
+.pend-footer{border-top:0.5px solid var(--border);padding:10px 14px;display:flex;align-items:center;justify-content:space-between;gap:8px;background:var(--bg)}
+.pend-meta{font-size:11px;color:var(--text3)}
+.pend-apr{padding:7px 14px;border-radius:var(--rad);font-size:12px;font-weight:600;border:none;background:var(--blue);color:#fff;cursor:pointer;font-family:var(--font-sans)}
+.pend-pin-wrap{background:var(--bg);padding:12px 14px;display:none;border-top:0.5px solid var(--border)}
+.pend-pin-wrap.open{display:block}
+.pin-w{display:flex;flex-direction:column;align-items:center;padding:4px 0 8px}
+.pin-t{font-size:15px;font-weight:700;color:var(--text);margin-bottom:4px}
+.pin-s{font-size:12px;color:var(--text2);margin-bottom:14px;text-align:center;line-height:1.5}
+.pin-cx{background:var(--bg);border-radius:var(--rad);padding:10px 14px;margin-bottom:16px;width:100%;border:0.5px solid var(--border)}
+.pcl{font-size:11px;color:var(--text3)}.pcv{font-size:13px;font-weight:600;color:var(--text);margin-top:2px}
+.pin-ds{display:flex;gap:14px;margin-bottom:20px}
+.pin-d{width:14px;height:14px;border-radius:50%;border:1.5px solid var(--border2);background:var(--bg);transition:all .15s}
+.pin-d.f{background:var(--blue);border-color:var(--blue)}
+.pin-g{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:100%}
+.pib{background:var(--bg);border:0.5px solid var(--border);border-radius:var(--rad);padding:15px 0;font-size:20px;font-weight:600;color:var(--text);cursor:pointer;text-align:center;line-height:1;font-family:var(--font-sans);transition:all .1s}
+.pib:active{background:var(--blue-light);border-color:var(--blue-mid);transform:scale(0.97)}
+.pie{font-size:12px;color:var(--red);margin-top:10px;min-height:16px;text-align:center;font-weight:500}
+.met{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-bottom:10px}
+.mt{background:var(--card);border-radius:var(--rad);padding:10px 12px;border:0.5px solid var(--border)}
+.ml{font-size:11px;color:var(--text3);font-weight:500}
+.mv{font-size:22px;font-weight:700;color:var(--text);margin-top:2px;line-height:1.1}
+.lock-screen{display:flex;flex-direction:column;align-items:center;padding:32px 16px;text-align:center}
+.lock-ic{width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin-bottom:16px}
+.loading-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 16px;gap:12px}
+.overlay-loading{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.45);z-index:999;display:none;flex-direction:column;align-items:center;justify-content:center;gap:14px}
+.overlay-loading.active{display:flex}
+.overlay-spinner{width:44px;height:44px;border:3px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin .8s linear infinite}
+.overlay-msg{font-size:14px;font-weight:600;color:#fff;text-align:center;padding:0 32px;line-height:1.5}
+.spinner{width:32px;height:32px;border:2.5px solid var(--border);border-top-color:var(--blue);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.oi{display:flex;gap:7px;margin-bottom:6px}.oi:last-child{margin-bottom:0}
+.od{width:5px;height:5px;border-radius:50%;background:var(--border2);margin-top:6px;flex-shrink:0}
+.ot{font-size:12px;color:var(--text2);line-height:1.6}
+.tab-bar{display:flex;background:var(--card);border-top:0.5px solid var(--border);padding:8px 0 max(4px,env(safe-area-inset-bottom));flex-shrink:0}
+.tab-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:4px 0;border:none;background:transparent;position:relative;font-family:var(--font-sans)}
+.tab-item i{font-size:21px;color:var(--text3);transition:color .15s}
+.tab-item.ta i{color:var(--blue)}
+.tbl{font-size:10px;color:var(--text3);font-weight:500}
+.tab-item.ta .tbl{color:var(--blue);font-weight:600}
+.tab-badge{position:absolute;top:0;right:8px;background:var(--red-mid);color:#fff;font-size:9px;font-weight:700;border-radius:10px;padding:1px 5px;line-height:1.3}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <div class="tpr">
+      <div><div class="tpt" id="tpt">Receitas de Produto</div><div class="tps" id="tps">Laminação</div></div>
+      <div class="spp" id="tpp" style="display:none"><div class="spd"></div>Aprovada</div>
+    </div>
+  </div>
+  <div id="sbw"></div>
+  <div class="overlay-loading" id="overlay-loading"><div class="overlay-spinner"></div><div class="overlay-msg" id="overlay-msg">Salvando...</div></div>
+  <div class="content" id="main-content">
+
+    <!-- LISTA -->
+    <div id="s-lista" class="sc active">
+      <div class="sw"><i class="ti ti-search"></i><input type="text" placeholder="Buscar por Cód. PA, cliente ou serviço..." id="si" oninput="filtrar()"></div>
+      <div class="sl">Receitas cadastradas</div>
+      <div class="card" style="padding:0 14px" id="lw">
+        <div class="loading-wrap"><div class="spinner"></div><span style="font-size:13px;color:var(--text3)">Carregando receitas...</span></div>
+      </div>
+    </div>
+
+    <!-- DETALHE -->
+    <div id="s-rec" class="sc">
+      <button class="bb" onclick="irLista()"><i class="ti ti-arrow-left"></i> Receitas</button>
+      <div id="rec-id"></div>
+      <div class="card" id="rec-info"></div>
+      <div class="card" id="rec-params"></div>
+      <div class="card" id="rec-obs" style="display:none"></div>
+      <button class="bp" onclick="irRep()"><i class="ti ti-clipboard-check"></i> Registrar repetição</button>
+      <div style="height:16px"></div>
+    </div>
+
+    <!-- NOVA RECEITA -->
+    <div id="s-nova" class="sc">
+      <!-- PASSO 1: IDENTIFICAÇÃO -->
+      <div id="ns1">
+        <div class="card">
+          <div class="sl">Identificação do produto</div>
+          <div class="fd"><div class="fdl">Cliente</div><input type="text" id="n-cli"></div>
+          <div class="fr">
+            <div class="fd"><div class="fdl">Cód. PA</div><input type="text" id="n-cod" placeholder="141.405.0011" oninput="fmtCodPA(this)" maxlength="12"></div>
+            <div class="fd"><div class="fdl">OP de criação</div><input type="text" id="n-op"></div>
+          </div>
+          <div class="fd"><div class="fdl">Descrição do serviço</div><input type="text" id="n-serv"></div>
+          <div class="fd"><div class="fdl">Operador</div><input type="text" id="n-oper"></div>
+        </div>
+        <div class="card">
+          <div class="sl">Tipo de laminação</div>
+          <div class="seg" id="seg-tipo">
+            <button class="seg-btn" onclick="selTipo('Base Solvente')">Base Solvente</button>
+            <button class="seg-btn" onclick="selTipo('Solvente Less')">Solvente Less</button>
+            <button class="seg-btn" onclick="selTipo('Monocomponente')">Monocomponente</button>
+          </div>
+        </div>
+        <div class="card" id="card-numero" style="display:none">
+          <div class="sl">Número da laminação</div>
+          <div class="num-seg" id="seg-numero">
+            <button class="num-btn" onclick="selNumero('1ª')">1ª</button>
+            <button class="num-btn" onclick="selNumero('2ª')">2ª</button>
+            <button class="num-btn" onclick="selNumero('3ª')">3ª</button>
+            <button class="num-btn" onclick="selNumero('4ª')">4ª</button>
+          </div>
+        </div>
+        <div class="card" id="card-maquina" style="display:none">
+          <div class="sl">Máquina</div>
+          <div class="fd"><select id="n-maq" onchange="selMaquina()"><option value="">Selecione a máquina</option></select></div>
+        </div>
+        <div class="nr"><button class="bnn" id="btn-ns1" onclick="nStep(2)" disabled>Próximo: informações <i class="ti ti-arrow-right"></i></button></div>
+      </div>
+
+      <!-- PASSO 2: INFORMAÇÕES -->
+      <div id="ns2" style="display:none">
+        <div class="card">
+          <div class="sl">Informações do adesivo</div>
+          <div id="info-campos"></div>
+        </div>
+        <div class="nr"><button class="bnp" onclick="nStep(1)"><i class="ti ti-arrow-left"></i> Voltar</button><button class="bnn" onclick="nStep(3)">Parâmetros <i class="ti ti-arrow-right"></i></button></div>
+      </div>
+
+      <!-- PASSO 3: PARÂMETROS -->
+      <div id="ns3" style="display:none">
+        <div class="card">
+          <div class="sl">Parâmetros da máquina</div>
+          <div id="param-campos"></div>
+        </div>
+        <div class="card"><div class="sl">Observações técnicas</div><textarea id="n-obs" rows="3"></textarea></div>
+        <div class="nr"><button class="bnp" onclick="nStep(2)"><i class="ti ti-arrow-left"></i> Voltar</button><button class="bnn" onclick="nStep(4)">Revisar <i class="ti ti-arrow-right"></i></button></div>
+      </div>
+
+      <!-- PASSO 4: REVISÃO + PIN -->
+      <div id="ns4" style="display:none">
+        <div class="card" id="rvw"></div>
+        <div class="card">
+          <div class="pin-w">
+            <div class="pin-t">Aprovação</div>
+            <div class="pin-s">Digite o PIN do supervisor para aprovar e salvar a receita</div>
+            <div class="pin-cx"><div class="pcl">Receita</div><div class="pcv" id="pnc">—</div></div>
+            <div class="pin-ds" id="pnd-n"><div class="pin-d" id="pd-n-0"></div><div class="pin-d" id="pd-n-1"></div><div class="pin-d" id="pd-n-2"></div><div class="pin-d" id="pd-n-3"></div></div>
+            <div class="pin-g">
+              <button class="pib" onclick="pinN('1')">1</button><button class="pib" onclick="pinN('2')">2</button><button class="pib" onclick="pinN('3')">3</button>
+              <button class="pib" onclick="pinN('4')">4</button><button class="pib" onclick="pinN('5')">5</button><button class="pib" onclick="pinN('6')">6</button>
+              <button class="pib" onclick="pinN('7')">7</button><button class="pib" onclick="pinN('8')">8</button><button class="pib" onclick="pinN('9')">9</button>
+              <button class="pib" onclick="pinN('del')" style="font-size:16px"><i class="ti ti-backspace"></i></button>
+              <button class="pib" onclick="pinN('0')">0</button>
+              <button class="pib" onclick="pinN('ok')" style="background:var(--blue);color:#fff;border-color:var(--blue)"><i class="ti ti-check"></i></button>
+            </div>
+            <div class="pie" id="pne"></div>
+          </div>
+        </div>
+        <div class="nr"><button class="bnp" onclick="nStep(3)"><i class="ti ti-arrow-left"></i> Editar</button></div>
+      </div>
+    </div>
+
+    <!-- REGISTRO DE REPETIÇÃO -->
+    <div id="s-rep" class="sc">
+      <button class="bb" onclick="ir('s-rec')"><i class="ti ti-arrow-left"></i> Voltar à receita</button>
+      <div class="ibox" style="background:var(--green-light);border:0.5px solid #C0DD97">
+        <div class="ibic" style="background:rgba(255,255,255,0.6)"><i class="ti ti-user" style="color:var(--green)"></i></div>
+        <div style="flex:1"><div style="font-size:11px;color:var(--green);margin-bottom:4px;font-weight:600">Operador</div><input class="ibinp" style="color:var(--green)" type="text" id="oper-inp" oninput="uBtn()"></div>
+      </div>
+      <div class="ibox" style="background:var(--blue-light);border:0.5px solid var(--blue-mid)">
+        <div class="ibic" style="background:rgba(255,255,255,0.6)"><i class="ti ti-file-invoice" style="color:var(--blue)"></i></div>
+        <div style="flex:1"><div style="font-size:11px;color:var(--blue);margin-bottom:4px;font-weight:600">Nº da OP de produção</div><input class="ibinp" style="color:var(--blue)" type="text" id="op-inp" oninput="uBtn()"></div>
+      </div>
+      <div class="card">
+        <div class="sl">Identificação</div>
+        <div class="hg" id="rep-id-grid"></div>
+        <div><div class="fl">Data / hora</div><div class="fv" style="font-size:12px;margin-top:2px" id="rep-dt"></div></div>
+      </div>
+      <div class="card" id="rep-info-card">
+        <div class="sl">Informações do adesivo</div>
+        <div id="rep-info"></div>
+      </div>
+      <div class="card">
+        <div class="sl">Parâmetros da máquina</div>
+        <div class="prg"><div class="prf" id="rpg" style="width:0%"></div></div>
+        <div id="params-rep"></div>
+      </div>
+      <div class="nr">
+        <button class="bnp" onclick="ir('s-rec')"><i class="ti ti-x"></i> Cancelar</button>
+        <button class="bnn" id="btn-revisar" onclick="irRevisar()" disabled>Revisar <i class="ti ti-arrow-right"></i></button>
+      </div>
+    </div>
+
+    <!-- REVISÃO DA REPETIÇÃO -->
+    <div id="s-rev" class="sc">
+      <button class="bb" onclick="ir('s-rep')"><i class="ti ti-arrow-left"></i> Voltar ao registro</button>
+      <div id="rev-dv-banner" style="display:none" class="rev-dv-banner"><i class="ti ti-alert-triangle" style="font-size:18px;color:var(--red)"></i><div><div style="font-size:13px;font-weight:600;color:var(--red)">Desvios identificados</div><div style="font-size:11px;color:var(--red);margin-top:2px" id="rev-dv-count"></div></div></div>
+      <div id="alt-banner" style="display:none" class="alt-banner"><i class="ti ti-file-pencil" style="font-size:18px;color:var(--blue)"></i><div><div style="font-size:13px;font-weight:600;color:var(--blue)">Alteração na receita solicitada</div><div style="font-size:11px;color:var(--blue);margin-top:2px" id="alt-count"></div></div></div>
+      <div class="card"><div class="sl">Revisão dos parâmetros</div><div id="rev-params"></div></div>
+      <div class="card">
+        <div class="pin-w">
+          <div class="pin-t">Aprovação do supervisor</div>
+          <div class="pin-s">Registre sua aprovação com PIN</div>
+          <div class="pin-cx"><div class="pcl">Receita</div><div class="pcv" id="rpctx">—</div></div>
+          <div class="pin-ds" id="pnd-r"><div class="pin-d" id="pd-r-0"></div><div class="pin-d" id="pd-r-1"></div><div class="pin-d" id="pd-r-2"></div><div class="pin-d" id="pd-r-3"></div></div>
+          <div class="pin-g">
+            <button class="pib" onclick="pinR('1')">1</button><button class="pib" onclick="pinR('2')">2</button><button class="pib" onclick="pinR('3')">3</button>
+            <button class="pib" onclick="pinR('4')">4</button><button class="pib" onclick="pinR('5')">5</button><button class="pib" onclick="pinR('6')">6</button>
+            <button class="pib" onclick="pinR('7')">7</button><button class="pib" onclick="pinR('8')">8</button><button class="pib" onclick="pinR('9')">9</button>
+            <button class="pib" onclick="pinR('del')" style="font-size:16px"><i class="ti ti-backspace"></i></button>
+            <button class="pib" onclick="pinR('0')">0</button>
+            <button class="pib" id="btn-pin-r" onclick="pinR('ok')" style="background:var(--blue);color:#fff;border-color:var(--blue)" disabled><i class="ti ti-check"></i></button>
+          </div>
+          <div class="pie" id="pre2"></div>
+        </div>
+      </div>
+      <div class="nr"><button class="bnp" onclick="ir('s-rep')"><i class="ti ti-arrow-left"></i> Editar</button></div>
+    </div>
+
+    <!-- SUCESSO -->
+    <div id="s-suc" class="sc">
+      <div style="padding:32px 0;text-align:center">
+        <div style="width:64px;height:64px;border-radius:50%;background:var(--green-light);display:flex;align-items:center;justify-content:center;margin:0 auto 16px"><i class="ti ti-check" style="font-size:28px;color:var(--green)"></i></div>
+        <div style="font-size:18px;font-weight:700;color:var(--text);margin-bottom:6px" id="suc-title">Salvo!</div>
+        <div style="font-size:13px;color:var(--text2);margin-bottom:24px;line-height:1.5" id="suc-sub"></div>
+        <div class="card" style="text-align:left" id="suc-box"></div>
+        <button class="bp" onclick="irLista()"><i class="ti ti-home"></i> Voltar às receitas</button>
+      </div>
+    </div>
+
+    <!-- HISTÓRICO -->
+    <div id="s-hist" class="sc">
+      <div class="sl">Histórico por receita</div>
+      <div class="fcs" id="hist-filtros"></div>
+      <div id="hist-conteudo"></div>
+    </div>
+
+    <!-- PENDÊNCIAS (com bloqueio) -->
+    <div id="s-pend-lock" class="sc">
+      <div class="lock-screen">
+        <div class="lock-ic" style="background:var(--blue-light)"><i class="ti ti-lock" style="font-size:26px;color:var(--blue)"></i></div>
+        <div style="font-size:16px;font-weight:700;margin-bottom:6px">Acesso restrito</div>
+        <div style="font-size:13px;color:var(--text2);margin-bottom:24px;line-height:1.5">Digite o PIN do supervisor para ver as pendências</div>
+        <div class="pin-ds" id="plkd-pend"><div class="pin-d" id="plkd-pend-0"></div><div class="pin-d" id="plkd-pend-1"></div><div class="pin-d" id="plkd-pend-2"></div><div class="pin-d" id="plkd-pend-3"></div></div>
+        <div style="margin-bottom:16px"></div>
+        <div class="pin-g" style="max-width:300px">
+          <button class="pib" onclick="ppLock('pend','1')">1</button><button class="pib" onclick="ppLock('pend','2')">2</button><button class="pib" onclick="ppLock('pend','3')">3</button>
+          <button class="pib" onclick="ppLock('pend','4')">4</button><button class="pib" onclick="ppLock('pend','5')">5</button><button class="pib" onclick="ppLock('pend','6')">6</button>
+          <button class="pib" onclick="ppLock('pend','7')">7</button><button class="pib" onclick="ppLock('pend','8')">8</button><button class="pib" onclick="ppLock('pend','9')">9</button>
+          <button class="pib" onclick="ppLock('pend','back')" style="font-size:16px"><i class="ti ti-backspace"></i></button>
+          <button class="pib" onclick="ppLock('pend','0')">0</button>
+          <button class="pib" onclick="ppLock('pend','ok')" style="background:var(--blue);color:#fff;border-color:var(--blue)"><i class="ti ti-check"></i></button>
+        </div>
+        <div class="pie" id="plk-pend-err"></div>
+      </div>
+    </div>
+    <div id="s-pend" class="sc">
+      <div class="sl">Aguardando aprovação</div>
+      <div id="pend-list"></div>
+    </div>
+
+    <!-- PAINEL (com bloqueio) -->
+    <div id="s-painel-lock" class="sc">
+      <div class="lock-screen">
+        <div class="lock-ic" style="background:var(--blue-light)"><i class="ti ti-lock" style="font-size:26px;color:var(--blue)"></i></div>
+        <div style="font-size:16px;font-weight:700;margin-bottom:6px">Acesso restrito</div>
+        <div style="font-size:13px;color:var(--text2);margin-bottom:24px;line-height:1.5">Digite o PIN do supervisor para acessar o painel</div>
+        <div class="pin-ds" id="plkd-p-painel"><div class="pin-d" id="plkd-p-painel-0"></div><div class="pin-d" id="plkd-p-painel-1"></div><div class="pin-d" id="plkd-p-painel-2"></div><div class="pin-d" id="plkd-p-painel-3"></div></div>
+        <div style="margin-bottom:16px"></div>
+        <div class="pin-g" style="max-width:300px">
+          <button class="pib" onclick="ppLock('painel','1')">1</button><button class="pib" onclick="ppLock('painel','2')">2</button><button class="pib" onclick="ppLock('painel','3')">3</button>
+          <button class="pib" onclick="ppLock('painel','4')">4</button><button class="pib" onclick="ppLock('painel','5')">5</button><button class="pib" onclick="ppLock('painel','6')">6</button>
+          <button class="pib" onclick="ppLock('painel','7')">7</button><button class="pib" onclick="ppLock('painel','8')">8</button><button class="pib" onclick="ppLock('painel','9')">9</button>
+          <button class="pib" onclick="ppLock('painel','back')" style="font-size:16px"><i class="ti ti-backspace"></i></button>
+          <button class="pib" onclick="ppLock('painel','0')">0</button>
+          <button class="pib" onclick="ppLock('painel','ok')" style="background:var(--blue);color:#fff;border-color:var(--blue)"><i class="ti ti-check"></i></button>
+        </div>
+        <div class="pie" id="plk-painel-err"></div>
+      </div>
+    </div>
+    <div id="s-painel" class="sc">
+      <div class="sl">Painel — Laminação</div>
+      <div class="met" id="painel-met"></div>
+      <div class="sl">Receitas recentes</div>
+      <div id="painel-lista"></div>
+    </div>
+
+  </div>
+  <div class="tab-bar">
+    <button class="tab-item ta" id="tab-r" onclick="setTab('tab-r');irLista()"><i class="ti ti-file-text"></i><span class="tbl">Receitas</span></button>
+    <button class="tab-item" id="tab-h" onclick="setTab('tab-h');ir('s-hist')"><i class="ti ti-history"></i><span class="tbl">Histórico</span></button>
+    <button class="tab-item" id="tab-n" onclick="setTab('tab-n');irNova()"><i class="ti ti-plus"></i><span class="tbl">Nova</span></button>
+    <button class="tab-item" id="tab-pend" onclick="setTab('tab-pend');irPendLock()"><i class="ti ti-clock"></i><span class="tbl">Pendências</span><span class="tab-badge" id="pend-badge" style="display:none">0</span></button>
+    <button class="tab-item" id="tab-p" onclick="setTab('tab-p');irPainelLock()"><i class="ti ti-chart-bar"></i><span class="tbl">Painel</span></button>
+  </div>
+</div>
+
+<script>
+const API = 'https://script.google.com/macros/s/AKfycbxkaVKjJrwKQKp8EBihLjalkhgipVVJqzPRUd0S3aviukVXe_vnTFyqN2zxW4Uynssy/exec';
+
+const LAM_MAQUINAS = {"Base Solvente": ["Flexotech", "Supercombi 3000", "Supercombi 4000", "Comexi"], "Solvente Less": ["Simplex 1", "Simplex 2", "Supercombi 3000", "Supercombi 4000", "Comexi"], "Monocomponente": ["Supercombi 3000", "Supercombi 4000", "Comexi"]};
+const LAM_CAMPOS = {"Base Solvente": {"Supercombi 3000/4000": {"info": ["Adesivo", "Proporção", "Gramatura Aplicada (g/m²)", "Potência do Tratamento 1 (W)", "Potência do Tratamento 2 (W)"], "params": ["Gravação do Cilindro", "Viscosidade do Adesivo", "Pressão da Faca", "Pressão do Rolo Aplicador Esquerdo", "Pressão do Rolo Aplicador Direito", "Pressão do NIP Esquerdo", "Pressão do NIP Direito", "Tensão do Freio Desbobinador 1", "Tensão da Ponte", "Tensão do Freio Desbobinador 2", "Tensão do Rebobinador", "Tensão Decrescente (%)", "Temperatura do Rolo de NIP", "Pressão do Compactador Direito", "Pressão do Compactador Esquerdo", "Temperatura do Soprador 1 SP1", "Temperatura do Soprador 2 SP1", "Velocidade de Produção", "Filme Desbobinador 1", "Filme Desbobinador 2", "Largura Filme Desb. 1", "Largura Filme Desb. 2"]}, "Comexi": {"info": ["Adesivo", "Proporção", "Gramatura Aplicada (g/m²)", "Potência do Tratamento 1 (W)", "Potência do Tratamento 2 (W)"], "params": ["Gravação do Cilindro", "Viscosidade do Adesivo", "Pressão da Faca", "Pressão do Rolo Aplicador Esquerdo", "Pressão do Rolo Aplicador Direito", "Pressão do NIP Esquerdo", "Pressão do NIP Direito", "Tensão do Freio Desbobinador 1", "Tensão da Ponte", "Tensão do Freio Desbobinador 2", "Tensão do Rebobinador", "Tensão Decrescente (%)", "Temperatura do Rolo de NIP", "Pressão do Compactador Direito", "Pressão do Compactador Esquerdo", "Temperatura do Soprador 1 SP1", "Temperatura do Soprador 2 SP1", "Exaustor 1", "Exaustor 2", "Ventilação", "Velocidade de Produção", "Filme Desbobinador 1", "Filme Desbobinador 2", "Largura Filme Desb. 1", "Largura Filme Desb. 2"]}, "Flexotech": {"info": ["Adesivo", "Proporção", "Gramatura Aplicada (g/m²)", "Potência do Tratamento 1 (W)", "Potência do Tratamento 2 (W)"], "params": ["Gravação do Cilindro", "Viscosidade do Adesivo", "Pressão da Faca", "Pressão da Camisa 1 Lado Esquerdo", "Pressão da Camisa 1 Lado Direito", "Pressão do NIP Esquerdo", "Pressão do NIP Direito", "Tensão do Freio Desbobinador 1", "Tensão da Ponte", "Pressão do Compactador Direito", "Pressão do Compactador Esquerdo", "Velocidade de Produção", "Tensão Inicial do Rebobinador", "Tensão Final do Rebobinador", "% Draw do Aplicador", "% Draw do Impressor", "Queimador Superior 3", "Queimador Superior 4", "Insuflador do Queimador 3", "Exaustor do Queimador 3", "Insuflador do Queimador 4", "Exaustor do Queimador 4"]}}, "Solvente Less": {"Simplex 1": {"info": ["Adesivo/Catalisador", "Proporção", "Gramatura Aplicada (g/m²)", "Potência do Tratamento 1 (W)", "Potência do Tratamento 2 (W)"], "params": ["Pressão da Camisa", "Pressão do Rolo Aplicador", "Temperatura do Aplicador", "Temperatura do Separador", "Pressão do NIP Esquerdo", "Pressão do NIP Direito", "Tensão do Freio Desbobinador 1", "Tensão da Ponte", "Tensão do Freio Desbobinador 2", "Tensão do Rebobinador", "Tensão Decrescente (%)", "Temperatura do Rolo NIP", "Pressão do Compactador Direito", "Pressão do Compactador Esquerdo", "Velocidade de Produção (m/min)", "Filme Desbobinador 1", "Filme Desbobinador 2", "Largura Filme Desb. 1 (mm)", "Largura Filme Desb. 2 (mm)"]}, "Supercombi 3000/4000": {"info": ["Adesivo/Catalisador", "Proporção", "Gramatura Aplicada (g/m²)", "Potência do Tratamento 1 (W)", "Potência do Tratamento 2 (W)"], "params": ["Pressão da Camisa", "Pressão do Rolo Aplicador", "Temperatura do Aplicador", "Temperatura do Separador", "Pressão do NIP Esquerdo", "Pressão do NIP Direito", "Tensão do Freio Desbobinador 1", "Tensão da Ponte", "Tensão do Freio Desbobinador 2", "Tensão do Rebobinador", "Tensão Decrescente (%)", "Temperatura do Rolo NIP", "Pressão do Compactador Direito", "Pressão do Compactador Esquerdo", "Velocidade de Produção (m/min)", "Filme Desbobinador 1", "Filme Desbobinador 2", "Largura Filme Desb. 1 (mm)", "Largura Filme Desb. 2 (mm)"]}, "Comexi": {"info": ["Adesivo/Catalisador", "Proporção", "Gramatura Aplicada (g/m²)", "Potência do Tratamento 1 (W)", "Potência do Tratamento 2 (W)"], "params": ["Pressão da Camisa", "Pressão do Rolo Aplicador", "Temperatura do Aplicador", "Temperatura do Separador", "Pressão do NIP Esquerdo", "Pressão do NIP Direito", "Tensão do Freio Desbobinador 1", "Tensão da Ponte", "Tensão do Freio Desbobinador 2", "Tensão do Rebobinador", "Tensão Decrescente (%)", "Temperatura do Rolo NIP", "Pressão do Compactador Direito", "Pressão do Compactador Esquerdo", "Velocidade de Produção (m/min)", "Filme Desbobinador 1", "Filme Desbobinador 2", "Largura Filme Desb. 1 (mm)", "Largura Filme Desb. 2 (mm)"]}, "Simplex 2": {"info": ["Adesivo/Catalisador", "Proporção", "Gramatura Aplicada (g/m²)", "Potência do Tratamento 1 (W)", "Potência do Tratamento 2 (W)"], "params": ["Pressão da Camisa", "Pressão do Rolo Aplicador", "Temperatura do Aplicador", "Temperatura do Separador", "Pressão do NIP Esquerdo", "Pressão do NIP Direito", "Tensão do Freio Desbobinador 1", "Percentual ao Esticar 1", "Inércia de Desaceleração 1", "Tensão da Ponte", "Tensão do Freio Desbobinador 2", "Percentual ao Esticar 2", "Inércia de Desaceleração 2", "Tensão do Rebobinador", "Percentual ao Esticar Rebob.", "Inércia Aceleração", "Tensão Decrescente (%)", "Temperatura do Rolo NIP", "Pressão do Compactador Direito", "Pressão do Compactador Esquerdo", "Velocidade de Produção", "Filme Desbobinador 1", "Filme Desbobinador 2", "Largura Filme Desb. 1", "Largura Filme Desb. 2"]}}, "Monocomponente": {"Supercombi 3000/4000": {"info": ["Adesivo", "Gramatura Aplicada (g/m²)", "Potência do Tratamento 1 (W)", "Potência do Tratamento 2 (W)"], "params": ["Pressão da Camisa", "Pressão do Rolo Aplicador", "Temperatura do Aplicador", "Temperatura do Separador", "Pressão do NIP Esquerdo", "Pressão do NIP Direito", "Tensão do Freio Desbobinador 1", "Tensão da Ponte", "Tensão do Freio Desbobinador 2", "Tensão do Rebobinador", "Tensão Decrescente (%)", "Temperatura do Rolo NIP", "Pressão do Compactador Direito", "Pressão do Compactador Esquerdo", "Velocidade de Produção", "Filme Desbobinador 1", "Filme Desbobinador 2", "Largura Filme Desb. 1", "Largura Filme Desb. 2"]}, "Comexi": {"info": ["Adesivo", "Gramatura Aplicada (g/m²)", "Potência do Tratamento 1 (W)", "Potência do Tratamento 2 (W)"], "params": ["Pressão da Camisa", "Pressão do Rolo Aplicador", "Temperatura do Aplicador", "Temperatura do Separador", "Pressão do NIP Esquerdo", "Pressão do NIP Direito", "Tensão do Freio Desbobinador 1", "Tensão da Ponte", "Tensão do Freio Desbobinador 2", "Tensão do Rebobinador", "Tensão Decrescente (%)", "Temperatura do Rolo NIP", "Pressão do Compactador Direito", "Pressão do Compactador Esquerdo", "Velocidade de Produção", "Filme Desbobinador 1", "Filme Desbobinador 2", "Largura Filme Desb. 1", "Largura Filme Desb. 2"]}}};
+function chaveMaquina(maq){ return (maq==='Supercombi 3000'||maq==='Supercombi 4000')?'Supercombi 3000/4000':maq; }
+function getCampos(tipo,maq){ const c=LAM_CAMPOS[tipo]; if(!c)return null; return c[chaveMaquina(maq)]||null; }
+
+// ---------- Estado ----------
+let receitas = [], recIdx = null, nsn = 1;
+let novaTipo = '', novaNumero = '', novaMaq = '';
+let pinBufN = '', pinBufR = '';
+const lockBufs = {pend:'', painel:''};
+let pendencias = [], pendPinBufs = {};
+let sbwHTML = '';
+const altOpts = {};
+
+// ---------- JSONP ----------
+function jsonp(url){
+  return new Promise((resolve, reject) => {
+    const cb = 'cb_' + Date.now() + '_' + Math.random().toString(36).slice(2);
+    const timer = setTimeout(() => { cleanup(); reject(new Error('Tempo limite excedido.')); }, 30000);
+    function cleanup(){ clearTimeout(timer); delete window[cb]; const s=document.getElementById(cb); if(s)s.remove(); }
+    window[cb] = (data) => { cleanup(); if(data && data.status==='erro') reject(new Error(data.mensagem||'Erro')); else resolve(data.data); };
+    const script = document.createElement('script');
+    script.id = cb;
+    script.src = url + (url.includes('?')?'&':'?') + 'callback=' + cb;
+    script.onerror = () => { cleanup(); reject(new Error('Erro de conexão.')); };
+    document.head.appendChild(script);
+  });
+}
+function apiGet(action, extra=''){ return jsonp(`${API}?action=${action}${extra}`); }
+function apiPost(body){
+  const clean = JSON.parse(JSON.stringify(body));
+  let encoded;
+  try { encoded = encodeURIComponent(JSON.stringify(clean)); }
+  catch(e){ return Promise.reject(new Error('Erro ao processar dados: '+e.message)); }
+  return jsonp(`${API}?action=${body.action}&body=${encoded}`);
+}
+
+// ---------- Navegação ----------
+function ir(id){
+  document.querySelectorAll('.sc').forEach(s=>s.classList.remove('active'));
+  const el=document.getElementById(id);
+  if(el)el.classList.add('active');
+  document.getElementById('main-content').scrollTop=0;
+  // título
+  const tpt=document.getElementById('tpt'), tps=document.getElementById('tps');
+  const map={'s-lista':['Receitas de Produto','Laminação'],'s-rec':['Detalhe da receita','Laminação'],'s-nova':['Nova receita','Laminação'],'s-rep':['Registrar repetição','Laminação'],'s-rev':['Revisão','Laminação'],'s-suc':['Concluído','Laminação'],'s-hist':['Histórico','Por receita · Laminação'],'s-pend':['Pendências','Aguardando aprovação'],'s-pend-lock':['Pendências','Acesso restrito'],'s-painel':['Painel','Laminação'],'s-painel-lock':['Painel','Acesso restrito']};
+  if(map[id]){ tpt.textContent=map[id][0]; tps.textContent=map[id][1]; }
+}
+function setTab(id){ document.querySelectorAll('.tab-item').forEach(t=>t.classList.remove('ta')); document.getElementById(id).classList.add('ta'); }
+function irLista(){ setTab('tab-r'); ir('s-lista'); }
+
+// ---------- Carregamento ----------
+async function init(){
+  try{
+    receitas = await apiGet('getReceitasLista');
+    receitas = receitas.map(r=>({...r, _detalhesCarregados:false}));
+    rL(receitas);
+    carregarPendencias();
+  }catch(e){
+    document.getElementById('lw').innerHTML = `<div style="padding:20px 0;text-align:center;font-size:13px;color:var(--red)">Erro ao carregar: ${e.message}</div>`;
+  }
+}
+async function carregarPendencias(){
+  try{
+    pendencias = await apiGet('getPendencias') || [];
+    const badge=document.getElementById('pend-badge');
+    if(pendencias.length>0){ badge.style.display='block'; badge.textContent=pendencias.length; }
+    else badge.style.display='none';
+  }catch(e){ console.warn('pendencias', e.message); }
+}
+
+// ---------- Lista ----------
+function badgeTipo(tipo){
+  const m={'Base Solvente':'lb-bs','Solvente Less':'lb-sl','Monocomponente':'lb-mc'};
+  const abbr={'Base Solvente':'Base Solv.','Solvente Less':'Solv. Less','Monocomponente':'Mono'};
+  return `<span class="lam-badge ${m[tipo]||'lb-sl'}">${abbr[tipo]||tipo}</span>`;
+}
+function rL(lista){
+  const lw=document.getElementById('lw');
+  if(!lista.length){ lw.innerHTML=`<div style="padding:24px 0;text-align:center;font-size:13px;color:var(--text3)">Nenhuma receita encontrada</div>`; return; }
+  lw.innerHTML = lista.map(r=>`
+    <div class="li" onclick="abrirRec(${r.ID})">
+      <div class="lic"><i class="ti ti-layers-subtract"></i></div>
+      <div class="lb">
+        <div class="lt">${r.CLIENTE||''} — ${fmtCodPAExib(r.COD_PA)}</div>
+        <div class="ls">${r.NUMERO_LAMINACAO||''} · ${r.MAQUINA||''} · ${r.SERVICO||''}</div>
+      </div>
+      ${badgeTipo(r.TIPO_LAMINACAO)}
+    </div>`).join('');
+}
+function filtrar(){
+  const q=document.getElementById('si').value.toLowerCase().trim();
+  if(!q){ rL(receitas); return; }
+  const f=receitas.filter(r=>
+    String(r.CLIENTE||'').toLowerCase().includes(q) ||
+    String(r.COD_PA||'').toLowerCase().includes(q) ||
+    String(r.SERVICO||'').toLowerCase().includes(q) ||
+    String(r.MAQUINA||'').toLowerCase().includes(q) ||
+    String(r.TIPO_LAMINACAO||'').toLowerCase().includes(q)
+  );
+  rL(f);
+}
+
+// ---------- Cód PA ----------
+function fmtCodPA(input){
+  let v=input.value.replace(/\D/g,'').slice(0,10);
+  let out=v;
+  if(v.length>3&&v.length<=6) out=v.slice(0,3)+'.'+v.slice(3);
+  else if(v.length>6) out=v.slice(0,3)+'.'+v.slice(3,6)+'.'+v.slice(6);
+  input.value=out;
+}
+function fmtCodPAExib(cod){
+  const v=String(cod||'').replace(/\D/g,'');
+  if(v.length>=10) return v.slice(0,3)+'.'+v.slice(3,6)+'.'+v.slice(6);
+  return cod||'—';
+}
+</script>
+
+<script>
+// ---------- Abrir receita (detalhe sob demanda) ----------
+async function abrirRec(id){
+  recIdx = id;
+  let r = receitas.find(x=>String(x.ID)===String(id));
+  if(!r) return;
+  ir('s-rec');
+  if(!r._detalhesCarregados){
+    document.getElementById('rec-id').innerHTML = `<div class="loading-wrap"><div class="spinner"></div><span style="font-size:13px;color:var(--text3)">Carregando receita...</span></div>`;
+    document.getElementById('rec-info').innerHTML='';
+    document.getElementById('rec-params').innerHTML='';
+    try{
+      const det = await apiGet('getReceitaDetalhe', `&id=${id}`);
+      det.informacoes = Array.isArray(det.informacoes)?det.informacoes:[];
+      det.parametros = Array.isArray(det.parametros)?det.parametros:[];
+      det.versoes = Array.isArray(det.versoes)?det.versoes:[];
+      det._detalhesCarregados = true;
+      const ix = receitas.findIndex(x=>String(x.ID)===String(id));
+      if(ix>=0) receitas[ix]=det;
+      r = det;
+    }catch(e){
+      document.getElementById('rec-id').innerHTML = `<div style="padding:20px 0;text-align:center;font-size:13px;color:var(--red)">Erro ao carregar: ${e.message}</div>`;
+      return;
+    }
+  }
+  renderRec(r);
+}
+function renderRec(r){
+  // Identificação
+  document.getElementById('rec-id').innerHTML = `
+    <div class="card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+        <div class="sl" style="margin-bottom:0">Identificação</div>
+        ${badgeTipo(r.TIPO_LAMINACAO)}
+      </div>
+      <div class="hg">
+        <div><div class="fl">Cliente</div><div class="fv">${r.CLIENTE||'—'}</div></div>
+        <div><div class="fl">Cód. PA</div><div class="fv">${fmtCodPAExib(r.COD_PA)}</div></div>
+        <div><div class="fl">OP de criação</div><div class="fv">${r.OP_CRIACAO||'—'}</div></div>
+        <div><div class="fl">Nº laminação</div><div class="fv fvac">${r.NUMERO_LAMINACAO||'—'}</div></div>
+        <div><div class="fl">Máquina</div><div class="fv">${r.MAQUINA||'—'}</div></div>
+        <div><div class="fl">Operador</div><div class="fv">${r.OPERADOR||'—'}</div></div>
+      </div>
+      <div style="margin-top:10px"><div class="fl">Serviço</div><div class="fv">${r.SERVICO||'—'}</div></div>
+      <div style="margin-top:10px"><div class="fl">Aprovador</div><div class="fv">${r.APROVADOR||'—'}</div></div>
+    </div>`;
+  // Informações
+  const infos = r.informacoes||[];
+  document.getElementById('rec-info').innerHTML = `<div class="sl">Informações do adesivo</div>` +
+    (infos.length ? `<div class="pb">${infos.map(i=>`<div class="pbox"><div class="pl">${i.CAMPO}</div><div class="pv">${i.VALOR||'—'}</div></div>`).join('')}</div>` : `<div style="font-size:12px;color:var(--text3)">Sem informações</div>`);
+  // Parâmetros
+  const params = r.parametros||[];
+  document.getElementById('rec-params').innerHTML = `<div class="sl">Parâmetros da máquina</div>` +
+    (params.length ? `<div class="pb">${params.map(p=>`<div class="pbox"><div class="pl">${p.CAMPO}</div><div class="pv">${p.VALOR||'—'}</div></div>`).join('')}</div>` : `<div style="font-size:12px;color:var(--text3)">Sem parâmetros</div>`);
+  // Observações
+  const obsEl=document.getElementById('rec-obs');
+  if(r.OBSERVACOES && String(r.OBSERVACOES).trim()){
+    obsEl.style.display='block';
+    obsEl.innerHTML=`<div class="sl">Observações técnicas</div><div style="font-size:13px;color:var(--text2);line-height:1.5">${r.OBSERVACOES}</div>`;
+  } else obsEl.style.display='none';
+}
+
+// ---------- Nova receita ----------
+function irNova(){
+  novaTipo=''; novaNumero=''; novaMaq=''; nsn=1; pinBufN='';
+  ['n-cli','n-cod','n-op','n-serv','n-oper','n-obs'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
+  document.querySelectorAll('#seg-tipo .seg-btn').forEach(b=>b.classList.remove('sel'));
+  document.querySelectorAll('#seg-numero .num-btn').forEach(b=>b.classList.remove('sel'));
+  document.getElementById('card-numero').style.display='none';
+  document.getElementById('card-maquina').style.display='none';
+  document.getElementById('n-maq').innerHTML='<option value="">Selecione a máquina</option>';
+  updDotsN();
+  document.getElementById('pne').textContent='';
+  ['ns1','ns2','ns3','ns4'].forEach((id,i)=>document.getElementById(id).style.display=i===0?'block':'none');
+  uNs1();
+  ir('s-nova');
+}
+function selTipo(tipo){
+  novaTipo=tipo; novaMaq=''; 
+  document.querySelectorAll('#seg-tipo .seg-btn').forEach(b=>b.classList.toggle('sel', b.textContent===tipo));
+  // Monocomponente não tem número? Tem sim (1ª-4ª) — mostra para todos
+  document.getElementById('card-numero').style.display='block';
+  // Preencher máquinas filtradas
+  const maqs = LAM_MAQUINAS[tipo]||[];
+  const sel=document.getElementById('n-maq');
+  sel.innerHTML='<option value="">Selecione a máquina</option>'+maqs.map(m=>`<option>${m}</option>`).join('');
+  document.getElementById('card-maquina').style.display='block';
+  sel.value='';
+  uNs1();
+}
+function selNumero(num){
+  novaNumero=num;
+  document.querySelectorAll('#seg-numero .num-btn').forEach(b=>b.classList.toggle('sel', b.textContent===num));
+  uNs1();
+}
+function selMaquina(){
+  novaMaq=document.getElementById('n-maq').value;
+  uNs1();
+}
+function uNs1(){
+  const cli=document.getElementById('n-cli').value.trim();
+  const cod=document.getElementById('n-cod').value.trim();
+  const serv=document.getElementById('n-serv').value.trim();
+  const oper=document.getElementById('n-oper').value.trim();
+  const ok = cli&&cod&&serv&&oper&&novaTipo&&novaNumero&&novaMaq;
+  document.getElementById('btn-ns1').disabled=!ok;
+}
+['n-cli','n-cod','n-op','n-serv','n-oper'].forEach(id=>{
+  document.addEventListener('input',e=>{ if(e.target&&e.target.id===id) uNs1(); });
+});
+
+// ---------- Passos da nova receita ----------
+function nStep(n){
+  nsn=n;
+  ['ns1','ns2','ns3','ns4'].forEach((id,i)=>document.getElementById(id).style.display=(i+1)===n?'block':'none');
+  document.getElementById('main-content').scrollTop=0;
+  if(n===2) montarInfoCampos();
+  if(n===3) montarParamCampos();
+  if(n===4) bRv();
+}
+function montarInfoCampos(){
+  const campos = getCampos(novaTipo, novaMaq);
+  if(!campos){ document.getElementById('info-campos').innerHTML='<div style="font-size:12px;color:var(--red)">Combinação inválida</div>'; return; }
+  const cont=document.getElementById('info-campos');
+  if(cont.dataset.key === novaTipo+'|'+novaMaq) return; // já montado
+  cont.dataset.key = novaTipo+'|'+novaMaq;
+  cont.innerHTML = campos.info.map((c,i)=>`
+    <div class="fd"><div class="fdl">${c}</div><input type="text" id="inf-${i}" inputmode="text"></div>`).join('');
+}
+function montarParamCampos(){
+  const campos = getCampos(novaTipo, novaMaq);
+  if(!campos){ document.getElementById('param-campos').innerHTML='<div style="font-size:12px;color:var(--red)">Combinação inválida</div>'; return; }
+  const cont=document.getElementById('param-campos');
+  if(cont.dataset.key === novaTipo+'|'+novaMaq) return;
+  cont.dataset.key = novaTipo+'|'+novaMaq;
+  cont.innerHTML = campos.params.map((c,i)=>`
+    <div class="param-row"><div class="param-top"><div class="param-lbl">${c}</div>
+    <input class="param-inp" type="text" inputmode="text" id="par-${i}"></div></div>`).join('');
+}
+</script>
+
+<script>
+// ---------- Revisão da nova receita (passo 4) ----------
+function bRv(){
+  const campos = getCampos(novaTipo, novaMaq);
+  if(!campos) return;
+  const cli=document.getElementById('n-cli').value.trim();
+  const cod=document.getElementById('n-cod').value.trim();
+  const op=document.getElementById('n-op').value.trim();
+  const serv=document.getElementById('n-serv').value.trim();
+  const oper=document.getElementById('n-oper').value.trim();
+  const obs=document.getElementById('n-obs').value.trim();
+
+  const infoVals = campos.info.map((c,i)=>({campo:c, valor:(document.getElementById('inf-'+i)?.value||'').trim()}));
+  const paramVals = campos.params.map((c,i)=>({campo:c, valor:(document.getElementById('par-'+i)?.value||'').trim()}));
+
+  document.getElementById('pnc').textContent = `${cli} — ${fmtCodPAExib(cod)}`;
+
+  document.getElementById('rvw').innerHTML = `
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+      <div class="sl" style="margin-bottom:0">Revisão da receita</div>
+      ${badgeTipo(novaTipo)}
+    </div>
+    <div class="hg">
+      <div><div class="fl">Cliente</div><div class="fv">${cli}</div></div>
+      <div><div class="fl">Cód. PA</div><div class="fv">${fmtCodPAExib(cod)}</div></div>
+      <div><div class="fl">OP criação</div><div class="fv">${op||'—'}</div></div>
+      <div><div class="fl">Nº laminação</div><div class="fv fvac">${novaNumero}</div></div>
+      <div><div class="fl">Máquina</div><div class="fv">${novaMaq}</div></div>
+      <div><div class="fl">Operador</div><div class="fv">${oper}</div></div>
+    </div>
+    <div style="margin-top:8px"><div class="fl">Serviço</div><div class="fv">${serv}</div></div>
+    <div class="sl" style="margin-top:16px">Informações do adesivo</div>
+    <div class="pb">${infoVals.map(v=>`<div class="pbox"><div class="pl">${v.campo}</div><div class="pv">${v.valor||'—'}</div></div>`).join('')}</div>
+    <div class="sl" style="margin-top:16px">Parâmetros da máquina</div>
+    <div class="pb">${paramVals.map(v=>`<div class="pbox"><div class="pl">${v.campo}</div><div class="pv">${v.valor||'—'}</div></div>`).join('')}</div>
+    ${obs?`<div class="sl" style="margin-top:16px">Observações</div><div style="font-size:13px;color:var(--text2);line-height:1.5">${obs}</div>`:''}
+  `;
+}
+
+// ---------- PIN nova receita ----------
+function updDotsN(){
+  for(let i=0;i<4;i++){ const d=document.getElementById('pd-n-'+i); if(d)d.className='pin-d'+(i<pinBufN.length?' f':''); }
+}
+function pinN(v){
+  const err=document.getElementById('pne');
+  if(v==='del'){ pinBufN=pinBufN.slice(0,-1); }
+  else if(v==='ok'){
+    if(pinBufN.length<4){ err.textContent='Digite os 4 dígitos'; return; }
+    err.textContent='';
+    const pin=pinBufN;
+    salvarNovaReceita(pin);
+    return;
+  } else { if(pinBufN.length<4) pinBufN+=v; }
+  updDotsN();
+}
+
+async function salvarNovaReceita(pin){
+  const campos = getCampos(novaTipo, novaMaq);
+  showOverlay('Validando PIN...');
+  let aprovador='';
+  try{
+    const res = await apiPost({action:'validarPin', pin});
+    if(!res.valido){ hideOverlay(); document.getElementById('pne').textContent='PIN incorreto. Tente novamente.'; pinBufN=''; updDotsN(); return; }
+    aprovador = res.nome;
+  }catch(e){ hideOverlay(); document.getElementById('pne').textContent='Erro: '+e.message; pinBufN=''; updDotsN(); return; }
+
+  showOverlay('Salvando receita...');
+  const receita = {
+    cliente:document.getElementById('n-cli').value.trim(),
+    codPA:document.getElementById('n-cod').value.trim(),
+    opCriacao:document.getElementById('n-op').value.trim(),
+    servico:document.getElementById('n-serv').value.trim(),
+    tipoLaminacao:novaTipo,
+    numeroLaminacao:novaNumero,
+    maquina:novaMaq,
+    operador:document.getElementById('n-oper').value.trim(),
+    observacoes:document.getElementById('n-obs').value.trim()
+  };
+  const informacoes = campos.info.map((c,i)=>({campo:c, valor:(document.getElementById('inf-'+i)?.value||'').trim()}));
+  const parametros = campos.params.map((c,i)=>({campo:c, valor:(document.getElementById('par-'+i)?.value||'').trim()}));
+
+  try{
+    const res = await apiPost({action:'salvarReceita', receita, informacoes, parametros, aprovador});
+    hideOverlay();
+    pinBufN=''; updDotsN();
+    // Tela de sucesso
+    document.getElementById('suc-title').textContent='Receita salva!';
+    document.getElementById('suc-sub').textContent=`${receita.cliente} — ${novaNumero} laminação`;
+    document.getElementById('suc-box').innerHTML=`
+      <div class="trr"><span class="trl">Tipo</span><span class="trv">${novaTipo}</span></div>
+      <div class="trr"><span class="trl">Máquina</span><span class="trv">${novaMaq}</span></div>
+      <div class="trr"><span class="trl">Aprovador</span><span class="trv">${aprovador}</span></div>`;
+    ir('s-suc');
+    // Recarregar lista
+    receitas = await apiGet('getReceitasLista');
+    receitas = receitas.map(r=>({...r,_detalhesCarregados:false}));
+    rL(receitas);
+  }catch(e){ hideOverlay(); document.getElementById('pne').textContent='Erro ao salvar: '+e.message; }
+}
+
+// ---------- Overlay ----------
+function showOverlay(msg){ document.getElementById('overlay-msg').textContent=msg||'Carregando...'; document.getElementById('overlay-loading').classList.add('active'); }
+function hideOverlay(){ document.getElementById('overlay-loading').classList.remove('active'); }
+</script>
+
+<script>
+// ---------- Registro de repetição ----------
+function irRep(){
+  const r = receitas.find(x=>String(x.ID)===String(recIdx));
+  if(!r) return;
+  document.getElementById('oper-inp').value='';
+  document.getElementById('op-inp').value='';
+  document.getElementById('rep-dt').textContent = new Date().toLocaleString('pt-BR');
+  // Identificação
+  document.getElementById('rep-id-grid').innerHTML = `
+    <div><div class="fl">Cliente</div><div class="fv">${r.CLIENTE||'—'}</div></div>
+    <div><div class="fl">Cód. PA</div><div class="fv">${fmtCodPAExib(r.COD_PA)}</div></div>
+    <div><div class="fl">Nº laminação</div><div class="fv fvac">${r.NUMERO_LAMINACAO||'—'}</div></div>
+    <div><div class="fl">Máquina</div><div class="fv">${r.MAQUINA||'—'}</div></div>`;
+  // Informações (read-only, mostra referência)
+  const infos = r.informacoes||[];
+  document.getElementById('rep-info').innerHTML = infos.length
+    ? `<div class="pb">${infos.map(i=>`<div class="pbox"><div class="pl">${i.CAMPO}</div><div class="pv">${i.VALOR||'—'}</div></div>`).join('')}</div>`
+    : `<div style="font-size:12px;color:var(--text3)">Sem informações</div>`;
+  // Parâmetros — campos editáveis com detecção de desvio
+  const params = r.parametros||[];
+  document.getElementById('params-rep').innerHTML = params.map((p,i)=>{
+    const ref = String(p.VALOR||'');
+    return `<div class="param-row" id="rprow-${i}">
+      <div class="param-top">
+        <div class="param-lbl">${p.CAMPO}<div style="font-size:10px;color:var(--text3);margin-top:2px">Receita: ${ref||'—'}</div></div>
+        <input class="param-inp" type="text" inputmode="text" id="rpar-${i}" oninput="chkP(${i},'${ref.replace(/'/g,"\\'")}')">
+      </div>
+      <div class="just-inp" id="rjust-${i}" style="display:none">
+        <label><i class="ti ti-alert-triangle"></i> Desvio — justifique</label>
+        <textarea id="rjt-${i}" rows="2" placeholder="Justifique o desvio..."></textarea>
+      </div>
+    </div>`;
+  }).join('');
+  uBtn();
+  uProg();
+  ir('s-rep');
+}
+function chkP(i, ref){
+  const inp=document.getElementById('rpar-'+i);
+  const just=document.getElementById('rjust-'+i);
+  const val=inp.value.trim();
+  // comparação exata
+  const desvio = val!=='' && ref!=='' && val!==String(ref);
+  if(desvio){ inp.classList.add('dv'); just.style.display='block'; }
+  else { inp.classList.remove('dv'); just.style.display='none'; }
+  uBtn(); uProg();
+}
+function uProg(){
+  const r = receitas.find(x=>String(x.ID)===String(recIdx));
+  const params = r?(r.parametros||[]):[];
+  const total=params.length;
+  let preench=0;
+  params.forEach((p,i)=>{ const v=document.getElementById('rpar-'+i); if(v&&v.value.trim()!=='') preench++; });
+  document.getElementById('rpg').style.width = total?Math.round(preench/total*100)+'%':'0%';
+}
+function uBtn(){
+  const r = receitas.find(x=>String(x.ID)===String(recIdx));
+  const params = r?(r.parametros||[]):[];
+  const oper=document.getElementById('oper-inp').value.trim();
+  const op=document.getElementById('op-inp').value.trim();
+  // todos os parâmetros preenchidos + justificativas de desvio preenchidas
+  let ok = oper!=='' && op!=='';
+  params.forEach((p,i)=>{
+    const v=document.getElementById('rpar-'+i);
+    if(!v||v.value.trim()==='') ok=false;
+    const j=document.getElementById('rjust-'+i);
+    if(j&&j.style.display!=='none'){ const jt=document.getElementById('rjt-'+i); if(!jt||jt.value.trim()==='') ok=false; }
+  });
+  document.getElementById('btn-revisar').disabled=!ok;
+}
+
+// ---------- Coletar desvios ----------
+function getDesvios(){
+  const r = receitas.find(x=>String(x.ID)===String(recIdx));
+  const params = r?(r.parametros||[]):[];
+  const dvs=[];
+  params.forEach((p,i)=>{
+    const inp=document.getElementById('rpar-'+i);
+    if(!inp) return;
+    const val=inp.value.trim();
+    const ref=String(p.VALOR||'');
+    if(val!==''&&ref!==''&&val!==String(ref)){
+      const jt=document.getElementById('rjt-'+i);
+      dvs.push({ idx:i, parametro:p.CAMPO, valorReceita:ref, valorReal:val, justificativa:jt?jt.value.trim():'' });
+    }
+  });
+  return dvs;
+}
+
+// ---------- Revisão da repetição ----------
+function irRevisar(){
+  const r = receitas.find(x=>String(x.ID)===String(recIdx));
+  const params = r?(r.parametros||[]):[];
+  const dvs=getDesvios();
+  document.getElementById('rpctx').textContent=`${r.CLIENTE} — ${fmtCodPAExib(r.COD_PA)}`;
+
+  // Banner de desvios
+  const dvBanner=document.getElementById('rev-dv-banner');
+  if(dvs.length){ dvBanner.style.display='flex'; document.getElementById('rev-dv-count').textContent=`${dvs.length} parâmetro(s) com desvio`; }
+  else dvBanner.style.display='none';
+
+  // Limpar opções de alteração anteriores
+  Object.keys(altOpts).forEach(k=>delete altOpts[k]);
+
+  // Renderizar revisão de parâmetros
+  document.getElementById('rev-params').innerHTML = params.map((p,i)=>{
+    const inp=document.getElementById('rpar-'+i);
+    const val=inp?inp.value.trim():'';
+    const ref=String(p.VALOR||'');
+    const isDesvio = val!==''&&ref!==''&&val!==String(ref);
+    const jt=document.getElementById('rjt-'+i);
+    const just=jt?jt.value.trim():'';
+    if(!isDesvio){
+      return `<div class="rev-row"><div class="rev-row-top"><div class="rev-lbl">${p.CAMPO}</div><div class="rev-right"><div class="rev-real">${val||'—'}</div></div></div></div>`;
+    }
+    // Com desvio: mostra valor, justificativa e opções (pontual vs alterar receita)
+    return `<div class="rev-row">
+      <div class="rev-row-top">
+        <div class="rev-lbl">${p.CAMPO}<div style="font-size:10px;color:var(--text3);margin-top:2px">Receita: ${ref}</div></div>
+        <div class="rev-right"><div class="rev-real dv">${val} <span class="rev-dv-pill">desvio</span></div></div>
+      </div>
+      <div class="rev-just"><div class="rev-just-lbl">Justificativa</div>${just}</div>
+      <div class="alt-opts">
+        <div class="alt-btn sel-pont" id="alt-pont-${i}" onclick="selAlt(${i},'pontual')"><i class="ti ti-bolt"></i>Desvio pontual</div>
+        <div class="alt-btn" id="alt-rec-${i}" onclick="selAlt(${i},'receita')"><i class="ti ti-file-pencil"></i>Alterar receita</div>
+      </div>
+    </div>`;
+  }).join('');
+
+  // default: todos pontual
+  dvs.forEach(d=>{ altOpts[d.idx]='pontual'; });
+  updAltBanner();
+
+  // reset PIN
+  pinBufR=''; updDotsR();
+  document.getElementById('pre2').textContent='';
+  ir('s-rev');
+}
+function selAlt(i, tipo){
+  altOpts[i]=tipo;
+  document.getElementById('alt-pont-'+i).className='alt-btn'+(tipo==='pontual'?' sel-pont':'');
+  document.getElementById('alt-rec-'+i).className='alt-btn'+(tipo==='receita'?' sel-rec':'');
+  updAltBanner();
+}
+function updAltBanner(){
+  const nAlt=Object.values(altOpts).filter(v=>v==='receita').length;
+  const banner=document.getElementById('alt-banner');
+  if(nAlt>0){ banner.style.display='flex'; document.getElementById('alt-count').textContent=`${nAlt} alteração(ões) irão para aprovação dupla`; }
+  else banner.style.display='none';
+}
+
+// ---------- PIN repetição ----------
+function updDotsR(){
+  for(let i=0;i<4;i++){ const d=document.getElementById('pd-r-'+i); if(d)d.className='pin-d'+(i<pinBufR.length?' f':''); }
+  const btn=document.getElementById('btn-pin-r');
+  if(btn) btn.disabled = pinBufR.length<4;
+}
+function pinR(v){
+  const err=document.getElementById('pre2');
+  if(v==='del'){ pinBufR=pinBufR.slice(0,-1); }
+  else if(v==='ok'){
+    if(pinBufR.length<4){ err.textContent='Digite os 4 dígitos'; return; }
+    err.textContent='';
+    salvarRepeticao(pinBufR);
+    return;
+  } else { if(pinBufR.length<4) pinBufR+=v; }
+  updDotsR();
+}
+
+async function salvarRepeticao(pin){
+  showOverlay('Validando PIN...');
+  let aprovador='';
+  try{
+    const res = await apiPost({action:'validarPin', pin});
+    if(!res.valido){ hideOverlay(); document.getElementById('pre2').textContent='PIN incorreto. Tente novamente.'; pinBufR=''; updDotsR(); return; }
+    aprovador=res.nome;
+  }catch(e){ hideOverlay(); document.getElementById('pre2').textContent='Erro: '+e.message; pinBufR=''; updDotsR(); return; }
+
+  showOverlay('Salvando repetição...');
+  const r = receitas.find(x=>String(x.ID)===String(recIdx));
+  const oper=document.getElementById('oper-inp').value.trim();
+  const op=document.getElementById('op-inp').value.trim();
+  const dvs=getDesvios();
+
+  // separa desvios pontuais x alteração de receita (pendências)
+  const desvios=[], pendencias2=[];
+  dvs.forEach(d=>{
+    const tipoAlt = altOpts[d.idx]||'pontual';
+    desvios.push({ parametro:d.parametro, valorReceita:d.valorReceita, valorReal:d.valorReal, tipo:'DESVIO', tipoAlteracao:tipoAlt==='receita'?'ALTERAR_RECEITA':'PONTUAL', justificativa:d.justificativa });
+    if(tipoAlt==='receita'){
+      pendencias2.push({ parametro:d.parametro, valorAtual:d.valorReceita, valorProposto:d.valorReal, justificativa:d.justificativa });
+    }
+  });
+
+  try{
+    const res = await apiPost({action:'salvarRepeticao', idReceita:recIdx, opProducao:op, operador:oper, aprovador, temDesvio:dvs.length>0, desvios, pendencias:pendencias2});
+    hideOverlay();
+    pinBufR=''; updDotsR();
+    document.getElementById('suc-title').textContent='Repetição registrada!';
+    document.getElementById('suc-sub').textContent=`OP ${op} · ${dvs.length} desvio(s)`;
+    document.getElementById('suc-box').innerHTML=`
+      <div class="trr"><span class="trl">Operador</span><span class="trv">${oper}</span></div>
+      <div class="trr"><span class="trl">Aprovador</span><span class="trv">${aprovador}</span></div>
+      <div class="trr"><span class="trl">Desvios</span><span class="trv">${dvs.length}</span></div>
+      ${pendencias2.length?`<div class="trr"><span class="trl">Alterações p/ aprovação</span><span class="trv">${pendencias2.length}</span></div>`:''}`;
+    ir('s-suc');
+    carregarPendencias();
+  }catch(e){ hideOverlay(); document.getElementById('pre2').textContent='Erro ao salvar: '+e.message; }
+}
+</script>
+
+<script>
+// ---------- Histórico ----------
+let histFiltroId = null;
+function ir_hist_load(){
+  // monta filtros por receita
+  const fc=document.getElementById('hist-filtros');
+  fc.innerHTML = `<div class="fc fca" onclick="setHistFiltro(null,this)">Todas</div>` +
+    receitas.slice(0,12).map(r=>`<div class="fc" onclick="setHistFiltro(${r.ID},this)">${r.CLIENTE} ${r.NUMERO_LAMINACAO||''}</div>`).join('');
+  renderHist();
+}
+function setHistFiltro(id, el){
+  histFiltroId=id;
+  document.querySelectorAll('#hist-filtros .fc').forEach(f=>f.classList.remove('fca'));
+  if(el)el.classList.add('fca');
+  renderHist();
+}
+async function renderHist(){
+  const cont=document.getElementById('hist-conteudo');
+  let lista = histFiltroId ? receitas.filter(r=>String(r.ID)===String(histFiltroId)) : receitas.slice(0,8);
+  if(!lista.length){ cont.innerHTML=`<div style="padding:24px 0;text-align:center;font-size:13px;color:var(--text3)">Nenhuma receita</div>`; return; }
+  cont.innerHTML='<div class="loading-wrap"><div class="spinner"></div></div>';
+  let html='';
+  for(const r of lista){
+    let det=r;
+    if(!r._detalhesCarregados){
+      try{
+        det = await apiGet('getReceitaDetalhe',`&id=${r.ID}`);
+        det.versoes=Array.isArray(det.versoes)?det.versoes:[];
+        det._detalhesCarregados=true;
+        const ix=receitas.findIndex(x=>String(x.ID)===String(r.ID)); if(ix>=0)receitas[ix]=det;
+      }catch(e){ continue; }
+    }
+    const versoes=det.versoes||[];
+    html += `<div class="hist-card">
+      <div class="hist-hdr">
+        <div><div class="hist-v">${det.CLIENTE} — ${fmtCodPAExib(det.COD_PA)}</div><div style="font-size:11px;color:var(--text3);margin-top:2px">${det.NUMERO_LAMINACAO||''} · ${det.MAQUINA||''}</div></div>
+        ${badgeTipo(det.TIPO_LAMINACAO)}
+      </div>
+      <div style="padding:10px 14px">
+        ${versoes.length ? versoes.map(v=>{
+          const reps=v.reps||[];
+          return `<div style="margin-bottom:8px">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+              <span class="hist-vb ${(v.ATIVA===true||v.ATIVA==='TRUE')?'hist-vb-a':'hist-vb-o'}">Versão ${v.NUMERO_VERSAO}${(v.ATIVA===true||v.ATIVA==='TRUE')?' · ativa':''}</span>
+              <span style="font-size:11px;color:var(--text3)">${reps.length} repetição(ões)</span>
+            </div>
+            ${reps.map(rep=>`<div class="trr"><span class="trl">OP ${rep.OP_PRODUCAO} · ${rep.OPERADOR}</span><span class="trv">${rep.TEM_DESVIO===true||rep.TEM_DESVIO==='TRUE'?'⚠ desvio':'✓'}</span></div>`).join('')}
+          </div>`;
+        }).join('') : `<div style="font-size:12px;color:var(--text3)">Sem versões registradas</div>`}
+      </div>
+    </div>`;
+  }
+  cont.innerHTML = html || `<div style="padding:24px 0;text-align:center;font-size:13px;color:var(--text3)">Nenhuma receita</div>`;
+}
+
+// ---------- Lock (pendências e painel) ----------
+function irPendLock(){ lockBufs.pend=''; updLockDots('pend'); document.getElementById('plk-pend-err').textContent=''; ir('s-pend-lock'); }
+function irPainelLock(){ lockBufs.painel=''; updLockDots('painel'); document.getElementById('plk-painel-err').textContent=''; ir('s-painel-lock'); }
+function updLockDots(ctx){
+  const pfx = ctx==='pend'?'plkd-pend':'plkd-p-painel';
+  for(let i=0;i<4;i++){ const d=document.getElementById(pfx+'-'+i); if(d)d.className='pin-d'+(i<lockBufs[ctx].length?' f':''); }
+}
+async function ppLock(ctx, v){
+  const err=document.getElementById('plk-'+ctx+'-err');
+  if(v==='back'){ lockBufs[ctx]=lockBufs[ctx].slice(0,-1); updLockDots(ctx); return; }
+  if(v==='ok'){
+    if(lockBufs[ctx].length<4){ err.textContent='Digite os 4 dígitos'; return; }
+    showOverlay('Validando...');
+    try{
+      const res=await apiPost({action:'validarPin', pin:lockBufs[ctx]});
+      hideOverlay();
+      if(!res.valido){ err.textContent='PIN incorreto.'; lockBufs[ctx]=''; updLockDots(ctx); return; }
+      err.textContent=''; lockBufs[ctx]='';
+      if(ctx==='pend'){ renderPend(); ir('s-pend'); }
+      else { renderPainel(); ir('s-painel'); }
+    }catch(e){ hideOverlay(); err.textContent='Erro: '+e.message; lockBufs[ctx]=''; updLockDots(ctx); }
+    return;
+  }
+  if(lockBufs[ctx].length<4) lockBufs[ctx]+=v;
+  updLockDots(ctx);
+}
+
+// ---------- Pendências ----------
+function renderPend(){
+  const cont=document.getElementById('pend-list');
+  if(!pendencias.length){ cont.innerHTML=`<div style="padding:24px 0;text-align:center;font-size:13px;color:var(--text3)">Nenhuma pendência</div>`; return; }
+  cont.innerHTML = pendencias.map(p=>`
+    <div class="pend-card">
+      <div class="pend-hdr">
+        <div class="pend-ic"><i class="ti ti-file-pencil"></i></div>
+        <div class="pend-bd"><div class="pend-title">${p.PARAMETRO}</div><div class="pend-sub">Pendência #${p.ID} · Rep. #${p.ID_REPETICAO}</div></div>
+        <span class="pend-badge">Pendente</span>
+      </div>
+      <div class="pend-body">
+        <div class="pend-row"><div class="pend-lbl">Valor atual (receita)</div><div class="pend-vals"><div class="pend-de">${p.VALOR_ATUAL||'—'}</div></div></div>
+        <div class="pend-row"><div class="pend-lbl">Valor proposto</div><div class="pend-vals"><div class="pend-para">${p.VALOR_PROPOSTO||'—'}</div></div></div>
+        <div class="pend-row"><div class="pend-lbl">Justificativa</div><div class="pend-just">${p.JUSTIFICATIVA||'—'}</div></div>
+        <div class="pend-row"><div class="pend-lbl">Solicitante</div><div class="pend-vals"><div class="pend-de">${p.SOLICITANTE||'—'}</div></div></div>
+      </div>
+      <div class="pend-footer">
+        <div class="pend-meta">Requer 2ª aprovação</div>
+        <button class="pend-apr" onclick="abrirPinPend(${p.ID})">Aprovar com PIN</button>
+      </div>
+      <div class="pend-pin-wrap" id="ppw-${p.ID}">
+        <div class="pin-w">
+          <div class="pin-s">Digite seu PIN para aprovar (deve ser diferente do 1º aprovador)</div>
+          <div class="pin-ds" id="ppd-${p.ID}"><div class="pin-d" id="ppd-${p.ID}-0"></div><div class="pin-d" id="ppd-${p.ID}-1"></div><div class="pin-d" id="ppd-${p.ID}-2"></div><div class="pin-d" id="ppd-${p.ID}-3"></div></div>
+          <div class="pin-g">
+            ${[1,2,3,4,5,6,7,8,9].map(n=>`<button class="pib" onclick="pinPend(${p.ID},'${n}')">${n}</button>`).join('')}
+            <button class="pib" onclick="pinPend(${p.ID},'back')"><i class="ti ti-backspace"></i></button>
+            <button class="pib" onclick="pinPend(${p.ID},'0')">0</button>
+            <button class="pib" onclick="pinPend(${p.ID},'ok')" style="background:var(--blue);color:#fff;border-color:var(--blue)"><i class="ti ti-check"></i></button>
+          </div>
+          <div class="pie" id="ppe-${p.ID}"></div>
+        </div>
+      </div>
+    </div>`).join('');
+}
+function abrirPinPend(id){
+  const w=document.getElementById('ppw-'+id);
+  document.querySelectorAll('.pend-pin-wrap').forEach(x=>{ if(x!==w)x.classList.remove('open'); });
+  w.classList.toggle('open');
+  pendPinBufs[id]='';
+  updPendDots(id);
+}
+function updPendDots(id){
+  const buf=pendPinBufs[id]||'';
+  for(let i=0;i<4;i++){ const d=document.getElementById(`ppd-${id}-${i}`); if(d)d.className='pin-d'+(i<buf.length?' f':''); }
+}
+async function pinPend(id, v){
+  const err=document.getElementById('ppe-'+id);
+  if(!pendPinBufs[id]) pendPinBufs[id]='';
+  if(v==='back'){ pendPinBufs[id]=pendPinBufs[id].slice(0,-1); updPendDots(id); return; }
+  if(v==='ok'){
+    if(pendPinBufs[id].length<4){ err.textContent='Digite os 4 dígitos'; return; }
+    const pend=pendencias.find(p=>String(p.ID)===String(id));
+    showOverlay('Validando PIN...');
+    try{
+      const res=await apiPost({action:'validarPin', pin:pendPinBufs[id]});
+      if(!res.valido){ hideOverlay(); err.textContent='PIN incorreto.'; pendPinBufs[id]=''; updPendDots(id); return; }
+      if(pend && res.nome===pend.SOLICITANTE){ hideOverlay(); err.textContent='Deve ser diferente do 1º aprovador.'; pendPinBufs[id]=''; updPendDots(id); return; }
+      showOverlay('Aprovando...');
+      await apiPost({action:'aprovarPendencia', idPendencia:id, aprovador2:res.nome, idReceita:pend?pend.ID_RECEITA:null});
+      hideOverlay();
+      pendencias = pendencias.filter(p=>String(p.ID)!==String(id));
+      carregarPendencias();
+      renderPend();
+    }catch(e){ hideOverlay(); err.textContent='Erro: '+e.message; pendPinBufs[id]=''; updPendDots(id); }
+    return;
+  }
+  if(pendPinBufs[id].length<4) pendPinBufs[id]+=v;
+  updPendDots(id);
+}
+
+// ---------- Painel ----------
+async function renderPainel(){
+  const total=receitas.length;
+  const porTipo={'Base Solvente':0,'Solvente Less':0,'Monocomponente':0};
+  receitas.forEach(r=>{ if(porTipo[r.TIPO_LAMINACAO]!==undefined)porTipo[r.TIPO_LAMINACAO]++; });
+  document.getElementById('painel-met').innerHTML = `
+    <div class="mt"><div class="ml">Receitas ativas</div><div class="mv">${total}</div></div>
+    <div class="mt"><div class="ml">Pendências</div><div class="mv">${pendencias.length}</div></div>
+    <div class="mt"><div class="ml">Base Solvente</div><div class="mv">${porTipo['Base Solvente']}</div></div>
+    <div class="mt"><div class="ml">Solvente Less</div><div class="mv">${porTipo['Solvente Less']}</div></div>`;
+  document.getElementById('painel-lista').innerHTML = receitas.slice(0,8).map(r=>`
+    <div class="li" onclick="setTab('tab-r');abrirRec(${r.ID})">
+      <div class="lic"><i class="ti ti-layers-subtract"></i></div>
+      <div class="lb"><div class="lt">${r.CLIENTE} — ${fmtCodPAExib(r.COD_PA)}</div><div class="ls">${r.NUMERO_LAMINACAO||''} · ${r.MAQUINA||''}</div></div>
+      ${badgeTipo(r.TIPO_LAMINACAO)}
+    </div>`).join('');
+}
+
+// Hook histórico ao trocar de aba
+const _ir = ir;
+ir = function(id){ _ir(id); if(id==='s-hist') ir_hist_load(); };
+
+// ---------- Init ----------
+init();
+</script>
+</body>
+</html>
