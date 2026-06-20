@@ -371,6 +371,18 @@ textarea{resize:none;line-height:1.5;width:100%}
         <div class="nr"><button class="bnn" onclick="nStep(2)">Próximo: tintas <i class="ti ti-arrow-right"></i></button></div>
       </div>
       <div id="ns2" style="display:none">
+        <!-- CONJUGAÇÃO -->
+        <div class="card" style="overflow:hidden;padding:0">
+          <div style="padding:10px 14px;display:flex;align-items:center;gap:10px;background:var(--blue-light);border-bottom:0.5px solid var(--border)">
+            <div style="width:32px;height:32px;border-radius:var(--rad);background:rgba(255,255,255,0.5);display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="ti ti-layers-subtract" style="font-size:17px;color:var(--blue)"></i></div>
+            <div style="flex:1"><div style="font-size:13px;font-weight:600;color:var(--blue)">Conjugação</div><div style="font-size:11px;color:var(--blue);opacity:.8;margin-top:1px">Esse Cód. PA roda com mais de uma combinação de tintas?</div></div>
+            <div class="htog"><button class="to tof" id="hof-conj" onclick="sHF('conj',false)">Não</button><button class="to" id="hon-conj" onclick="sHF('conj',true)">Sim</button></div>
+          </div>
+          <div class="htr" id="htr-conj" style="display:none;padding:10px 14px">
+            <span style="font-size:12px;color:var(--text2);flex:1">Nome desta conjugação</span>
+            <input type="text" id="n-conj-nome" placeholder="Ex: Wafer Chocolate" style="flex:1;max-width:160px">
+          </div>
+        </div>
         <!-- PRÉ HOT FIXO -->
         <div class="card" style="overflow:hidden;padding:0">
           <div style="padding:10px 14px;display:flex;align-items:center;gap:10px;background:var(--amber-light);border-bottom:0.5px solid var(--border)">
@@ -1338,6 +1350,12 @@ function ppN(v){
 }
 
 async function salvarNovaReceita(aprovador) {
+  const ehConj=document.getElementById('hon-conj')?.className.includes('ton')||false;
+  const nomeConj=document.getElementById('n-conj-nome')?.value.trim()||'';
+  if(ehConj && !nomeConj){
+    document.getElementById('pne').textContent='Digite o nome da conjugação.';
+    return;
+  }
   showLoading('Salvando receita...');
   const cli=document.getElementById('n-cli').value,cod=document.getElementById('n-cod').value;
   const preHotOn=document.getElementById('hon-preHot')?.className.includes('ton')||false;
@@ -1363,7 +1381,7 @@ async function salvarNovaReceita(aprovador) {
   const parametros={tensaoFreio:pbInputs[0]?.value||'',pressaoCompactador:pbInputs[1]?.value||'',avancoCR:pbInputs[2]?.value||'',velocidade:pbInputs[3]?.value||'',taxaReducao:pbInputs[4]?.value||'',tensaoRebobinador:pbInputs[5]?.value||'',avanco:pbInputs[6]?.value||'',posicaoCompactador:pbInputs[7]?.value||'',tempAmbiente:pbInputs[8]?.value||'',larguraFilme:pbInputs[9]?.value||'',pressaoCilBorracha:pbInputs[10]?.value||'',material:document.getElementById('n-material')?.value||''};
   try {
     const obsVal=document.getElementById('n-obs')?.value||'';
-    await apiPost({action:'salvarReceita',receita:{cliente:cli,codPA:cod,opCriacao:document.getElementById('n-op').value,servico:document.getElementById('n-serv').value,processo:'Rotogravura',maquina:document.getElementById('n-maq').value,operador:document.getElementById('n-oper').value,observacoes:obsVal},tintas,parametros,aprovador});
+    await apiPost({action:'salvarReceita',receita:{cliente:cli,codPA:cod,opCriacao:document.getElementById('n-op').value,servico:document.getElementById('n-serv').value,processo:'Rotogravura',maquina:document.getElementById('n-maq').value,operador:document.getElementById('n-oper').value,observacoes:obsVal},tintas,parametros,aprovador,ehConjugacao:ehConj,nomeConjugacao:nomeConj});
     await carregarReceitas();
     hideLoading();
     showSuc('Receita aprovada e salva!',`${cli} · ${cod} está disponível para os operadores.`,[{l:'Produto',v:`${cli} · ${cod}`},{l:'Aprovador',v:aprovador},{l:'Status',v:'Aprovada'}],false,'s-lista');
