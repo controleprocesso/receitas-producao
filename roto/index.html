@@ -275,6 +275,20 @@ textarea{resize:none;line-height:1.5;width:100%}
 .tbl{font-size:10px;color:var(--text3);font-weight:500;transition:color .15s}
 .tab-item.ta .tbl{color:var(--blue);font-weight:600}
 .tab-badge{position:absolute;top:0;right:8px;background:var(--red-mid);color:#fff;font-size:9px;font-weight:700;border-radius:10px;padding:1px 5px;line-height:1.3}
+.ci{padding:10px 12px;border-radius:var(--rad);border:1.5px solid var(--border2);background:var(--card);cursor:pointer;display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;transition:all .15s}
+.ci:last-child{margin-bottom:0}
+.ci.sel{border-color:var(--blue);background:#fff}
+.cinm{font-size:13px;font-weight:600;color:var(--text)}
+.ci.sel .cinm{color:var(--blue)}
+.cin{font-size:11px;color:var(--text3);margin-top:1px}
+.cj-card{border:0.5px solid var(--border);border-radius:var(--rad);margin-bottom:8px;overflow:hidden}
+.cj-card:last-child{margin-bottom:0}
+.cj-hdr{display:flex;align-items:center;justify-content:space-between;padding:11px 12px;cursor:pointer;background:var(--card)}
+.cj-hdr:active{background:var(--bg)}
+.cj-nome{font-size:13px;font-weight:600;color:var(--text)}
+.cj-sub{font-size:11px;color:var(--text3);margin-top:2px}
+.cj-body{padding:4px 12px 10px;border-top:0.5px solid var(--border)}
+.cj-chv{font-size:15px;color:var(--text3);transition:transform .2s}
 </style>
 </head>
 <body>
@@ -302,6 +316,7 @@ textarea{resize:none;line-height:1.5;width:100%}
       <button class="bb" onclick="ir('s-lista')"><i class="ti ti-arrow-left"></i> Receitas de Produto</button>
       <div class="card" id="rec-id"></div>
       <div class="card" id="rec-tintas"></div>
+      <div class="card" id="rec-conjugacoes" style="display:none"></div>
       <div class="card"><div class="sl">Parâmetros da máquina</div><div class="pb" id="rec-params-box"></div></div>
       <div class="card" id="rec-estufas"></div>
       <div class="card" style="overflow:hidden;padding:0" id="rec-rolo"></div>
@@ -309,6 +324,31 @@ textarea{resize:none;line-height:1.5;width:100%}
       <div class="card" id="rec-obs" style="display:none"></div>
       <button class="bp" onclick="ir('s-rep')"><i class="ti ti-clipboard-check"></i> Registrar repetição</button>
       <div style="height:16px"></div>
+    </div>
+
+    <!-- NOVA CONJUGAÇÃO -->
+    <div id="s-nova-conj" class="sc">
+      <button class="bb" onclick="ir('s-rec')"><i class="ti ti-arrow-left"></i> Voltar à receita</button>
+      <div class="card" id="nc-promover-card" style="display:none">
+        <div class="sl">Nomeie a configuração atual</div>
+        <div style="font-size:12px;color:var(--text2);margin-bottom:10px;line-height:1.5">Essa receita vai passar a ter conjugações diferentes de tinta. Dê um nome para a configuração de tintas que já existe hoje.</div>
+        <div class="fd"><div class="fdl">Nome da configuração atual</div><input type="text" id="nc-nome-atual" placeholder="Ex: Wafer Chocolate"></div>
+      </div>
+      <div class="card">
+        <div class="sl">Nova conjugação</div>
+        <div class="fd"><div class="fdl">Nome</div><input type="text" id="nc-nome" placeholder="Ex: Wafer Morango"></div>
+        <div class="fd"><div class="fdl">Observações desta conjugação (opcional)</div><textarea id="nc-obs" rows="2" placeholder="Anotações específicas..."></textarea></div>
+      </div>
+      <div class="card">
+        <div class="sl">Tintas desta conjugação</div>
+        <div id="nc-tintas-rows"></div>
+        <button class="bnp" style="margin-top:8px;width:100%" onclick="addNcTinta()"><i class="ti ti-plus"></i> Adicionar estação</button>
+      </div>
+      <div class="pie" id="nc-err" style="text-align:left;margin-bottom:8px"></div>
+      <div class="nr">
+        <button class="bnp" onclick="ir('s-rec')"><i class="ti ti-x"></i> Cancelar</button>
+        <button class="bnn" onclick="salvarConjugacao()"><i class="ti ti-check"></i> Salvar conjugação</button>
+      </div>
     </div>
 
     <!-- NOVA RECEITA -->
@@ -469,6 +509,10 @@ textarea{resize:none;line-height:1.5;width:100%}
         <div class="sl">Identificação</div>
         <div class="hg" id="rep-id-grid"></div>
         <div><div class="fl">Data / hora</div><div class="fv" style="font-size:12px;margin-top:2px" id="rep-dt"></div></div>
+      </div>
+      <div class="card" id="rep-conj-sel-wrap" style="display:none;background:var(--blue-light);border-color:var(--blue-mid)">
+        <div style="font-size:11px;font-weight:600;color:var(--blue);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px"><i class="ti ti-layers-subtract" style="font-size:12px;vertical-align:-1px"></i> Qual conjugação está rodando?</div>
+        <div id="rep-conj-sel"></div>
       </div>
       <div class="card" style="overflow:hidden;padding:0">
         <div style="padding:10px 14px;display:flex;align-items:center;gap:10px;border-bottom:0.5px solid var(--border)">
@@ -708,6 +752,8 @@ const lockBufs={pend:'',painel:''};
 const altOpts={};
 let pendencias=[], pendPinBufs={};
 let sbwHTML='';
+let repTintasAtivas=[], repConjSelecionada=null;
+let ncTintaRows=[], ncPromovendo=false;
 
 const paramsDef=[
   {id:'p0',lbl:'Tensão Freio Desbob.',un:'N',ref:'70',tipo:'normal'},
@@ -840,6 +886,7 @@ async function abrirRec(id) {
       detalhe.tintas = Array.isArray(detalhe.tintas) ? detalhe.tintas : (detalhe.tintas ? [detalhe.tintas] : []);
       detalhe.parametros = Array.isArray(detalhe.parametros) ? (detalhe.parametros[0]||{}) : (detalhe.parametros||{});
       detalhe.versoes = Array.isArray(detalhe.versoes) ? detalhe.versoes : [];
+      detalhe.conjugacoes = Array.isArray(detalhe.conjugacoes) ? detalhe.conjugacoes : [];
       detalhe._detalhesCarregados = true;
       // Atualizar na lista em memória
       const idx2 = receitas.findIndex(x => String(x.ID) === String(id));
@@ -854,8 +901,20 @@ async function abrirRec(id) {
   document.getElementById('rec-id').innerHTML=`<div class="sl">Identificação</div><div class="hg"><div><div class="fl">Cliente</div><div class="fv fvac">${r.CLIENTE}</div></div><div><div class="fl">Máquina</div><div class="fv">${r.MAQUINA}</div></div><div><div class="fl">Cód. PA</div><div class="fv">${fmtCodPAExib(r.COD_PA)}</div></div><div><div class="fl">OP Criação</div><div class="fv">${r.OP_CRIACAO||'—'}</div></div></div><div><div class="fl">Serviço</div><div class="fv" style="font-size:12px;margin-top:2px">${r.SERVICO}</div></div><div style="margin-top:10px;display:flex;gap:8px"><div style="flex:1"><div class="fl">Operador</div><div class="fv" style="font-size:12px">${r.OPERADOR||'—'}</div></div><div style="flex:1"><div class="fl">Aprovador</div><div class="fv" style="font-size:12px">${r.APROVADOR||'—'}</div></div></div>`;
 
   const tintas = Array.isArray(r.tintas) ? r.tintas : (r.tintas ? [r.tintas] : []);
+  const conjugacoes = Array.isArray(r.conjugacoes) ? r.conjugacoes : [];
   const p = Array.isArray(r.parametros) ? (r.parametros[0]||{}) : (r.parametros||{});
-  document.getElementById('rec-tintas').innerHTML=`<div class="sl">Tintas por estação</div>${tintas.map(t=>`<div class="tr2"><div class="nc">${t.ESTACAO}</div><div><div style="font-size:13px;font-weight:600;color:var(--text)">${t.NOME_COR}</div><div style="font-size:11px;color:var(--text3);margin-top:1px">${t.COD_TINTA}${t.ID_CAMISA?' · Camisa: '+t.ID_CAMISA:''}</div><div class="chips"><div class="chip">Visc. <b>${t.VISCOSIDADE} s</b></div><div class="chip">Sec. <b>${secStr(t.SECAGEM_MIN,t.SECAGEM_SEG)}</b></div></div></div></div>`).join('')}`;
+  const recTintasEl = document.getElementById('rec-tintas');
+  const recConjEl = document.getElementById('rec-conjugacoes');
+  if (conjugacoes.length > 0) {
+    recTintasEl.style.display = 'none';
+    recConjEl.style.display = 'block';
+    renderConjugacoes(conjugacoes);
+  } else {
+    recTintasEl.style.display = 'block';
+    recConjEl.style.display = 'none';
+    recTintasEl.innerHTML=`<div class="sl">Tintas por estação</div>${tintas.map(t=>`<div class="tr2"><div class="nc">${t.ESTACAO}</div><div><div style="font-size:13px;font-weight:600;color:var(--text)">${t.NOME_COR}</div><div style="font-size:11px;color:var(--text3);margin-top:1px">${t.COD_TINTA}${t.ID_CAMISA?' · Camisa: '+t.ID_CAMISA:''}</div><div class="chips"><div class="chip">Visc. <b>${t.VISCOSIDADE} s</b></div><div class="chip">Sec. <b>${secStr(t.SECAGEM_MIN,t.SECAGEM_SEG)}</b></div></div></div></div>`).join('')}
+    <button class="bnp" style="margin-top:10px;color:var(--blue);border-color:var(--blue-mid)" onclick="irNovaConjugacao()"><i class="ti ti-plus"></i> Adicionar conjugação</button>`;
+  }
 
   document.getElementById('rec-params-box').innerHTML=`<div class="pbox"><div class="pl">Tensão Freio Desbob.</div><div class="pv">${p.TENSAO_FREIO||'—'} <span class="pu">N</span></div></div><div class="pbox"><div class="pl">Pressão Compactador</div><div class="pv">${p.PRESSAO_COMPACTADOR||'—'} <span class="pu">Bar</span></div></div><div class="pbox"><div class="pl">Avanço CR</div><div class="pv">${p.AVANCO_CR||'—'} <span class="pu">N</span></div></div><div class="pbox"><div class="pl">Velocidade</div><div class="pv">${p.VELOCIDADE||'—'} <span class="pu">m/min</span></div></div><div class="pbox"><div class="pl">Taxa de Redução</div><div class="pv">${p.TAXA_REDUCAO||'—'} <span class="pu">%</span></div></div><div class="pbox"><div class="pl">Tensão Rebobinador</div><div class="pv">${p.TENSAO_REBOBINADOR||'—'} <span class="pu">N</span></div></div><div class="pbox"><div class="pl">Avanço</div><div class="pv">${p.AVANCO||'—'} <span class="pu">N</span></div></div><div class="pbox"><div class="pl">Posição Compactador</div><div class="pv" style="font-size:13px">${p.POSICAO_COMPACTADOR||'—'}</div></div><div class="pbox"><div class="pl">Temp. Ambiente</div><div class="pv">${p.TEMP_AMBIENTE||'—'} <span class="pu">°C</span></div></div><div class="pbox"><div class="pl">Largura do Filme</div><div class="pv">${p.LARGURA_FILME||'—'} <span class="pu">mm</span></div></div><div class="pbox"><div class="pl">Pressão Cil. Borracha</div><div class="pv">${p.PRESSAO_CIL_BORRACHA||'—'}</div></div>${p.MATERIAL?`<div class="pbox" style="grid-column:span 2"><div class="pl">Material</div><div class="pv" style="font-size:13px">${p.MATERIAL}</div></div>`:''}`;
 
@@ -901,6 +960,101 @@ async function abrirRec(id) {
   ir('s-rec');
 }
 
+// ── CONJUGAÇÕES ──────────────────────────────────────────
+
+function renderConjugacoes(conjugacoes) {
+  const html = conjugacoes.map(c => {
+    const tintas = Array.isArray(c.tintas) ? c.tintas : [];
+    return `<div class="cj-card">
+      <div class="cj-hdr" onclick="togCj(${c.ID})">
+        <div><div class="cj-nome">${c.NOME}</div><div class="cj-sub">${tintas.length} estações${c.OBSERVACOES?' · com observação':''}</div></div>
+        <i class="ti ti-chevron-down cj-chv" id="cjchv-${c.ID}"></i>
+      </div>
+      <div class="cj-body" id="cjbody-${c.ID}" style="display:none">
+        ${tintas.map(t=>`<div class="tr2"><div class="nc">${t.ESTACAO}</div><div><div style="font-size:13px;font-weight:600;color:var(--text)">${t.NOME_COR}</div><div style="font-size:11px;color:var(--text3);margin-top:1px">${t.COD_TINTA}${t.ID_CAMISA?' · Camisa: '+t.ID_CAMISA:''}</div><div class="chips"><div class="chip">Visc. <b>${t.VISCOSIDADE||'—'} s</b></div><div class="chip">Sec. <b>${secStr(t.SECAGEM_MIN||0,t.SECAGEM_SEG||0)}</b></div></div></div></div>`).join('')}
+        ${c.OBSERVACOES?`<div style="margin-top:8px;padding-top:8px;border-top:0.5px solid var(--border);font-size:12px;color:var(--text2);line-height:1.5"><b>Obs.:</b> ${c.OBSERVACOES}</div>`:''}
+      </div>
+    </div>`;
+  }).join('');
+  document.getElementById('rec-conjugacoes').innerHTML = `<div class="sl">Conjugações (${conjugacoes.length})</div>${html}<button class="bnp" style="margin-top:10px;color:var(--blue);border-color:var(--blue-mid)" onclick="irNovaConjugacao()"><i class="ti ti-plus"></i> Adicionar conjugação</button>`;
+}
+
+function togCj(id) {
+  const b = document.getElementById('cjbody-'+id);
+  const c = document.getElementById('cjchv-'+id);
+  const open = b.style.display !== 'none';
+  b.style.display = open ? 'none' : 'block';
+  c.style.transform = open ? '' : 'rotate(180deg)';
+}
+
+function irNovaConjugacao() {
+  const r = receitas.find(x => String(x.ID) === String(recIdx));
+  if (!r) return;
+  ncPromovendo = !(Array.isArray(r.conjugacoes) && r.conjugacoes.length > 0);
+  document.getElementById('nc-promover-card').style.display = ncPromovendo ? 'block' : 'none';
+  document.getElementById('nc-nome-atual').value = '';
+  document.getElementById('nc-nome').value = '';
+  document.getElementById('nc-obs').value = '';
+  ncTintaRows = [{estacao:1}];
+  renderNcTintas();
+  document.getElementById('nc-err').textContent = '';
+  ir('s-nova-conj');
+}
+
+function renderNcTintas() {
+  document.getElementById('nc-tintas-rows').innerHTML = ncTintaRows.map((t,i)=>`
+    <div style="display:flex;gap:6px;align-items:center;padding:6px 0;border-bottom:0.5px solid var(--border)">
+      <div class="nc">${i+1}</div>
+      <input type="text" placeholder="Cód. tinta" id="nct-cod-${i}" style="width:90px">
+      <input type="text" placeholder="Nome da cor" id="nct-nome-${i}" style="flex:1">
+    </div>`).join('');
+}
+
+function addNcTinta() {
+  ncTintaRows.push({estacao: ncTintaRows.length+1});
+  renderNcTintas();
+}
+
+async function salvarConjugacao() {
+  const err = document.getElementById('nc-err');
+  err.textContent = '';
+  const nomeNova = document.getElementById('nc-nome').value.trim();
+  if (!nomeNova) { err.textContent = 'Digite o nome da nova conjugação.'; return; }
+  let nomeAtual = '';
+  if (ncPromovendo) {
+    nomeAtual = document.getElementById('nc-nome-atual').value.trim();
+    if (!nomeAtual) { err.textContent = 'Dê um nome para a configuração de tintas atual.'; return; }
+  }
+  const tintasPreenchidas = ncTintaRows.filter((t,i)=>document.getElementById('nct-nome-'+i)?.value.trim());
+  if (!tintasPreenchidas.length) { err.textContent = 'Adicione ao menos uma estação com tinta.'; return; }
+
+  const tintas = ncTintaRows.map((t,i) => ({
+    estacao: i+1,
+    codTinta: document.getElementById('nct-cod-'+i)?.value.trim() || '',
+    nomeCor: document.getElementById('nct-nome-'+i)?.value.trim() || '',
+    viscosidade: '', secagemMin: '', secagemSeg: '', pressaoRolo: '', pressaoFaca: '', tempEstufa: ''
+  })).filter(t => t.nomeCor);
+
+  showLoading('Salvando conjugação...');
+  try {
+    await apiPost({
+      action: 'criarConjugacao',
+      idReceita: recIdx,
+      promovendo: ncPromovendo,
+      nomeAtual,
+      observacoesAtual: '',
+      novaConjugacao: { nome: nomeNova, observacoes: document.getElementById('nc-obs').value.trim(), tintas }
+    });
+    const idx = receitas.findIndex(x => String(x.ID) === String(recIdx));
+    if (idx >= 0) receitas[idx]._detalhesCarregados = false;
+    hideLoading();
+    await abrirRec(recIdx);
+  } catch(e) {
+    hideLoading();
+    err.textContent = 'Erro ao salvar: ' + e.message;
+  }
+}
+
 // ── REGISTRO DE REPETIÇÃO ────────────────────────────────
 
 function rRep() {
@@ -911,7 +1065,56 @@ function rRep() {
   document.getElementById('rep-id-grid').innerHTML=`<div><div class="fl">Cliente</div><div class="fv fvac">${r.CLIENTE}</div></div><div><div class="fl">Cód. PA</div><div class="fv">${fmtCodPAExib(r.COD_PA)}</div></div><div><div class="fl">Máquina</div><div class="fv">${r.MAQUINA}</div></div>`;
   document.getElementById('rpctx').textContent=`${r.CLIENTE} · ${fmtCodPAExib(r.COD_PA)}`;
 
-  const tintas = Array.isArray(r.tintas) ? r.tintas : (r.tintas ? [r.tintas] : []);
+  const conjugacoes = Array.isArray(r.conjugacoes) ? r.conjugacoes : [];
+  const selWrap = document.getElementById('rep-conj-sel-wrap');
+  if (conjugacoes.length > 0) {
+    selWrap.style.display = 'block';
+    repConjSelecionada = conjugacoes[0].ID;
+    renderRepConjSel(conjugacoes);
+    renderRepTintas(Array.isArray(conjugacoes[0].tintas) ? conjugacoes[0].tintas : []);
+  } else {
+    selWrap.style.display = 'none';
+    repConjSelecionada = null;
+    renderRepTintas(Array.isArray(r.tintas) ? r.tintas : (r.tintas ? [r.tintas] : []));
+  }
+
+  const pRef = Array.isArray(r.parametros) ? (r.parametros[0]||{}) : (r.parametros||{});
+  document.getElementById('params-rep').innerHTML = paramsDef.map(p=>{
+    const refVal = getParamRef(p.id, pRef) || p.ref;
+    const isSel=p.tipo==='sel', isInf=p.tipo==='info';
+    const inp = isSel
+      ? `<select class="param-sel" id="pinp-${p.id}" onchange="chkP('${p.id}','${refVal}')"><option value="">—</option>${p.opts.map(o=>`<option>${o}</option>`).join('')}</select>`
+      : `<input class="param-inp${isInf?' inf':''}" id="pinp-${p.id}" type="text" inputmode="decimal" oninput="chkP('${p.id}','${refVal}')" placeholder="">`;
+    return `<div class="param-row"><div class="param-top"><div class="param-lbl">${p.lbl}${p.un?`<span class="un">(${p.un})</span>`:''}</div>${inp}</div><div id="jprow-${p.id}" style="display:none" class="just-inp"><label><i class="ti ti-alert-triangle" style="font-size:11px;vertical-align:-1px"></i> Fora do especificado — justifique</label><textarea id="jparam-${p.id}" rows="2" placeholder="Justifique..."></textarea></div></div>`;
+  }).join('');
+
+  uPrg();
+}
+
+function renderRepConjSel(conjugacoes) {
+  document.getElementById('rep-conj-sel').innerHTML = conjugacoes.map(c => {
+    const tintas = Array.isArray(c.tintas) ? c.tintas : [];
+    const sel = String(c.ID) === String(repConjSelecionada);
+    return `<div class="ci${sel?' sel':''}" onclick="selRepConj(${c.ID})">
+      <div><div class="cinm">${c.NOME}</div><div class="cin">${tintas.length} estações</div></div>
+      ${sel?'<i class="ti ti-check" style="font-size:14px;color:var(--blue)"></i>':''}
+    </div>`;
+  }).join('');
+}
+
+function selRepConj(id) {
+  const r = receitas.find(x => String(x.ID) === String(recIdx));
+  if (!r) return;
+  const conj = (r.conjugacoes||[]).find(c => String(c.ID) === String(id));
+  if (!conj) return;
+  repConjSelecionada = id;
+  renderRepConjSel(r.conjugacoes);
+  renderRepTintas(Array.isArray(conj.tintas) ? conj.tintas : []);
+  uPrg();
+}
+
+function renderRepTintas(tintas) {
+  repTintasAtivas = tintas;
   document.getElementById('tintas-rep').innerHTML = tintas.map(t=>`
     <div class="vbloco">
       <div class="vhdr"><div class="nc">${t.ESTACAO}</div><div><div style="font-size:13px;font-weight:600;color:var(--text)">${t.NOME_COR}</div><div style="font-size:11px;color:var(--text3)">${t.COD_TINTA}</div></div></div>
@@ -926,16 +1129,6 @@ function rRep() {
         </div>
       </div>
     </div>`).join('');
-
-  const pRef = Array.isArray(r.parametros) ? (r.parametros[0]||{}) : (r.parametros||{});
-  document.getElementById('params-rep').innerHTML = paramsDef.map(p=>{
-    const refVal = getParamRef(p.id, pRef) || p.ref;
-    const isSel=p.tipo==='sel', isInf=p.tipo==='info';
-    const inp = isSel
-      ? `<select class="param-sel" id="pinp-${p.id}" onchange="chkP('${p.id}','${refVal}')"><option value="">—</option>${p.opts.map(o=>`<option>${o}</option>`).join('')}</select>`
-      : `<input class="param-inp${isInf?' inf':''}" id="pinp-${p.id}" type="text" inputmode="decimal" oninput="chkP('${p.id}','${refVal}')" placeholder="">`;
-    return `<div class="param-row"><div class="param-top"><div class="param-lbl">${p.lbl}${p.un?`<span class="un">(${p.un})</span>`:''}</div>${inp}</div><div id="jprow-${p.id}" style="display:none" class="just-inp"><label><i class="ti ti-alert-triangle" style="font-size:11px;vertical-align:-1px"></i> Fora do especificado — justifique</label><textarea id="jparam-${p.id}" rows="2" placeholder="Justifique..."></textarea></div></div>`;
-  }).join('');
 
   // Popular seções de camisa, rolo e estufa
   // Camisa: sem desvio, só campo livre
@@ -964,8 +1157,8 @@ function rRep() {
   const rr=document.getElementById('rep-rolo-rows');if(rr)rr.innerHTML=repDesvioRow('reprolo',t=>t.PRESSAO_ROLO,'1','');
   const re=document.getElementById('rep-estufa-rows');if(re)re.innerHTML=repDesvioRow('repesufa',t=>t.TEMP_ESTUFA,'80','°C');
   const rfa=document.getElementById('rep-faca-rows');if(rfa)rfa.innerHTML=repDesvioRow('repfaca',t=>t.PRESSAO_FACA,'3.5','Bar');
-  uPrg();
 }
+
 
 function getParamRef(pid, p) {
   const map={p0:p.TENSAO_FREIO,p1:p.PRESSAO_COMPACTADOR,p2:p.AVANCO_CR,p3:p.VELOCIDADE,p4:p.TAXA_REDUCAO,p5:p.TENSAO_REBOBINADOR,p6:p.AVANCO,p7:p.POSICAO_COMPACTADOR,p8:p.TEMP_AMBIENTE,p9:p.LARGURA_FILME,p10:p.PRESSAO_CIL_BORRACHA};
@@ -1003,14 +1196,13 @@ function uPrg(){const norm=paramsDef.filter(p=>p.tipo!=='info');const f=norm.fil
 function uBtn(){
   const r=receitas.find(x=>String(x.ID)===String(recIdx));
   if(!r)return;
-  const tintas=r.tintas||[];
+  const tintas=repTintasAtivas||[];
   const operOk=document.getElementById('oper-inp')?.value.trim()!=='';
   const opOk=document.getElementById('op-inp')?.value.trim()!=='';
   const tOk=tintas.every(t=>document.getElementById('visc-'+t.ESTACAO)?.value.trim()!==''&&document.getElementById('sec-'+t.ESTACAO)?.value.trim()!==''&&document.getElementById('repcamisa-'+t.ESTACAO)?.value.trim()!==''&&document.getElementById('reprolo-'+t.ESTACAO)?.value.trim()!==''&&document.getElementById('repesufa-'+t.ESTACAO)?.value.trim()!=='');
   const pOk=paramsDef.filter(p=>p.tipo!=='info').every(p=>document.getElementById('pinp-'+p.id)?.value.trim()!=='');
   const jOk=getDvF().every(d=>d.just.trim()!=='');
-  const r2=receitas.find(x=>String(x.ID)===String(recIdx));
-  const tintas2=Array.isArray(r2?.tintas)?r2.tintas:[];
+  const tintas2=repTintasAtivas||[];
   const compJok=['reprolo','repesufa','repfaca'].every(prefix=>
     tintas2.every(t=>{
       const i=document.getElementById(prefix+'-'+t.ESTACAO);
@@ -1028,7 +1220,7 @@ function uBtn(){
 function getDvF(){
   const r=receitas.find(x=>String(x.ID)===String(recIdx));
   if(!r)return[];
-  const tintas=r.tintas||[];
+  const tintas=repTintasAtivas||[];
   const pRef=r.parametros||{};
   const dvs=[];
   tintas.forEach(t=>{
@@ -1041,8 +1233,7 @@ function getDvF(){
     const i=document.getElementById('pinp-'+p.id),j=document.getElementById('jparam-'+p.id);
     if(i?.classList.contains('dv')||i?.classList.contains('dv'))dvs.push({key:p.id,lbl:p.lbl+(p.un?` (${p.un})`:''),val:i.value,ref:getParamRef(p.id,pRef)||p.ref,just:j?.value||'',tipo:'MAQUINA',tipoAlt:''});
   });
-  const r3=receitas.find(x=>String(x.ID)===String(recIdx));
-  const tintas3=Array.isArray(r3?.tintas)?r3.tintas:(r3?.tintas?[r3.tintas]:[]);
+  const tintas3=repTintasAtivas||[];
   [{prefix:'reprolo',lbl:'Pressão do Rolo',refFn:t=>t.PRESSAO_ROLO,un:''},{prefix:'repesufa',lbl:'Estufa',refFn:t=>t.TEMP_ESTUFA,un:'°C'},{prefix:'repfaca',lbl:'Pressão da Faca',refFn:t=>t.PRESSAO_FACA,un:'Bar'}].forEach(({prefix,lbl,refFn,un})=>{
     tintas3.forEach(t=>{
       const i=document.getElementById(prefix+'-'+t.ESTACAO);
@@ -1199,7 +1390,7 @@ async function salvarRepeticao(aprovador) {
   showLoading('Salvando repetição...');
   const r=receitas.find(x=>String(x.ID)===String(recIdx));
   if(!r)return;
-  const tintas=r.tintas||[];
+  const tintas=repTintasAtivas||[];
   const op=document.getElementById('op-inp')?.value||'—';
   const oper=document.getElementById('oper-inp')?.value||'—';
   const dvs=getDvF();
@@ -1216,10 +1407,10 @@ async function salvarRepeticao(aprovador) {
   }));
 
   try {
-    const tintas2=r.tintas||[];
+    const tintas2=repTintasAtivas||[];
     const complementos=tintas2.map(t=>({estacao:t.ESTACAO,idCamisa:document.getElementById('repcamisa-'+t.ESTACAO)?.value||'',pressaoRolo:document.getElementById('reprolo-'+t.ESTACAO)?.value||'',pressaoFaca:document.getElementById('repfaca-'+t.ESTACAO)?.value||'',tempEstufa:document.getElementById('repesufa-'+t.ESTACAO)?.value||''}));
     const matRep=document.getElementById('rep-material')?.value||'';
-    await apiPost({action:'salvarRepeticao',idReceita:recIdx,opProducao:op,operador:oper,aprovador,temDesvio:dvs.length>0,desvios,pendencias:pends,complementos,material:matRep});
+    await apiPost({action:'salvarRepeticao',idReceita:recIdx,opProducao:op,operador:oper,aprovador,temDesvio:dvs.length>0,desvios,pendencias:pends,complementos,material:matRep,idConjugacao:repConjSelecionada||''});
     if(altCnt>0)await carregarPendencias();
     await carregarReceitas();
     const rows=[{l:'Cód. PA',v:r.COD_PA},{l:'OP',v:op},{l:'Operador',v:oper},{l:'Aprovador',v:aprovador}];
