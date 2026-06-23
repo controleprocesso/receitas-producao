@@ -353,11 +353,11 @@ textarea{resize:none;line-height:1.5;width:100%}
       <div class="card" id="nc-promover-card" style="display:none">
         <div class="sl">Nomeie a configuração atual</div>
         <div style="font-size:12px;color:var(--text2);margin-bottom:10px;line-height:1.5">Essa receita vai passar a ter conjugações diferentes de tinta. Dê um nome para a configuração de tintas que já existe hoje.</div>
-        <div class="fd"><div class="fdl">Nome da configuração atual</div><input type="text" id="nc-nome-atual" placeholder="Ex: Wafer Chocolate"></div>
+        <div class="fd"><div class="fdl">Nome da configuração atual</div><input type="text" id="nc-nome-atual"></div>
       </div>
       <div class="card">
         <div class="sl">Nova conjugação</div>
-        <div class="fd"><div class="fdl">Nome</div><input type="text" id="nc-nome" placeholder="Ex: Wafer Morango"></div>
+        <div class="fd"><div class="fdl">Nome</div><input type="text" id="nc-nome"></div>
         <div class="fd"><div class="fdl">Observações desta conjugação (opcional)</div><textarea id="nc-obs" rows="2" placeholder="Anotações específicas..."></textarea></div>
       </div>
       <div class="card">
@@ -1097,29 +1097,47 @@ function irNovaConjugacao() {
   document.getElementById('nc-nome-atual').value = '';
   document.getElementById('nc-nome').value = '';
   document.getElementById('nc-obs').value = '';
-  ncTintaRows = [{estacao:1}];
+  ncTintaRows = [{}];
   renderNcTintas();
   document.getElementById('nc-err').textContent = '';
   ir('s-nova-conj');
 }
 
+function syncNcTintaRows(){
+  ncTintaRows.forEach((t,i)=>{
+    t.cod = document.getElementById('nct-cod-'+i)?.value || '';
+    t.nome = document.getElementById('nct-nome-'+i)?.value || '';
+    t.visc = document.getElementById('nct-visc-'+i)?.value || '';
+    t.sec = document.getElementById('nct-sec-'+i)?.value || '';
+  });
+}
+
 function renderNcTintas() {
   document.getElementById('nc-tintas-rows').innerHTML = ncTintaRows.map((t,i)=>`
-    <div style="padding:8px 0;border-bottom:0.5px solid var(--border)">
-      <div style="display:flex;gap:6px;align-items:center;margin-bottom:6px">
-        <div class="nc">${i+1}</div>
-        <input type="text" placeholder="Cód. tinta" id="nct-cod-${i}" style="width:90px">
-        <input type="text" placeholder="Nome da cor" id="nct-nome-${i}" style="flex:1">
+    <div class="tbloco">
+      <div class="tbh">
+        <div class="tbhl"><div class="nc">${i+1}</div><span style="font-size:13px;font-weight:600;color:var(--text)">Estação ${i+1}</span></div>
+        <button class="dbn" onclick="removerNcTinta(${i})" aria-label="Remover estação ${i+1}"><i class="ti ti-trash"></i></button>
       </div>
-      <div style="display:flex;gap:6px;margin-left:30px">
-        <input type="text" placeholder="Viscosidade (s)" id="nct-visc-${i}" inputmode="decimal" style="flex:1">
-        <input type="text" placeholder="Secagem (min:s)" id="nct-sec-${i}" inputmode="numeric" style="flex:1">
+      <div class="tg">
+        <div><label>Código da tinta</label><input type="text" id="nct-cod-${i}" value="${t.cod||''}" placeholder="508.12.0441" oninput="fmtCodTinta(this)" maxlength="11"></div>
+        <div><label>Nome / cor</label><input type="text" id="nct-nome-${i}" value="${t.nome||''}"></div>
+        <div><label>Viscosidade (s)</label><input type="text" id="nct-visc-${i}" value="${t.visc||''}" inputmode="decimal"></div>
+        <div><label>Secagem (min:seg)</label><input type="text" id="nct-sec-${i}" value="${t.sec||''}" inputmode="numeric" placeholder="0:40" oninput="fmtSecagem(this)" onfocus="if(!this.value)this.value='0:'" onblur="if(this.value==='0:')this.value=''" style="width:90px"></div>
       </div>
     </div>`).join('');
 }
 
 function addNcTinta() {
-  ncTintaRows.push({estacao: ncTintaRows.length+1});
+  syncNcTintaRows();
+  ncTintaRows.push({});
+  renderNcTintas();
+}
+
+function removerNcTinta(i) {
+  syncNcTintaRows();
+  if(ncTintaRows.length<=1){ ncTintaRows=[{}]; renderNcTintas(); return; }
+  ncTintaRows.splice(i,1);
   renderNcTintas();
 }
 
