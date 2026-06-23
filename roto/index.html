@@ -316,8 +316,8 @@ textarea{resize:none;line-height:1.5;width:100%}
     <div id="s-maquina-setup" class="sc">
       <div class="lock-screen">
         <div class="lock-ic" style="background:var(--blue-light)"><i class="ti ti-device-tablet" style="font-size:26px;color:var(--blue)"></i></div>
-        <div style="font-size:16px;font-weight:700;margin-bottom:6px">Qual máquina é este tablet?</div>
-        <div style="font-size:13px;color:var(--text2);margin-bottom:24px;line-height:1.5">Isso define quais receitas aparecem primeiro. Você pode trocar quando quiser.</div>
+        <div style="font-size:16px;font-weight:700;margin-bottom:6px">Selecione a máquina</div>
+        <div style="font-size:13px;color:var(--text2);margin-bottom:24px;line-height:1.5">Isso define quais receitas irão aparecer. Você pode alternar de máquina quando quiser.</div>
         <div id="maq-setup-btns" style="width:100%;display:flex;flex-direction:column;align-items:center"></div>
         <button class="bb" id="maq-setup-cancel" style="margin-top:6px;display:none" onclick="ir('s-lista')"><i class="ti ti-x"></i> Cancelar</button>
       </div>
@@ -811,18 +811,20 @@ function renderMaqBar(){
   const bar = document.getElementById('maq-bar');
   if(!maquinaAtual){ bar.style.display='none'; return; }
   bar.style.display='flex';
-  document.getElementById('maq-bar-nome').textContent = maquinaAtual==='TODAS' ? 'Todas as máquinas' : maquinaAtual;
+  document.getElementById('maq-bar-nome').textContent = maquinaAtual;
 }
 
 function filtrarPorMaquina(lista){
-  if(!maquinaAtual || maquinaAtual==='TODAS') return lista;
+  if(!maquinaAtual) return lista;
   return lista.filter(r => r.MAQUINA === maquinaAtual);
 }
 
 function montarBotoesMaquina(comCancelar){
   const cont = document.getElementById('maq-setup-btns');
-  cont.innerHTML = MAQUINAS_ROTO.map(m=>`<button class="maq-setup-btn" onclick="selecionarMaquina('${m}')">${m}</button>`).join('')
-    + `<button class="maq-setup-btn" style="border-style:dashed;color:var(--text2)" onclick="selecionarMaquina('TODAS')">Todas as máquinas</button>`;
+  cont.innerHTML = MAQUINAS_ROTO.map(m=>{
+    const sel = m===maquinaAtual;
+    return `<button class="maq-setup-btn"${sel?' style="border-color:var(--blue);background:var(--blue-light);color:var(--blue)"':''} onclick="selecionarMaquina('${m}')">${m}${sel?' <i class="ti ti-check" style="font-size:13px;vertical-align:-1px"></i>':''}</button>`;
+  }).join('');
   document.getElementById('maq-setup-cancel').style.display = comCancelar ? 'block' : 'none';
 }
 
@@ -845,15 +847,12 @@ function irTrocarMaquina(){
 }
 
 function exigirMaquinaSeNecessario(){
-  if(!maquinaAtual){
-    montarBotoesMaquina(false);
-    document.getElementById('tpt').textContent='Configuração inicial';
-    document.getElementById('tps').textContent='Tablet desta máquina';
-    document.getElementById('tpp').style.display='none';
-    ir('s-maquina-setup');
-    return true;
-  }
-  return false;
+  montarBotoesMaquina(false);
+  document.getElementById('tpt').textContent='Selecione a máquina';
+  document.getElementById('tps').textContent='Tablet desta máquina';
+  document.getElementById('tpp').style.display='none';
+  ir('s-maquina-setup');
+  return true;
 }
 
 const paramsDef=[
@@ -932,11 +931,10 @@ function apiPost(body) {
 
 async function carregarReceitas() {
   try {
-    renderMaqBar();
-    const bloqueado = exigirMaquinaSeNecessario();
     // Carrega apenas dados leves para a lista
     receitas = await apiGet('getReceitasLista');
-    if(!bloqueado) rL(filtrarPorMaquina(receitas));
+    renderMaqBar();
+    exigirMaquinaSeNecessario(); // sempre pede para confirmar a máquina ao abrir
     try { atualizarHistorico(); } catch(e2) { console.warn('atualizarHistorico:', e2.message); }
     try { atualizarPainel(); } catch(e3) { console.warn('atualizarPainel:', e3.message); }
   } catch(e) {
