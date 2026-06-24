@@ -773,7 +773,7 @@ async function salvarNovaReceita(pin){
     observacoes:document.getElementById('n-obs').value.trim()
   };
   const informacoes = campos.info.map((c,i)=>({campo:c, valor:(document.getElementById('inf-'+i)?.value||'').trim()}));
-  const parametros = campos.params.map((c,i)=>({campo:c, valor:(document.getElementById('par-'+i)?.value||'').trim()}));
+  const parametros = campos.params.map((c,i)=>({campo:c, valor:normDec((document.getElementById('par-'+i)?.value||'').trim())}));
 
   try{
     const res = await apiPost({action:'salvarReceita', receita, informacoes, parametros, aprovador});
@@ -841,11 +841,16 @@ function chkP(i, ref){
   const inp=document.getElementById('rpar-'+i);
   const just=document.getElementById('rjust-'+i);
   const val=inp.value.trim();
-  // comparação exata
-  const desvio = val!=='' && ref!=='' && val!==String(ref);
+  // comparação exata, com normalização de separador decimal (, ou .)
+  const valCmp=normDec(val), refCmp=normDec(ref);
+  const desvio = valCmp!=='' && refCmp!=='' && valCmp!==refCmp;
   if(desvio){ inp.classList.add('dv'); just.style.display='block'; }
   else { inp.classList.remove('dv'); just.style.display='none'; }
   uBtn(); uProg();
+}
+
+function normDec(v){
+  return String(v==null?'':v).trim().replace(',', '.');
 }
 function uProg(){
   const r = receitas.find(x=>String(x.ID)===String(recIdx));
@@ -881,7 +886,8 @@ function getDesvios(){
     if(!inp) return;
     const val=inp.value.trim();
     const ref=String(p.VALOR||'');
-    if(val!==''&&ref!==''&&val!==String(ref)){
+    const valCmp=normDec(val), refCmp=normDec(ref);
+    if(valCmp!==''&&refCmp!==''&&valCmp!==refCmp){
       const jt=document.getElementById('rjt-'+i);
       dvs.push({ idx:i, parametro:p.CAMPO, valorReceita:ref, valorReal:val, justificativa:jt?jt.value.trim():'' });
     }
