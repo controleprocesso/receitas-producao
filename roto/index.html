@@ -1352,7 +1352,10 @@ function chkComplem(prefix, estacao, ref){
     j.style.display='none';
     uBtn();return;
   }
-  const dv=String(v)!==String(ref);
+  const numerico = prefix==='reprolo'||prefix==='repfaca'||prefix==='repesufa';
+  const vCmp = numerico ? normDec(v) : v;
+  const refCmp = numerico ? normDec(String(ref)) : String(ref);
+  const dv=vCmp!==refCmp;
   i.style.border=dv?'0.5px solid var(--red-mid)':'0.5px solid var(--border2)';
   i.style.background=dv?'var(--red-light)':'var(--card)';
   i.style.color=dv?'var(--red)':'var(--text)';
@@ -1363,7 +1366,7 @@ function chkComplem(prefix, estacao, ref){
 
 function chkV(n,ref){const i=document.getElementById('visc-'+n),j=document.getElementById('vtv-'+n),v=parseFloat(i.value.replace(',','.'));if(isNaN(v)||i.value.trim()===''){i.className='vi';j.style.display='none';uBtn();return;}const dv=Math.abs(v-ref)>TOL_VISC;i.className='vi'+(dv?' vdv':'');j.style.display=dv?'block':'none';uBtn();}
 function chkSec(n,rM,rS){const i=document.getElementById('sec-'+n),j=document.getElementById('vts-'+n);if(!i||i.value.trim()===''){if(i)i.className='vi';j.style.display='none';uBtn();return;}const parts=i.value.split(':');const vm=parseInt(parts[0])||0,vs=parseInt(parts[1])||0;const dv=Math.abs(secTotal(vm,vs)-secTotal(rM,rS))>TOL_SEC;i.className='vi'+(dv?' vdv':'');j.style.display=dv?'block':'none';uBtn();}
-function chkP(id,ref){const p=paramsDef.find(x=>x.id===id);if(p.tipo==='info')return;const i=document.getElementById('pinp-'+id),j=document.getElementById('jprow-'+id),v=i.value.trim();if(!v){i.className=p.tipo==='sel'?'param-sel':'param-inp';j.style.display='none';uPrg();return;}const dv=v!==String(ref);if(p.tipo==='sel')i.className='param-sel'+(dv?' dv':'');else i.className='param-inp'+(dv?' dv':'');j.style.display=dv?'block':'none';uPrg();}
+function chkP(id,ref){const p=paramsDef.find(x=>x.id===id);if(p.tipo==='info')return;const i=document.getElementById('pinp-'+id),j=document.getElementById('jprow-'+id),v=i.value.trim();if(!v){i.className=p.tipo==='sel'?'param-sel':'param-inp';j.style.display='none';uPrg();return;}const vCmp=p.tipo==='sel'?v:normDec(v);const refCmp=p.tipo==='sel'?String(ref):normDec(String(ref));const dv=vCmp!==refCmp;if(p.tipo==='sel')i.className='param-sel'+(dv?' dv':'');else i.className='param-inp'+(dv?' dv':'');j.style.display=dv?'block':'none';uPrg();}
 
 function uPrg(){const norm=paramsDef.filter(p=>p.tipo!=='info');const f=norm.filter(p=>document.getElementById('pinp-'+p.id)?.value.trim()!=='').length;document.getElementById('rpg').style.width=Math.round((f/norm.length)*100)+'%';uBtn();}
 
@@ -1534,7 +1537,7 @@ async function salvarNovaReceita(aprovador) {
     const ins=tb.querySelectorAll('input');
     const secRaw=(ins[3]?.value||'0:0').split(':');
     const secM=parseInt(secRaw[0])||0,secS=parseInt(secRaw[1])||0;
-    return{estacao:n,codTinta:ins[0]?.value||'',nomeCor:ins[1]?.value||'',idCamisa:document.getElementById('camisa-'+n)?.value||'',viscosidade:parseFloat(ins[2]?.value)||0,pressaoRolo:document.getElementById('rolo-'+n)?.value||'',pressaoFaca:document.getElementById('faca-'+n)?.value||'',secagemMin:secM,secagemSeg:secS,tempEstufa:document.getElementById('estufa-'+n)?.value||'',preHot:preHotOn,preHotTemp:document.getElementById('hti-preHot')?.value||'',posHot:posHotOn,posHotTemp:document.getElementById('hti-posHot')?.value||''};
+    return{estacao:n,codTinta:ins[0]?.value||'',nomeCor:ins[1]?.value||'',idCamisa:document.getElementById('camisa-'+n)?.value||'',viscosidade:parseFloat(normDec(ins[2]?.value))||0,pressaoRolo:normDec(document.getElementById('rolo-'+n)?.value||''),pressaoFaca:normDec(document.getElementById('faca-'+n)?.value||''),secagemMin:secM,secagemSeg:secS,tempEstufa:normDec(document.getElementById('estufa-'+n)?.value||''),preHot:preHotOn,preHotTemp:normDec(document.getElementById('hti-preHot')?.value||''),posHot:posHotOn,posHotTemp:normDec(document.getElementById('hti-posHot')?.value||'')};
   });
   // Adicionar estufas das estações sem tinta (estações removidas)
   const estacoesComTinta=tintas.map(t=>t.estacao);
@@ -1547,7 +1550,7 @@ async function salvarNovaReceita(aprovador) {
     }
   }
   const pbInputs=document.querySelectorAll('#ns3 .pb input:not(#n-material), #ns3 .pb select');
-  const parametros={tensaoFreio:pbInputs[0]?.value||'',pressaoCompactador:pbInputs[1]?.value||'',avancoCR:pbInputs[2]?.value||'',velocidade:pbInputs[3]?.value||'',taxaReducao:pbInputs[4]?.value||'',tensaoRebobinador:pbInputs[5]?.value||'',avanco:pbInputs[6]?.value||'',posicaoCompactador:pbInputs[7]?.value||'',tempAmbiente:pbInputs[8]?.value||'',larguraFilme:pbInputs[9]?.value||'',pressaoCilBorracha:pbInputs[10]?.value||'',material:document.getElementById('n-material')?.value||''};
+  const parametros={tensaoFreio:normDec(pbInputs[0]?.value||''),pressaoCompactador:normDec(pbInputs[1]?.value||''),avancoCR:normDec(pbInputs[2]?.value||''),velocidade:normDec(pbInputs[3]?.value||''),taxaReducao:normDec(pbInputs[4]?.value||''),tensaoRebobinador:normDec(pbInputs[5]?.value||''),avanco:normDec(pbInputs[6]?.value||''),posicaoCompactador:pbInputs[7]?.value||'',tempAmbiente:normDec(pbInputs[8]?.value||''),larguraFilme:normDec(pbInputs[9]?.value||''),pressaoCilBorracha:normDec(pbInputs[10]?.value||''),material:document.getElementById('n-material')?.value||''};
   try {
     const obsVal=document.getElementById('n-obs')?.value||'';
     await apiPost({action:'salvarReceita',receita:{cliente:cli,codPA:cod,opCriacao:document.getElementById('n-op').value,servico:document.getElementById('n-serv').value,processo:'Rotogravura',maquina:document.getElementById('n-maq').value,operador:document.getElementById('n-oper').value,observacoes:obsVal},tintas,parametros,aprovador,ehConjugacao:ehConj,nomeConjugacao:nomeConj});
@@ -1604,7 +1607,7 @@ async function salvarRepeticao(aprovador) {
 
   try {
     const tintas2=repTintasAtivas||[];
-    const complementos=tintas2.map(t=>({estacao:t.ESTACAO,idCamisa:document.getElementById('repcamisa-'+t.ESTACAO)?.value||'',pressaoRolo:document.getElementById('reprolo-'+t.ESTACAO)?.value||'',pressaoFaca:document.getElementById('repfaca-'+t.ESTACAO)?.value||'',tempEstufa:document.getElementById('repesufa-'+t.ESTACAO)?.value||''}));
+    const complementos=tintas2.map(t=>({estacao:t.ESTACAO,idCamisa:document.getElementById('repcamisa-'+t.ESTACAO)?.value||'',pressaoRolo:normDec(document.getElementById('reprolo-'+t.ESTACAO)?.value||''),pressaoFaca:normDec(document.getElementById('repfaca-'+t.ESTACAO)?.value||''),tempEstufa:normDec(document.getElementById('repesufa-'+t.ESTACAO)?.value||'')}));
     const matRep=document.getElementById('rep-material')?.value||'';
     await apiPost({action:'salvarRepeticao',idReceita:recIdx,opProducao:op,operador:oper,aprovador,temDesvio:dvs.length>0,desvios,pendencias:pends,complementos,material:matRep,idConjugacao:repConjSelecionada||''});
     if(altCnt>0)await carregarPendencias();
@@ -2058,6 +2061,10 @@ function fmtCodTinta(el) {
   if(v.length>5) v = v.slice(0,3)+'.'+v.slice(3,5)+'.'+v.slice(5);
   else if(v.length>3) v = v.slice(0,3)+'.'+v.slice(3);
   el.value = v;
+}
+
+function normDec(v){
+  return String(v==null?'':v).trim().replace(',', '.');
 }
 
 // ── AVISO AO SAIR ────────────────────────────────────────
