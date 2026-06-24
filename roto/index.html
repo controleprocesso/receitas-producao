@@ -934,12 +934,18 @@ async function carregarReceitas() {
     // Carrega apenas dados leves para a lista
     receitas = await apiGet('getReceitasLista');
     renderMaqBar();
-    exigirMaquinaSeNecessario(); // sempre pede para confirmar a máquina ao abrir
+    rL(filtrarPorMaquina(receitas));
     try { atualizarHistorico(); } catch(e2) { console.warn('atualizarHistorico:', e2.message); }
     try { atualizarPainel(); } catch(e3) { console.warn('atualizarPainel:', e3.message); }
   } catch(e) {
     document.getElementById('lw').innerHTML = `<div style="padding:20px 0;text-align:center;font-size:13px;color:var(--red)">Erro ao carregar receitas: ${e.message}</div>`;
   }
+}
+
+function initApp(){
+  exigirMaquinaSeNecessario(); // sempre pede para confirmar a máquina ao abrir o app
+  carregarReceitas();
+  carregarPendencias();
 }
 
 async function carregarPendencias() {
@@ -2063,8 +2069,7 @@ window.addEventListener('beforeunload', function(e) {
 });
 
 // ── INIT ─────────────────────────────────────────────────
-carregarReceitas();
-carregarPendencias();
+initApp();
 </script>
 </body>
 </html>
