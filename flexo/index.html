@@ -687,7 +687,7 @@ const SUPERVISORES = {
   '2707':'João Victor','1023':'Abiner Filho'
 };
 const TOL_VISC=1, TOL_SEC=20;
-let receitas=[], recIdx=0, filtroH='todos', nsn=1;
+let receitas=[], recIdx=0, filtroH='todos', nsn=1, receitasCarregadas=false;
 let pinBufN='', pinBufR='';
 const lockBufs={pend:'',painel:''};
 const altOpts={};
@@ -847,6 +847,7 @@ function apiPost(body) {
 async function carregarReceitas() {
   try {
     receitas = await apiGet('getReceitasLista');
+    receitasCarregadas = true;
     renderMaqBar();
     rL(filtrarPorMaquina(receitas));
     try { atualizarHistorico(); } catch(e2) { console.warn(e2); }
@@ -874,6 +875,10 @@ async function carregarPendencias() {
 // ── LISTA ────────────────────────────────────────────────
 
 function rL(lista) {
+  if(!receitasCarregadas){
+    document.getElementById('lw').innerHTML = '<div class="loading-wrap"><div class="spinner"></div><span style="font-size:13px;color:var(--text3)">Carregando receitas...</span></div>';
+    return;
+  }
   document.getElementById('lw').innerHTML = lista.length
     ? lista.map(r=>`<div class="li" onclick="abrirRec(${r.ID})"><div class="lic"><i class="ti ti-file-description"></i></div><div class="lb"><div class="lt">${r.CLIENTE} — ${fmtCodPAExib(r.COD_PA)}</div><div class="ls">${r.SERVICO} · ${r.MAQUINA}</div></div><span class="bok">Aprovada</span></div>`).join('')
     : '<div style="padding:20px 0;text-align:center;font-size:13px;color:var(--text3)">Nenhuma receita encontrada</div>';
