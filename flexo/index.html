@@ -1049,7 +1049,10 @@ function chkComplem(prefix, estacao, ref){
     j.style.display='none';
     uBtn();return;
   }
-  const dv=String(v)!==String(ref);
+  const numerico = prefix==='repfaca';
+  const vCmp = numerico ? normDec(v) : v;
+  const refCmp = numerico ? normDec(String(ref)) : String(ref);
+  const dv=vCmp!==refCmp;
   i.style.border=dv?'0.5px solid var(--red-mid)':'0.5px solid var(--border2)';
   i.style.background=dv?'var(--red-light)':'var(--card)';
   i.style.color=dv?'var(--red)':'var(--text)';
@@ -1060,7 +1063,7 @@ function chkComplem(prefix, estacao, ref){
 
 function chkV(n,ref){const i=document.getElementById('visc-'+n),j=document.getElementById('vtv-'+n),v=parseFloat(i.value.replace(',','.'));if(isNaN(v)||i.value.trim()===''){i.className='vi';j.style.display='none';uBtn();return;}const dv=Math.abs(v-ref)>TOL_VISC;i.className='vi'+(dv?' vdv':'');j.style.display=dv?'block':'none';uBtn();}
 function chkSec(n,rM,rS){const i=document.getElementById('sec-'+n),j=document.getElementById('vts-'+n);if(!i||i.value.trim()===''){if(i)i.className='vi';j.style.display='none';uBtn();return;}const parts=i.value.split(':');const vm=parseInt(parts[0])||0,vs=parseInt(parts[1])||0;const dv=Math.abs(secTotal(vm,vs)-secTotal(rM,rS))>TOL_SEC;i.className='vi'+(dv?' vdv':'');j.style.display=dv?'block':'none';uBtn();}
-function chkP(id,ref){const p=paramsDef.find(x=>x.id===id);if(p.tipo==='info')return;const i=document.getElementById('pinp-'+id),j=document.getElementById('jprow-'+id),v=i.value.trim();if(!v){i.className=p.tipo==='sel'?'param-sel':'param-inp';j.style.display='none';uPrg();return;}const dv=v!==String(ref);if(p.tipo==='sel')i.className='param-sel'+(dv?' dv':'');else i.className='param-inp'+(dv?' dv':'');j.style.display=dv?'block':'none';uPrg();}
+function chkP(id,ref){const p=paramsDef.find(x=>x.id===id);if(p.tipo==='info')return;const i=document.getElementById('pinp-'+id),j=document.getElementById('jprow-'+id),v=i.value.trim();if(!v){i.className=p.tipo==='sel'?'param-sel':'param-inp';j.style.display='none';uPrg();return;}const vCmp=p.tipo==='sel'?v:normDec(v);const refCmp=p.tipo==='sel'?String(ref):normDec(String(ref));const dv=vCmp!==refCmp;if(p.tipo==='sel')i.className='param-sel'+(dv?' dv':'');else i.className='param-inp'+(dv?' dv':'');j.style.display=dv?'block':'none';uPrg();}
 
 function uPrg(){const norm=paramsDef.filter(p=>p.tipo!=='info');const f=norm.filter(p=>document.getElementById('pinp-'+p.id)?.value.trim()!=='').length;document.getElementById('rpg').style.width=Math.round((f/norm.length)*100)+'%';uBtn();}
 
@@ -1220,7 +1223,7 @@ async function salvarNovaReceita(aprovador) {
     const ins=tb.querySelectorAll('input');
     const secRaw=(ins[3]?.value||'0:0').split(':');
     const secM=parseInt(secRaw[0])||0,secS=parseInt(secRaw[1])||0;
-    return{estacao:n,codTinta:ins[0]?.value||'',nomeCor:ins[1]?.value||'',viscosidade:parseFloat(ins[2]?.value)||0,secagemMin:secM,secagemSeg:secS,anilox:document.getElementById('anilox-'+n)?.value||'',duplaFace:document.getElementById('df-'+n)?.value||'',pressaoFaca:document.getElementById('faca-'+n)?.value||''};
+    return{estacao:n,codTinta:ins[0]?.value||'',nomeCor:ins[1]?.value||'',viscosidade:parseFloat(normDec(ins[2]?.value))||0,secagemMin:secM,secagemSeg:secS,anilox:document.getElementById('anilox-'+n)?.value||'',duplaFace:document.getElementById('df-'+n)?.value||'',pressaoFaca:normDec(document.getElementById('faca-'+n)?.value||'')};
   });
   // Adicionar estufas das estações sem tinta (estações removidas)
   const estacoesComTinta=tintas.map(t=>t.estacao);
@@ -1232,8 +1235,8 @@ async function salvarNovaReceita(aprovador) {
       }
     }
   }
-  const gP=id=>document.getElementById('pinp-'+id)?.value||'';
-  const parametros={tensaoFreio:gP('p0'),contraPressPive:gP('p1'),avanco:gP('p2'),cPressaoTambor:gP('p3'),tensaoRebobinador:gP('p4'),pressaoCilBorracha:gP('p5'),pressaoCompactador:gP('p6'),avancoCR:gP('p7'),posicaoCompactador:gP('p8'),velocidade:gP('p9'),tempAmbiente:gP('p10'),larguraFilme:document.getElementById('n-largura')?.value||'',tempSecEntrecores:document.getElementById('n-sec-ec')?.value||'',tempSecSuperior:document.getElementById('n-sec-sup')?.value||'',material:document.getElementById('n-material')?.value||''};
+  const gP=id=>normDec(document.getElementById('pinp-'+id)?.value||'');
+  const parametros={tensaoFreio:gP('p0'),contraPressPive:gP('p1'),avanco:gP('p2'),cPressaoTambor:gP('p3'),tensaoRebobinador:gP('p4'),pressaoCilBorracha:gP('p5'),pressaoCompactador:gP('p6'),avancoCR:gP('p7'),posicaoCompactador:document.getElementById('pinp-p8')?.value||'',velocidade:gP('p9'),tempAmbiente:gP('p10'),larguraFilme:normDec(document.getElementById('n-largura')?.value||''),tempSecEntrecores:normDec(document.getElementById('n-sec-ec')?.value||''),tempSecSuperior:normDec(document.getElementById('n-sec-sup')?.value||''),material:document.getElementById('n-material')?.value||''};
   try {
     const obsVal=document.getElementById('n-obs')?.value||'';
     await apiPost({action:'salvarReceita',receita:{cliente:cli,codPA:cod,opCriacao:document.getElementById('n-op').value,servico:document.getElementById('n-serv').value,processo:'Flexografia',maquina:document.getElementById('n-maq').value,operador:document.getElementById('n-oper').value,observacoes:obsVal},tintas,parametros,aprovador});
@@ -1285,7 +1288,7 @@ async function salvarRepeticao(aprovador) {
 
   try {
     const tintas2=r.tintas||[];
-    const complementos=tintas2.map(t=>({estacao:t.ESTACAO,anilox:document.getElementById('repanilox-'+t.ESTACAO)?.value||'',duplaFace:document.getElementById('repdf-'+t.ESTACAO)?.value||'',pressaoFaca:document.getElementById('repfaca-'+t.ESTACAO)?.value||''}));
+    const complementos=tintas2.map(t=>({estacao:t.ESTACAO,anilox:document.getElementById('repanilox-'+t.ESTACAO)?.value||'',duplaFace:document.getElementById('repdf-'+t.ESTACAO)?.value||'',pressaoFaca:normDec(document.getElementById('repfaca-'+t.ESTACAO)?.value||'')}));
     const matRep=document.getElementById('rep-material')?.value||'';
     await apiPost({action:'salvarRepeticao',idReceita:recIdx,opProducao:op,operador:oper,aprovador,temDesvio:dvs.length>0,desvios,pendencias:pends,complementos,material:matRep});
     if(altCnt>0)await carregarPendencias();
@@ -1717,6 +1720,10 @@ function fmtCodTinta(el) {
   if(v.length>5) v = v.slice(0,3)+'.'+v.slice(3,5)+'.'+v.slice(5);
   else if(v.length>3) v = v.slice(0,3)+'.'+v.slice(3);
   el.value = v;
+}
+
+function normDec(v){
+  return String(v==null?'':v).trim().replace(',', '.');
 }
 
 // ── AVISO AO SAIR ────────────────────────────────────────
