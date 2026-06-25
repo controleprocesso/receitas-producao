@@ -170,6 +170,34 @@ textarea{resize:none;line-height:1.5;width:100%}
 .tbl{font-size:10px;color:var(--text3);font-weight:500}
 .tab-item.ta .tbl{color:var(--blue);font-weight:600}
 .tab-badge{position:absolute;top:0;right:8px;background:var(--red-mid);color:#fff;font-size:9px;font-weight:700;border-radius:10px;padding:1px 5px;line-height:1.3}
+.ver-hdr-block{padding:10px 14px;display:flex;align-items:flex-start;justify-content:space-between}
+.vigente{background:var(--blue);border-radius:var(--rad-lg) var(--rad-lg) 0 0}
+.vigente .ver-hdr-lbl{color:#fff}
+.vigente .ver-hdr-date{color:var(--blue-mid)}
+.vigente .ver-aprov{color:rgba(255,255,255,0.7)}
+.obsoleta{background:var(--bg);border:0.5px solid var(--border);border-bottom:none;border-radius:var(--rad-lg) var(--rad-lg) 0 0}
+.obsoleta .ver-hdr-lbl{color:var(--text2)}
+.obsoleta .ver-hdr-date{color:var(--text3)}
+.obsoleta .ver-aprov{color:var(--text3)}
+.ver-hdr-lbl{font-size:12px;font-weight:600;display:flex;align-items:center;gap:6px}
+.ver-hdr-right{display:flex;flex-direction:column;align-items:flex-end;gap:3px}
+.ver-hdr-date{font-size:11px}
+.ver-aprov{font-size:11px}
+.ver-body-block{border:0.5px solid var(--border);border-top:none;overflow:hidden;border-radius:0 0 var(--rad-lg) var(--rad-lg)}
+.rep-item-hist{display:flex;align-items:center;padding:9px 14px;border-bottom:0.5px solid var(--border)}
+.rep-item-hist.vigente{background:var(--card)}
+.rep-item-hist.vigente .rep-num-h{color:var(--text)}
+.rep-item-hist.obsoleta{background:var(--bg)}
+.rep-item-hist.obsoleta .rep-num-h{color:var(--text2)}
+.rep-num-h{font-size:12px;font-weight:600}
+.rep-meta-h{font-size:11px;color:var(--text3);margin-top:1px}
+.rep-pill-h{font-size:10px;padding:2px 7px;border-radius:20px;white-space:nowrap;margin-left:auto;flex-shrink:0;font-weight:600}
+.pill-dv{background:var(--amber-light);color:var(--amber)}
+.pill-ok{background:var(--green-light);color:var(--green)}
+.pend-rej{padding:7px 14px;border-radius:var(--rad);font-size:12px;font-weight:600;border:0.5px solid var(--border2);background:transparent;color:var(--text2);cursor:pointer;font-family:var(--font-sans)}
+.pend-actions{display:flex;gap:6px}
+.trbx{background:var(--bg);border-radius:var(--rad);padding:10px 14px;margin-bottom:20px;width:100%;border:0.5px solid var(--border)}
+.fa{background:var(--blue-light);color:var(--blue);border-color:var(--blue-mid);font-weight:600}
 </style>
 </head>
 <body>
@@ -334,9 +362,20 @@ textarea{resize:none;line-height:1.5;width:100%}
 
     <!-- HISTÓRICO -->
     <div id="s-hist" class="sc">
-      <div class="sl">Histórico por receita</div>
-      <div class="fcs" id="hist-filtros"></div>
-      <div id="hist-conteudo"></div>
+      <div class="met">
+        <div class="mt"><div class="ml">Repetições</div><div class="mv" id="h-tot">—</div></div>
+        <div class="mt"><div class="ml">Com desvio</div><div class="mv" style="color:var(--amber)" id="h-dv">—</div></div>
+        <div class="mt"><div class="ml">Versões</div><div class="mv" id="h-ver">—</div></div>
+        <div class="mt"><div class="ml">Taxa de adesão</div><div class="mv" id="h-taxa">—</div></div>
+      </div>
+      <div class="sw" style="margin-bottom:8px"><i class="ti ti-search"></i><input type="text" placeholder="Buscar por Cód. PA ou cliente..." id="hs" oninput="filtrarH()"></div>
+      <div class="fcs">
+        <div class="fc fa" onclick="setFH(this,'todos')">Todos</div>
+        <div class="fc" onclick="setFH(this,'ok')">Sem desvio</div>
+        <div class="fc" onclick="setFH(this,'desvio')">Com desvio</div>
+      </div>
+      <div id="hres"></div>
+      <div style="height:16px"></div>
     </div>
 
     <!-- PENDÊNCIAS (com bloqueio) -->
@@ -359,8 +398,17 @@ textarea{resize:none;line-height:1.5;width:100%}
       </div>
     </div>
     <div id="s-pend" class="sc">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+        <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;flex:1">
+          <div class="mt"><div class="ml">Pendentes</div><div class="mv" style="color:var(--amber)" id="pend-cnt">0</div></div>
+          <div class="mt"><div class="ml">Aprovadas</div><div class="mv" style="color:var(--green)" id="pend-aprov">0</div></div>
+          <div class="mt"><div class="ml">Rejeitadas</div><div class="mv" id="pend-rej-cnt">0</div></div>
+        </div>
+        <button onclick="sairLock('pend')" style="background:transparent;border:none;cursor:pointer;color:var(--text3);padding:4px;margin-left:10px;flex-shrink:0"><i class="ti ti-lock" style="font-size:19px"></i></button>
+      </div>
       <div class="sl">Aguardando aprovação</div>
       <div id="pend-list"></div>
+      <div style="height:16px"></div>
     </div>
 
     <!-- PAINEL (com bloqueio) -->
@@ -383,10 +431,24 @@ textarea{resize:none;line-height:1.5;width:100%}
       </div>
     </div>
     <div id="s-painel" class="sc">
-      <div class="sl">Painel — Rebobinamento</div>
-      <div class="met" id="painel-met"></div>
-      <div class="sl">Receitas recentes</div>
-      <div id="painel-lista"></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+        <div><div style="font-size:14px;font-weight:700;color:var(--text)">Painel de supervisão</div><div style="font-size:11px;color:var(--text2);margin-top:1px" id="per-sub">Rebobinamento</div></div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <select style="font-size:12px;color:var(--blue);background:var(--blue-light);border:none;border-radius:var(--rad);padding:5px 9px;cursor:pointer;outline:none;font-weight:600" onchange="chPer(this)"><option value="7">7 dias</option><option value="30" selected>30 dias</option><option value="90">90 dias</option></select>
+          <button onclick="sairLock('painel')" style="background:transparent;border:none;cursor:pointer;color:var(--text3);padding:2px"><i class="ti ti-lock" style="font-size:17px"></i></button>
+        </div>
+      </div>
+      <div class="met" id="painel-met">
+        <div class="mt"><div class="ml">Receitas ativas</div><div class="mv" id="pm-rec">—</div></div>
+        <div class="mt"><div class="ml">Repetições</div><div class="mv" id="pm-rep">—</div></div>
+        <div class="mt"><div class="ml">Desvios</div><div class="mv" id="pm-dv">—</div></div>
+        <div class="mt"><div class="ml">Pendências abertas</div><div class="mv" id="pm-pend">—</div></div>
+      </div>
+      <div class="card">
+        <div class="sl">Resumo por receita</div>
+        <div id="painel-lista"></div>
+      </div>
+      <div style="height:16px"></div>
     </div>
 
   </div>
@@ -398,6 +460,7 @@ textarea{resize:none;line-height:1.5;width:100%}
     <button class="tab-item" id="tab-p" onclick="setTab('tab-p');irPainelLock()"><i class="ti ti-chart-bar"></i><span class="tbl">Painel</span></button>
   </div>
 </div>
+<script>
 const MAQUINAS_REB = ["Titan SR8", "Titan SR800", "Titan ER610", "Compack", "Rotobras I", "Rotobras II", "Permaco", "Exitus"];
 const PARAMS_REB = {"Titan": [{"id": "p0", "lbl": "Contato Enrolamento Inf.", "un": "%", "tipo": "normal"}, {"id": "p1", "lbl": "Contato Enrolamento Sup.", "un": "%", "tipo": "normal"}, {"id": "p2", "lbl": "Tensão de Fricção (Taper)", "un": "%", "tipo": "normal"}, {"id": "p3", "lbl": "Tensão de Enrolamento Sup.", "un": "%", "tipo": "normal"}, {"id": "p4", "lbl": "Tensão de Enrolamento Inf.", "un": "%", "tipo": "normal"}, {"id": "p5", "lbl": "Overspeed", "un": "%", "tipo": "normal"}, {"id": "p6", "lbl": "Tipo de Corte", "un": "", "tipo": "sel", "opts": ["Faca", "Lâmina"]}, {"id": "p7", "lbl": "Velocidade", "un": "m/min", "tipo": "normal"}, {"id": "p8", "lbl": "Freio", "un": "%", "tipo": "normal"}, {"id": "p9", "lbl": "Quant. de Faixas no Rolo Superior", "un": "", "tipo": "normal"}, {"id": "p10", "lbl": "Quant. de Faixas no Rolo Inferior", "un": "", "tipo": "normal"}, {"id": "p11", "lbl": "Dureza", "un": "", "tipo": "normal"}], "Compack": [{"id": "p0", "lbl": "Contato Enrolamento Inf.", "un": "%", "tipo": "normal"}, {"id": "p1", "lbl": "Contato Enrolamento Sup.", "un": "%", "tipo": "normal"}, {"id": "p2", "lbl": "Tensão de Fricção (Taper)", "un": "%", "tipo": "normal"}, {"id": "p3", "lbl": "Tensão de Enrolamento Sup.", "un": "%", "tipo": "normal"}, {"id": "p4", "lbl": "Tensão de Enrolamento Inf.", "un": "%", "tipo": "normal"}, {"id": "p5", "lbl": "Overspeed", "un": "%", "tipo": "normal"}, {"id": "p6", "lbl": "Tipo de Corte", "un": "", "tipo": "sel", "opts": ["Faca", "Lâmina"]}, {"id": "p7", "lbl": "Velocidade", "un": "m/min", "tipo": "normal"}, {"id": "p8", "lbl": "Freio", "un": "%", "tipo": "normal"}, {"id": "p9", "lbl": "Quant. de Faixas no Rolo Superior", "un": "", "tipo": "normal"}, {"id": "p10", "lbl": "Quant. de Faixas no Rolo Inferior", "un": "", "tipo": "normal"}, {"id": "p11", "lbl": "Dureza", "un": "", "tipo": "normal"}, {"id": "p12", "lbl": "Pressão da Prensa", "un": "bar", "tipo": "normal"}], "Rotobras": [{"id": "p0", "lbl": "Pressão do Rolo Calandra", "un": "bar", "tipo": "normal"}, {"id": "p1", "lbl": "Pressão do Braço Dianteiro", "un": "bar", "tipo": "normal"}, {"id": "p2", "lbl": "Pressão do Braço Traseiro", "un": "bar", "tipo": "normal"}, {"id": "p3", "lbl": "Tensão Inicial/Final Braço Dian.", "un": "%", "tipo": "normal"}, {"id": "p4", "lbl": "Tensão Inicial/Final Braço Tras.", "un": "%", "tipo": "normal"}, {"id": "p5", "lbl": "Tipo de Corte", "un": "", "tipo": "sel", "opts": ["Faca", "Lâmina"]}, {"id": "p6", "lbl": "Velocidade", "un": "m/min", "tipo": "normal"}, {"id": "p7", "lbl": "Freio", "un": "%", "tipo": "normal"}, {"id": "p8", "lbl": "Quant. de Faixas no Rolo Dianteiro", "un": "", "tipo": "normal"}, {"id": "p9", "lbl": "Quant. de Faixas no Rolo Traseiro", "un": "", "tipo": "normal"}, {"id": "p10", "lbl": "Diâmetro", "un": "mm", "tipo": "normal"}, {"id": "p11", "lbl": "Dureza", "un": "", "tipo": "normal"}], "Permaco/Exitus": [{"id": "p0", "lbl": "Pressão do Rolo Calandra", "un": "bar", "tipo": "normal"}, {"id": "p1", "lbl": "Pressão do Braço Superior", "un": "bar", "tipo": "normal"}, {"id": "p2", "lbl": "Pressão do Braço Inferior", "un": "bar", "tipo": "normal"}, {"id": "p3", "lbl": "Tensão Inicial/Final Braço Sup.", "un": "%", "tipo": "normal"}, {"id": "p4", "lbl": "Tensão Inicial/Final Braço Inf.", "un": "%", "tipo": "normal"}, {"id": "p5", "lbl": "Tipo de Corte", "un": "", "tipo": "sel", "opts": ["Faca", "Lâmina"]}, {"id": "p6", "lbl": "Velocidade", "un": "m/min", "tipo": "normal"}, {"id": "p7", "lbl": "Freio", "un": "%", "tipo": "normal"}, {"id": "p8", "lbl": "Quant. de Faixas no Rolo Superior", "un": "", "tipo": "normal"}, {"id": "p9", "lbl": "Quant. de Faixas no Rolo Inferior", "un": "", "tipo": "normal"}, {"id": "p10", "lbl": "Diâmetro", "un": "mm", "tipo": "normal"}, {"id": "p11", "lbl": "Dureza", "un": "", "tipo": "normal"}]};
 function chaveMaquinaReb(m){
@@ -407,6 +470,7 @@ function chaveMaquinaReb(m){
   return m;
 }
 function getParamsReb(maquina){ return PARAMS_REB[chaveMaquinaReb(maquina)] || []; }
+</script>
 <script>
 const API = 'https://script.google.com/macros/s/AKfycbwci4vlWiykFbD2_-4fiopy5Yy39R_yAcWCCdnxP-x4ywjcSygIxbQgZgg0Gaa1xAQ4/exec';
 
@@ -537,10 +601,14 @@ function initApp(){
 async function carregarPendencias(){
   try{
     pendencias = await apiGet('getPendencias') || [];
-    const badge=document.getElementById('pend-badge');
-    if(pendencias.length>0){ badge.style.display='block'; badge.textContent=pendencias.length; }
-    else badge.style.display='none';
+    uPendBadge();
   }catch(e){ console.warn('pendencias', e.message); }
+}
+function uPendBadge(){
+  const cnt=pendencias.length;
+  const pc=document.getElementById('pend-cnt'); if(pc)pc.textContent=cnt;
+  const b=document.getElementById('pend-badge');
+  if(b){ b.textContent=cnt; b.style.display=cnt>0?'block':'none'; }
 }
 
 function rL(lista) {
@@ -933,57 +1001,58 @@ async function salvarRepeticao(aprovador){
 </script>
 <script>
 // ---------- Histórico ----------
-let histFiltroId = null;
-function montarFiltrosHist(){
-  const fc=document.getElementById('hist-filtros');
-  fc.innerHTML = `<div class="fc fca" onclick="setHistFiltro(null,this)">Todas</div>` +
-    receitas.slice(0,12).map(r=>`<div class="fc" onclick="setHistFiltro(${r.ID},this)">${r.CLIENTE}</div>`).join('');
-  renderHist();
+let filtroH = 'todos';
+function atualizarHistorico(){
+  const totRep=receitas.reduce((s,r)=>s+(r.versoes||[]).reduce((s2,v)=>s2+(v.reps||[]).length,0),0);
+  const totDv=receitas.reduce((s,r)=>s+(r.versoes||[]).reduce((s2,v)=>s2+(v.reps||[]).filter(rep=>rep.TEM_DESVIO===true||rep.TEM_DESVIO==='TRUE').length,0),0);
+  const totVer=receitas.reduce((s,r)=>s+(r.versoes||[]).length,0);
+  const elTot=document.getElementById('h-tot'); if(elTot)elTot.textContent=totRep;
+  const elDv=document.getElementById('h-dv'); if(elDv)elDv.textContent=totDv;
+  const elVer=document.getElementById('h-ver'); if(elVer)elVer.textContent=totVer;
+  const elTaxa=document.getElementById('h-taxa'); if(elTaxa)elTaxa.textContent=totRep>0?Math.round(((totRep-totDv)/totRep)*100)+'%':'—';
+  renderH('', filtroH);
 }
-function setHistFiltro(id, el){
-  histFiltroId=id;
-  document.querySelectorAll('#hist-filtros .fc').forEach(f=>f.classList.remove('fca'));
-  if(el)el.classList.add('fca');
-  renderHist();
+function filtrarH(){ const q=document.getElementById('hs').value.toLowerCase().trim(); renderH(q, filtroH); }
+function setFH(el, t){
+  document.querySelectorAll('#s-hist .fc').forEach(c=>c.classList.remove('fa'));
+  el.classList.add('fa');
+  filtroH = t;
+  renderH(document.getElementById('hs').value.toLowerCase().trim(), t);
 }
-async function atualizarHistorico(){ if(document.getElementById('s-hist').classList.contains('active')) renderHist(); }
-async function renderHist(){
-  const cont=document.getElementById('hist-conteudo');
-  let lista = histFiltroId ? receitas.filter(r=>String(r.ID)===String(histFiltroId)) : receitas.slice(0,8);
-  if(!lista.length){ cont.innerHTML=`<div style="padding:24px 0;text-align:center;font-size:13px;color:var(--text3)">Nenhuma receita</div>`; return; }
-  cont.innerHTML='<div class="loading-wrap"><div class="spinner"></div></div>';
-  let html='';
-  for(const r of lista){
-    let det=r;
-    if(!r._detalhesCarregados){
-      try{
-        det = await apiGet('getReceitaDetalhe',`&id=${r.ID}`);
-        det.versoes=Array.isArray(det.versoes)?det.versoes:[];
-        det.parametros=Array.isArray(det.parametros)?det.parametros:[];
-        det._detalhesCarregados=true;
-        const ix=receitas.findIndex(x=>String(x.ID)===String(r.ID)); if(ix>=0)receitas[ix]=det;
-      }catch(e){ continue; }
-    }
-    const versoes=det.versoes||[];
-    html += `<div class="hist-card">
-      <div class="hist-hdr">
-        <div><div class="hist-v">${det.CLIENTE} — ${fmtCodPAExib(det.COD_PA)}</div><div style="font-size:11px;color:var(--text3);margin-top:2px">${det.MAQUINA||''}</div></div>
+function renderH(q, filtro){
+  let dados = receitas.filter(r=>(r.versoes||[]).some(v=>(v.reps||[]).length>0));
+  if(q) dados = dados.filter(r=>String(r.COD_PA||'').toLowerCase().includes(q) || String(r.CLIENTE||'').toLowerCase().includes(q));
+  if(filtro==='ok') dados = dados.map(r=>({...r, versoes:(r.versoes||[]).map(v=>({...v, reps:(v.reps||[]).filter(rep=>!(rep.TEM_DESVIO===true||rep.TEM_DESVIO==='TRUE'))})).filter(v=>v.reps.length>0)})).filter(r=>(r.versoes||[]).length>0);
+  if(filtro==='desvio') dados = dados.map(r=>({...r, versoes:(r.versoes||[]).map(v=>({...v, reps:(v.reps||[]).filter(rep=>rep.TEM_DESVIO===true||rep.TEM_DESVIO==='TRUE')})).filter(v=>v.reps.length>0)})).filter(r=>(r.versoes||[]).length>0);
+  const wrap=document.getElementById('hres');
+  if(!dados.length){ wrap.innerHTML=`<div class="card" style="text-align:center;font-size:13px;color:var(--text3);padding:20px">Nenhum resultado encontrado</div>`; return; }
+  wrap.innerHTML = dados.map(r=>`
+    <div style="margin-bottom:14px">
+      <div style="background:var(--blue-light);border:0.5px solid var(--border);border-radius:var(--rad-lg) var(--rad-lg) 0 0;padding:10px 14px;display:flex;justify-content:space-between;align-items:center">
+        <div><div style="font-size:13px;font-weight:700;color:var(--blue)">${r.CLIENTE} — ${fmtCodPAExib(r.COD_PA)}</div><div style="font-size:11px;color:var(--blue);opacity:.7;margin-top:2px">${r.MAQUINA}</div></div>
+        <span style="font-size:11px;color:var(--blue);font-weight:600">${(r.versoes||[]).reduce((s,v)=>s+(v.reps||[]).length,0)} rep.</span>
       </div>
-      <div style="padding:10px 14px">
-        ${versoes.length ? versoes.map(v=>{
-          const reps=v.reps||[];
-          return `<div style="margin-bottom:8px">
-            <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
-              <span class="hist-vb ${(v.ATIVA===true||v.ATIVA==='TRUE')?'hist-vb-a':'hist-vb-o'}">Versão ${v.NUMERO_VERSAO}${(v.ATIVA===true||v.ATIVA==='TRUE')?' · ativa':''}</span>
-              <span style="font-size:11px;color:var(--text3)">${reps.length} repetição(ões)</span>
+      ${(r.versoes||[]).map((v,vi)=>`
+        <div>
+          <div class="ver-hdr-block ${v.ATIVA===true||v.ATIVA==='TRUE'?'vigente':'obsoleta'}" style="${vi===0?'':'border-radius:0'}">
+            <div class="ver-hdr-lbl"><i class="ti ti-${v.ATIVA===true||v.ATIVA==='TRUE'?'check-circle':'history'}"></i>v${v.NUMERO_VERSAO} · ${v.ATIVA===true||v.ATIVA==='TRUE'?'Receita vigente':'Receita anterior'}</div>
+            <div class="ver-hdr-right">
+              <span class="ver-hdr-date">${v.DATA_CRIACAO||'—'}</span>
+              <span class="ver-aprov">Aprov. 1: ${v.APROVADOR_1||'—'}${v.APROVADOR_2?' · Aprov. 2: '+v.APROVADOR_2:''}</span>
             </div>
-            ${reps.map(rep=>`<div class="trr"><span class="trl">OP ${rep.OP_PRODUCAO} · ${rep.OPERADOR}</span><span class="trv">${rep.TEM_DESVIO===true||rep.TEM_DESVIO==='TRUE'?'⚠ desvio':'✓'}</span></div>`).join('')}
-          </div>`;
-        }).join('') : `<div style="font-size:12px;color:var(--text3)">Sem versões registradas</div>`}
-      </div>
-    </div>`;
-  }
-  cont.innerHTML = html || `<div style="padding:24px 0;text-align:center;font-size:13px;color:var(--text3)">Nenhuma receita</div>`;
+          </div>
+          <div class="ver-body-block" style="${vi<(r.versoes||[]).length-1?'border-radius:0':''}">
+            ${(v.reps||[]).length===0?`<div style="padding:10px 14px;font-size:12px;color:var(--text3);background:var(--${v.ATIVA===true||v.ATIVA==='TRUE'?'card':'bg'})">Nenhuma repetição.</div>`:(v.reps||[]).map(rep=>`
+              <div class="rep-item-hist ${v.ATIVA===true||v.ATIVA==='TRUE'?'vigente':'obsoleta'}">
+                <div style="flex:1">
+                  <div class="rep-num-h">OP ${rep.OP_PRODUCAO||'—'}</div>
+                  <div class="rep-meta-h">${rep.OPERADOR||'—'} · ${rep.DATA_HORA||'—'} · Aprov: ${rep.APROVADOR||'—'}</div>
+                </div>
+                <span class="rep-pill-h ${rep.TEM_DESVIO===true||rep.TEM_DESVIO==='TRUE'?'pill-dv':'pill-ok'}">${rep.TEM_DESVIO===true||rep.TEM_DESVIO==='TRUE'?'Com desvio':'Sem desvio'}</span>
+              </div>`).join('')}
+          </div>
+        </div>`).join('')}
+    </div>`).join('');
 }
 
 // ---------- Lock (pendências e painel) ----------
@@ -1015,46 +1084,36 @@ async function ppLock(ctx, v){
 
 // ---------- Pendências ----------
 function renderPend(){
-  const cont=document.getElementById('pend-list');
-  if(!pendencias.length){ cont.innerHTML=`<div style="padding:24px 0;text-align:center;font-size:13px;color:var(--text3)">Nenhuma pendência</div>`; return; }
-  cont.innerHTML = pendencias.map(p=>`
-    <div class="pend-card">
-      <div class="pend-hdr">
-        <div class="pend-ic"><i class="ti ti-file-pencil"></i></div>
-        <div class="pend-bd"><div class="pend-title">${p.PARAMETRO}</div><div class="pend-sub">Pendência #${p.ID} · Rep. #${p.ID_REPETICAO}</div></div>
-        <span class="pend-badge">Pendente</span>
-      </div>
-      <div class="pend-body">
-        <div class="pend-row"><div class="pend-lbl">Valor atual (receita)</div><div class="pend-vals"><div class="pend-de">${p.VALOR_ATUAL||'—'}</div></div></div>
-        <div class="pend-row"><div class="pend-lbl">Valor proposto</div><div class="pend-vals"><div class="pend-para">${p.VALOR_PROPOSTO||'—'}</div></div></div>
-        <div class="pend-row"><div class="pend-lbl">Justificativa</div><div class="pend-just">${p.JUSTIFICATIVA||'—'}</div></div>
-        <div class="pend-row"><div class="pend-lbl">Solicitante</div><div class="pend-vals"><div class="pend-de">${p.SOLICITANTE||'—'}</div></div></div>
-      </div>
-      <div class="pend-footer">
-        <div class="pend-meta">Requer 2ª aprovação</div>
-        <button class="pend-apr" onclick="abrirPinPend(${p.ID})">Aprovar com PIN</button>
-      </div>
+  if(pendencias.length===0){ document.getElementById('pend-list').innerHTML='<div style="padding:24px 0;text-align:center;font-size:13px;color:var(--text3)">Nenhuma pendência no momento.</div>'; return; }
+  document.getElementById('pend-list').innerHTML = pendencias.map(p=>`
+    <div class="pend-card" id="pc-${p.ID}">
+      <div class="pend-hdr"><div class="pend-ic"><i class="ti ti-file-pencil"></i></div><div class="pend-bd"><div class="pend-title">${p.CLI||'Receita'}</div><div class="pend-sub">Solicitado por <b>${p.SOLICITANTE}</b> · OP <b>${p.OP_PRODUCAO||'—'}</b></div></div><span class="pend-badge">pendente</span></div>
+      <div class="pend-body"><div class="pend-row"><div class="pend-lbl">${p.PARAMETRO}</div><div class="pend-vals"><span class="pend-de">De: ${p.VALOR_ATUAL}</span><span class="pend-para">Para: ${p.VALOR_PROPOSTO}</span><div class="pend-just">${p.JUSTIFICATIVA}</div></div></div></div>
+      <div class="pend-footer"><div class="pend-meta">Solicitante: <b>${p.SOLICITANTE}</b></div><div class="pend-actions"><button class="pend-rej" onclick="rejPend('${p.ID}')">Rejeitar</button><button class="pend-apr" onclick="abrirPendPin('${p.ID}')">Aprovar</button></div></div>
       <div class="pend-pin-wrap" id="ppw-${p.ID}">
-        <div class="pin-w">
-          <div class="pin-s">Digite seu PIN para aprovar (deve ser diferente do 1º aprovador)</div>
-          <div class="pin-ds"><div class="pin-d" id="ppd-${p.ID}-0"></div><div class="pin-d" id="ppd-${p.ID}-1"></div><div class="pin-d" id="ppd-${p.ID}-2"></div><div class="pin-d" id="ppd-${p.ID}-3"></div></div>
-          <div class="pin-g">
-            ${[1,2,3,4,5,6,7,8,9].map(n=>`<button class="pib" onclick="pinPend(${p.ID},'${n}')">${n}</button>`).join('')}
-            <button class="pib" onclick="pinPend(${p.ID},'back')"><i class="ti ti-backspace"></i></button>
-            <button class="pib" onclick="pinPend(${p.ID},'0')">0</button>
-            <button class="pib" onclick="pinPend(${p.ID},'ok')" style="background:var(--blue);color:#fff;border-color:var(--blue)"><i class="ti ti-check"></i></button>
-          </div>
-          <div class="pie" id="ppe-${p.ID}"></div>
+        <div style="font-size:12px;color:var(--text2);margin-bottom:8px;line-height:1.5">Digite seu PIN. Aprovador não pode ser <b>${p.SOLICITANTE}</b>.</div>
+        <div style="display:flex;gap:8px;margin-bottom:10px"><div class="pin-d" id="ppd-${p.ID}-0"></div><div class="pin-d" id="ppd-${p.ID}-1"></div><div class="pin-d" id="ppd-${p.ID}-2"></div><div class="pin-d" id="ppd-${p.ID}-3"></div></div>
+        <div class="pin-g" style="gap:6px">
+          ${[1,2,3,4,5,6,7,8,9].map(n=>`<button class="pib" onclick="pinPend('${p.ID}','${n}')">${n}</button>`).join('')}
+          <button class="pib" onclick="pinPend('${p.ID}','back')"><i class="ti ti-backspace"></i></button>
+          <button class="pib" onclick="pinPend('${p.ID}','0')">0</button>
+          <button class="pib" style="background:var(--blue-light);color:var(--blue)" onclick="pinPend('${p.ID}','ok')"><i class="ti ti-check"></i></button>
         </div>
+        <div class="pie" id="ppe-${p.ID}"></div>
       </div>
     </div>`).join('');
 }
-function abrirPinPend(id){
-  const w=document.getElementById('ppw-'+id);
-  document.querySelectorAll('.pend-pin-wrap').forEach(x=>{ if(x!==w)x.classList.remove('open'); });
-  w.classList.toggle('open');
-  pendPinBufs[id]='';
+function abrirPendPin(id){
+  if(!pendPinBufs[id])pendPinBufs[id]='';
+  document.querySelectorAll('.pend-pin-wrap').forEach(p=>p.classList.remove('open'));
+  document.getElementById('ppw-'+id)?.classList.add('open');
   updPendDots(id);
+}
+function rejPend(id){
+  pendencias = pendencias.filter(p=>String(p.ID)!==String(id));
+  const cntEl=document.getElementById('pend-rej-cnt'); if(cntEl) cntEl.textContent = (parseInt(cntEl.textContent)||0)+1;
+  uPendBadge();
+  renderPend();
 }
 function updPendDots(id){
   const buf=pendPinBufs[id]||'';
@@ -1088,17 +1147,26 @@ async function pinPend(id, v){
 }
 
 // ---------- Painel ----------
-async function renderPainel(){
-  const total=receitas.length;
-  document.getElementById('painel-met').innerHTML = `
-    <div class="mt"><div class="ml">Receitas ativas</div><div class="mv">${total}</div></div>
-    <div class="mt"><div class="ml">Pendências</div><div class="mv">${pendencias.length}</div></div>`;
-  document.getElementById('painel-lista').innerHTML = receitas.slice(0,8).map(r=>`
-    <div class="li" onclick="setTab('tab-r');abrirRec(${r.ID})">
-      <div class="lic"><i class="ti ti-refresh"></i></div>
-      <div class="lb"><div class="lt">${r.CLIENTE} — ${fmtCodPAExib(r.COD_PA)}</div><div class="ls">${r.MAQUINA||''}</div></div>
-    </div>`).join('');
+function atualizarPainel(){
+  if(!document.getElementById('s-painel').classList.contains('active')) return;
+  renderPainel();
 }
+function renderPainel(){
+  const totRec=receitas.length;
+  const totRep=receitas.reduce((s,r)=>s+(r.versoes||[]).reduce((s2,v)=>s2+(v.reps||[]).length,0),0);
+  const totDv=receitas.reduce((s,r)=>s+(r.versoes||[]).reduce((s2,v)=>s2+(v.reps||[]).filter(rep=>rep.TEM_DESVIO===true||rep.TEM_DESVIO==='TRUE').length,0),0);
+  document.getElementById('pm-rec').textContent=totRec;
+  document.getElementById('pm-rep').textContent=totRep;
+  document.getElementById('pm-dv').textContent=totDv;
+  document.getElementById('pm-pend').textContent=pendencias.length;
+  document.getElementById('painel-lista').innerHTML = receitas.map(r=>{
+    const reps=(r.versoes||[]).reduce((s,v)=>s+(v.reps||[]).length,0);
+    const dvs=(r.versoes||[]).reduce((s,v)=>s+(v.reps||[]).filter(rep=>rep.TEM_DESVIO===true||rep.TEM_DESVIO==='TRUE').length,0);
+    return `<div style="display:flex;align-items:center;padding:9px 0;border-bottom:0.5px solid var(--border)"><div style="flex:1"><div style="font-size:13px;font-weight:600;color:var(--text)">${r.CLIENTE} · ${r.COD_PA}</div><div style="font-size:11px;color:var(--text3);margin-top:2px">${r.MAQUINA}</div></div><div style="text-align:right;flex-shrink:0"><div style="font-size:12px;font-weight:600;color:var(--text)">${reps} rep.</div>${dvs>0?`<div style="font-size:11px;color:var(--amber);font-weight:600">${dvs} desvio${dvs!==1?'s':''}</div>`:''}</div></div>`;
+  }).join('');
+}
+function chPer(sel){ document.getElementById('per-sub').textContent=`Rebobinamento · últimos ${sel.value} dias`; }
+function sairLock(ctx){ lockBufs[ctx]=''; setTab('tab-r'); ir('s-lista'); }
 
 // ---------- Init ----------
 initApp();
