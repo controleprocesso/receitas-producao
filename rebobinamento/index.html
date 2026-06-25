@@ -1,0 +1,1107 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#B8530A">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Finepack Rebobinamento">
+<title>Finepack — Receitas Rebobinamento</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden}
+body{font-family:'SF Pro Display',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text)}
+:root{
+  --bg:#F5F5F3;--card:#FFFFFF;--border:#E5E4DF;--border2:#D0CFC8;
+  --text:#1A1A18;--text2:#6B6A65;--text3:#9B9A95;
+  --blue:#B8530A;--blue-light:#FBEEE3;--blue-mid:#E0A878;
+  --green:#3B6D11;--green-light:#EAF3DE;
+  --red:#A32D2D;--red-light:#FCEBEB;--red-mid:#E24B4A;
+  --amber:#633806;--amber-light:#FAEEDA;
+  --rad:10px;--rad-lg:14px;
+  --font-sans:'SF Pro Display',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+}
+.app{max-width:430px;margin:0 auto;background:var(--bg);height:100vh;height:100dvh;position:relative;display:flex;flex-direction:column;overflow:hidden}
+.topbar{background:var(--card);border-bottom:0.5px solid var(--border);padding:14px 16px 10px;flex-shrink:0}
+.tpr{display:flex;justify-content:space-between;align-items:center}
+.tpt{font-size:16px;font-weight:600;color:var(--text)}
+.tps{font-size:12px;color:var(--text2);margin-top:2px}
+.maq-bar{display:flex;align-items:center;gap:6px;background:var(--blue-light);color:var(--blue);font-size:12px;font-weight:600;padding:8px 14px;cursor:pointer;flex-shrink:0}
+.maq-bar i:first-child{font-size:14px}
+.maq-bar i:last-child{font-size:12px;margin-left:auto}
+.maq-setup-btn{width:100%;max-width:280px;padding:14px;border-radius:var(--rad);font-size:15px;font-weight:600;border:1.5px solid var(--border2);background:var(--card);color:var(--text);cursor:pointer;font-family:var(--font-sans);margin-bottom:10px;display:block}
+.maq-setup-btn:active{background:var(--blue-light);border-color:var(--blue)}
+.content{padding:12px;flex:1;overflow-y:auto}
+.sc{display:none}.sc.active{display:block}
+.card{background:var(--card);border:0.5px solid var(--border);border-radius:var(--rad-lg);padding:14px;margin-bottom:10px}
+.sl{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);margin-bottom:10px}
+.bb{display:flex;align-items:center;gap:6px;background:transparent;border:none;cursor:pointer;color:var(--blue);font-size:13px;padding:0;margin-bottom:12px;font-family:var(--font-sans)}
+.bp{width:100%;background:var(--blue);color:#fff;border:none;border-radius:var(--rad);padding:14px;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:8px;font-family:var(--font-sans)}
+.bp:disabled{opacity:.4;pointer-events:none}
+.nr{display:flex;gap:8px;margin-top:4px;margin-bottom:16px}
+.bnp{flex:1;border:0.5px solid var(--border2);border-radius:var(--rad);padding:12px;font-size:13px;color:var(--text2);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;font-family:var(--font-sans)}
+.bnn{flex:2;background:var(--blue);color:#fff;border:none;border-radius:var(--rad);padding:12px;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;font-family:var(--font-sans)}
+.bnn:disabled{opacity:.4;pointer-events:none}
+input[type=text],select,textarea{font-size:13px;color:var(--text);background:var(--card);border:0.5px solid var(--border2);border-radius:var(--rad);padding:9px 11px;outline:none;font-family:var(--font-sans)}
+input:focus,select:focus,textarea:focus{border-color:var(--blue)}
+textarea{resize:none;line-height:1.5;width:100%}
+.sw{display:flex;gap:8px;align-items:center;background:var(--card);border:0.5px solid var(--border2);border-radius:var(--rad);padding:0 12px;margin-bottom:10px}
+.sw input{border:none;background:transparent;font-size:14px;padding:10px 0;flex:1;color:var(--text);outline:none}
+.li{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:0.5px solid var(--border);cursor:pointer}
+.li:last-child{border-bottom:none}.li:active{opacity:.7}
+.lic{width:38px;height:38px;background:var(--blue-light);border-radius:var(--rad);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.lic i{font-size:19px;color:var(--blue)}
+.lb{flex:1;min-width:0}
+.lt{font-size:13px;font-weight:600;color:var(--text)}
+.ls{font-size:11px;color:var(--text3);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bok{font-size:10px;padding:2px 8px;border-radius:20px;white-space:nowrap;flex-shrink:0;background:var(--green-light);color:var(--green);font-weight:600}
+.hg{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.fl{font-size:11px;color:var(--text3)}
+.fv{font-size:13px;font-weight:600;color:var(--text);margin-top:3px}
+.fvac{color:var(--blue)}
+.pb{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+.pbox{background:var(--bg);border-radius:var(--rad);padding:10px 12px;border:0.5px solid var(--border)}
+.pl{font-size:11px;color:var(--text3);line-height:1.3}
+.pv{font-size:15px;font-weight:600;color:var(--text);margin-top:3px;line-height:1}
+.fd{margin-bottom:10px}.fd:last-child{margin-bottom:0}
+.fdl{font-size:12px;color:var(--text2);margin-bottom:5px;font-weight:500}
+.fd input,.fd select{width:100%}
+.fr{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:10px}
+.fr .fd{margin-bottom:0}
+.maq-setup-list{display:flex;flex-direction:column;gap:8px}
+.maq-item{padding:12px 14px;border-radius:var(--rad);border:1.5px solid var(--border2);background:var(--card);cursor:pointer;display:flex;align-items:center;justify-content:space-between;transition:all .15s}
+.maq-item.sel{border-color:var(--blue);background:var(--blue-light)}
+.maq-item-nm{font-size:14px;font-weight:600;color:var(--text)}
+.maq-item.sel .maq-item-nm{color:var(--blue)}
+.param-row{padding:9px 0;border-bottom:0.5px solid var(--border)}
+.param-row:last-child{border-bottom:none}.param-row:first-child{padding-top:0}
+.param-top{display:flex;align-items:center;gap:10px}
+.param-lbl{font-size:12px;color:var(--text);line-height:1.3;flex:1}
+.param-inp{width:100px;font-size:13px;padding:7px 10px;border:0.5px solid var(--border2);border-radius:var(--rad);background:var(--card);color:var(--text);text-align:center;outline:none}
+.param-sel{width:120px;font-size:12px;padding:7px 8px;border:0.5px solid var(--border2);border-radius:var(--rad);background:var(--card);color:var(--text);outline:none}
+.param-inp.dv,.param-sel.dv{border-color:var(--red-mid);background:var(--red-light);color:var(--red)}
+.just-inp{margin-top:6px}
+.just-inp label{font-size:11px;color:var(--red);font-weight:600;display:flex;align-items:center;gap:4px;margin-bottom:4px}
+.just-inp textarea{font-size:12px;padding:7px 9px;border:0.5px solid var(--red-mid);background:#FFF8F8}
+.pin-w{display:flex;flex-direction:column;align-items:center;padding:4px 0 8px}
+.pin-t{font-size:15px;font-weight:700;color:var(--text);margin-bottom:4px}
+.pin-s{font-size:12px;color:var(--text2);margin-bottom:14px;text-align:center;line-height:1.5}
+.pin-cx{background:var(--bg);border-radius:var(--rad);padding:10px 14px;margin-bottom:16px;width:100%;border:0.5px solid var(--border)}
+.pcl{font-size:11px;color:var(--text3)}.pcv{font-size:13px;font-weight:600;color:var(--text);margin-top:2px}
+.pin-ds{display:flex;gap:14px;margin-bottom:20px}
+.pin-d{width:14px;height:14px;border-radius:50%;border:1.5px solid var(--border2);background:var(--bg);transition:all .15s}
+.pin-d.f{background:var(--blue);border-color:var(--blue)}
+.pin-g{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:100%}
+.pib{background:var(--bg);border:0.5px solid var(--border);border-radius:var(--rad);padding:15px 0;font-size:20px;font-weight:600;color:var(--text);cursor:pointer;text-align:center;line-height:1;font-family:var(--font-sans)}
+.pib:active{background:var(--blue-light);border-color:var(--blue-mid);transform:scale(0.97)}
+.pie{font-size:12px;color:var(--red);margin-top:10px;min-height:16px;text-align:center;font-weight:500}
+.met{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-bottom:10px}
+.mt{background:var(--card);border-radius:var(--rad);padding:10px 12px;border:0.5px solid var(--border)}
+.ml{font-size:11px;color:var(--text3);font-weight:500}
+.mv{font-size:22px;font-weight:700;color:var(--text);margin-top:2px;line-height:1.1}
+.lock-screen{display:flex;flex-direction:column;align-items:center;padding:32px 16px;text-align:center}
+.lock-ic{width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin-bottom:16px}
+.loading-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 16px;gap:12px}
+.overlay-loading{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.45);z-index:999;display:none;flex-direction:column;align-items:center;justify-content:center;gap:14px}
+.overlay-loading.active{display:flex}
+.overlay-spinner{width:44px;height:44px;border:3px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin .8s linear infinite}
+.overlay-msg{font-size:14px;font-weight:600;color:#fff;text-align:center;padding:0 32px;line-height:1.5}
+.spinner{width:32px;height:32px;border:2.5px solid var(--border);border-top-color:var(--blue);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.fcs{display:flex;gap:6px;margin-bottom:10px;overflow-x:auto;padding-bottom:2px}
+.fc{font-size:12px;font-weight:600;padding:5px 14px;border-radius:20px;white-space:nowrap;cursor:pointer;border:0.5px solid var(--border2);background:var(--card);color:var(--text2);font-family:var(--font-sans)}
+.fc.fca{background:var(--blue);color:#fff;border-color:var(--blue)}
+.hist-card{background:var(--card);border:0.5px solid var(--border);border-radius:var(--rad-lg);margin-bottom:10px;overflow:hidden}
+.hist-hdr{padding:12px 14px;border-bottom:0.5px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.hist-v{font-size:13px;font-weight:700;color:var(--text)}
+.hist-vb{font-size:10px;padding:2px 8px;border-radius:20px;font-weight:600}
+.hist-vb-a{background:var(--blue-light);color:var(--blue)}.hist-vb-o{background:var(--bg);color:var(--text3);border:0.5px solid var(--border2)}
+.trr{display:flex;justify-content:space-between;padding:5px 0;font-size:12px;border-bottom:0.5px solid var(--border)}
+.trr:last-child{border-bottom:none}
+.trl{color:var(--text3)}.trv{color:var(--text);font-weight:600}
+.pend-card{background:var(--card);border:0.5px solid var(--border);border-radius:var(--rad-lg);margin-bottom:10px;overflow:hidden}
+.pend-hdr{padding:12px 14px;display:flex;align-items:flex-start;gap:10px}
+.pend-ic{width:38px;height:38px;background:var(--blue-light);border-radius:var(--rad);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.pend-ic i{font-size:19px;color:var(--blue)}
+.pend-bd{flex:1;min-width:0}
+.pend-title{font-size:13px;font-weight:600;color:var(--text)}
+.pend-sub{font-size:11px;color:var(--text3);margin-top:2px}
+.pend-badge{font-size:10px;padding:2px 8px;border-radius:20px;background:var(--amber-light);color:var(--amber);font-weight:600;white-space:nowrap;flex-shrink:0}
+.pend-body{border-top:0.5px solid var(--border);padding:10px 14px}
+.pend-row{display:flex;align-items:flex-start;gap:8px;padding:7px 0;border-bottom:0.5px solid var(--border)}
+.pend-row:last-child{border-bottom:none}
+.pend-lbl{flex:1;font-size:12px;color:var(--text2)}
+.pend-vals{display:flex;flex-direction:column;align-items:flex-end;gap:2px;flex-shrink:0}
+.pend-de{font-size:11px;color:var(--text3)}
+.pend-para{font-size:13px;font-weight:600;color:var(--blue)}
+.pend-just{background:var(--blue-light);border-radius:5px;padding:4px 8px;margin-top:3px;font-size:11px;color:var(--blue);line-height:1.4;text-align:right;max-width:180px}
+.pend-footer{border-top:0.5px solid var(--border);padding:10px 14px;display:flex;align-items:center;justify-content:space-between;gap:8px;background:var(--bg)}
+.pend-meta{font-size:11px;color:var(--text3)}
+.pend-apr{padding:7px 14px;border-radius:var(--rad);font-size:12px;font-weight:600;border:none;background:var(--blue);color:#fff;cursor:pointer;font-family:var(--font-sans)}
+.pend-pin-wrap{background:var(--bg);padding:12px 14px;display:none;border-top:0.5px solid var(--border)}
+.pend-pin-wrap.open{display:block}
+.rev-row{padding:8px 0;border-bottom:0.5px solid var(--border)}
+.rev-row:last-child{border-bottom:none}
+.rev-row-top{display:flex;align-items:flex-start;gap:8px}
+.rev-lbl{flex:1;font-size:12px;color:var(--text2);line-height:1.3}
+.rev-right{display:flex;flex-direction:column;align-items:flex-end;gap:2px;flex-shrink:0;max-width:150px}
+.rev-real{font-size:13px;font-weight:600;color:var(--text);display:flex;align-items:center;gap:4px;flex-wrap:wrap;justify-content:flex-end}
+.rev-real.dv{color:var(--red)}
+.rev-dv-pill{font-size:10px;padding:1px 6px;border-radius:20px;background:var(--red-light);color:var(--red);white-space:nowrap;font-weight:600}
+.rev-just{background:#FFF8F8;border:0.5px solid #F09595;border-radius:var(--rad);padding:6px 8px;margin-top:4px;font-size:12px;color:var(--amber);line-height:1.4;width:100%}
+.rev-just-lbl{font-size:10px;color:var(--red);font-weight:600;margin-bottom:2px}
+.alt-opts{display:flex;gap:6px;margin-top:8px}
+.alt-btn{flex:1;padding:8px;border-radius:var(--rad);font-size:11px;font-weight:600;cursor:pointer;text-align:center;border:1.5px solid var(--border2);background:var(--card);color:var(--text2);line-height:1.3;font-family:var(--font-sans)}
+.alt-btn i{display:block;font-size:15px;margin-bottom:3px}
+.alt-btn.sel-pont{border-color:var(--green);background:var(--green-light);color:var(--green)}
+.alt-btn.sel-rec{border-color:var(--blue);background:var(--blue-light);color:var(--blue)}
+.rev-dv-banner{background:var(--red-light);border-radius:var(--rad);padding:10px 12px;margin-bottom:10px;display:flex;align-items:center;gap:8px;border:0.5px solid #F09595}
+.alt-banner{background:var(--blue-light);border-radius:var(--rad);padding:10px 12px;margin-bottom:10px;display:flex;align-items:center;gap:8px;border:0.5px solid var(--blue-mid)}
+.ibox{border-radius:var(--rad);padding:12px 14px;margin-bottom:10px;display:flex;align-items:center;gap:10px}
+.ibic{width:34px;height:34px;border-radius:var(--rad);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ibic i{font-size:17px}
+.ibinp{font-size:14px;font-weight:600;border:none;background:transparent;outline:none;width:100%;font-family:var(--font-sans)}
+.tab-bar{display:flex;background:var(--card);border-top:0.5px solid var(--border);padding:8px 0 max(4px,env(safe-area-inset-bottom));flex-shrink:0}
+.tab-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:4px 0;border:none;background:transparent;position:relative;font-family:var(--font-sans)}
+.tab-item i{font-size:21px;color:var(--text3);transition:color .15s}
+.tab-item.ta i{color:var(--blue)}
+.tbl{font-size:10px;color:var(--text3);font-weight:500}
+.tab-item.ta .tbl{color:var(--blue);font-weight:600}
+.tab-badge{position:absolute;top:0;right:8px;background:var(--red-mid);color:#fff;font-size:9px;font-weight:700;border-radius:10px;padding:1px 5px;line-height:1.3}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <div class="tpr">
+      <div><div class="tpt" id="tpt">Receitas de Produto</div><div class="tps" id="tps">Rebobinamento</div></div>
+    </div>
+  </div>
+  <div class="maq-bar" id="maq-bar" style="display:none" onclick="irTrocarMaquina()">
+    <i class="ti ti-device-tablet"></i>
+    <span id="maq-bar-nome">—</span>
+    <i class="ti ti-chevron-right"></i>
+  </div>
+  <div class="overlay-loading" id="overlay-loading"><div class="overlay-spinner"></div><div class="overlay-msg" id="overlay-msg">Salvando...</div></div>
+  <div class="content" id="main-content">
+
+    <!-- CONFIGURAÇÃO DE MÁQUINA DO TABLET -->
+    <div id="s-maquina-setup" class="sc">
+      <div class="lock-screen">
+        <div class="lock-ic" style="background:var(--blue-light)"><i class="ti ti-device-tablet" style="font-size:26px;color:var(--blue)"></i></div>
+        <div style="font-size:16px;font-weight:700;margin-bottom:6px">Selecione a máquina</div>
+        <div style="font-size:13px;color:var(--text2);margin-bottom:24px;line-height:1.5">Isso define quais receitas irão aparecer. Você pode alternar de máquina quando quiser.</div>
+        <div id="maq-setup-btns" class="maq-setup-list" style="width:100%;max-width:320px"></div>
+        <button class="bb" id="maq-setup-cancel" style="margin-top:14px;display:none" onclick="ir('s-lista')"><i class="ti ti-x"></i> Cancelar</button>
+      </div>
+    </div>
+
+    <!-- LISTA -->
+    <div id="s-lista" class="sc active">
+      <div class="sw"><i class="ti ti-search"></i><input type="text" placeholder="Buscar por Cód. PA, cliente ou serviço..." id="si" oninput="filtrar()"></div>
+      <div class="sl">Receitas cadastradas</div>
+      <div class="card" style="padding:0 14px" id="lw">
+        <div class="loading-wrap"><div class="spinner"></div><span style="font-size:13px;color:var(--text3)">Carregando receitas...</span></div>
+      </div>
+    </div>
+
+    <!-- DETALHE -->
+    <div id="s-rec" class="sc">
+      <button class="bb" onclick="ir('s-lista')"><i class="ti ti-arrow-left"></i> Receitas de Produto</button>
+      <div class="card" id="rec-id"></div>
+      <div class="card"><div class="sl">Parâmetros da máquina</div><div class="pb" id="rec-params-box"></div></div>
+      <div class="card" id="rec-obs" style="display:none"></div>
+      <button class="bp" onclick="irRep()"><i class="ti ti-clipboard-check"></i> Registrar repetição</button>
+      <div style="height:16px"></div>
+    </div>
+
+    <!-- NOVA RECEITA -->
+    <div id="s-nova" class="sc">
+      <div id="ns1">
+        <div class="card">
+          <div class="sl">Identificação do produto</div>
+          <div class="fd"><div class="fdl">Cliente</div><input type="text" id="n-cli" oninput="uNs1()"></div>
+          <div class="fr">
+            <div class="fd"><div class="fdl">Cód. PA</div><input type="text" id="n-cod" placeholder="141.405.0011" oninput="fmtCodPA(this);uNs1()" maxlength="12"></div>
+            <div class="fd"><div class="fdl">OP de criação</div><input type="text" id="n-op" oninput="uNs1()"></div>
+          </div>
+          <div class="fd"><div class="fdl">Descrição do serviço</div><input type="text" id="n-serv" oninput="uNs1()"></div>
+          <div class="fd"><div class="fdl">Operador</div><input type="text" id="n-oper" oninput="uNs1()"></div>
+        </div>
+        <div class="card">
+          <div class="sl">Máquina</div>
+          <div id="ns1-maq-btns" class="maq-setup-list"></div>
+        </div>
+        <div class="nr"><button class="bnn" id="btn-ns1" onclick="nStep(2)" disabled>Próximo: parâmetros <i class="ti ti-arrow-right"></i></button></div>
+      </div>
+
+      <div id="ns2" style="display:none">
+        <div class="card">
+          <div class="sl">Parâmetros da máquina</div>
+          <div id="param-campos"></div>
+        </div>
+        <div class="card"><div class="sl">Observações técnicas</div><textarea id="n-obs" rows="3"></textarea></div>
+        <div class="nr"><button class="bnp" onclick="nStep(1)"><i class="ti ti-arrow-left"></i> Voltar</button><button class="bnn" onclick="nStep(3)">Revisar <i class="ti ti-arrow-right"></i></button></div>
+      </div>
+
+      <div id="ns3" style="display:none">
+        <div class="card" id="rvw"></div>
+        <div class="card">
+          <div class="pin-w">
+            <div class="pin-t">Aprovação</div>
+            <div class="pin-s">Digite o PIN do supervisor para aprovar e salvar a receita</div>
+            <div class="pin-cx"><div class="pcl">Receita</div><div class="pcv" id="pnc">—</div></div>
+            <div class="pin-ds"><div class="pin-d" id="pd-n-0"></div><div class="pin-d" id="pd-n-1"></div><div class="pin-d" id="pd-n-2"></div><div class="pin-d" id="pd-n-3"></div></div>
+            <div class="pin-g">
+              <button class="pib" onclick="pinN('1')">1</button><button class="pib" onclick="pinN('2')">2</button><button class="pib" onclick="pinN('3')">3</button>
+              <button class="pib" onclick="pinN('4')">4</button><button class="pib" onclick="pinN('5')">5</button><button class="pib" onclick="pinN('6')">6</button>
+              <button class="pib" onclick="pinN('7')">7</button><button class="pib" onclick="pinN('8')">8</button><button class="pib" onclick="pinN('9')">9</button>
+              <button class="pib" onclick="pinN('back')" style="font-size:16px"><i class="ti ti-backspace"></i></button>
+              <button class="pib" onclick="pinN('0')">0</button>
+              <button class="pib" onclick="pinN('ok')" style="background:var(--blue);color:#fff;border-color:var(--blue)"><i class="ti ti-check"></i></button>
+            </div>
+            <div class="pie" id="pne"></div>
+          </div>
+        </div>
+        <div class="nr"><button class="bnp" onclick="nStep(2)"><i class="ti ti-arrow-left"></i> Editar</button></div>
+      </div>
+    </div>
+
+    <!-- REGISTRO DE REPETIÇÃO -->
+    <div id="s-rep" class="sc">
+      <button class="bb" onclick="ir('s-rec')"><i class="ti ti-arrow-left"></i> Voltar à receita</button>
+      <div class="ibox" style="background:var(--green-light);border:0.5px solid #C0DD97">
+        <div class="ibic" style="background:rgba(255,255,255,0.6)"><i class="ti ti-user" style="color:var(--green)"></i></div>
+        <div style="flex:1"><div style="font-size:11px;color:var(--green);margin-bottom:4px;font-weight:600">Operador</div><input class="ibinp" style="color:var(--green)" type="text" id="oper-inp" oninput="uBtn()"></div>
+      </div>
+      <div class="ibox" style="background:var(--blue-light);border:0.5px solid var(--blue-mid)">
+        <div class="ibic" style="background:rgba(255,255,255,0.6)"><i class="ti ti-file-invoice" style="color:var(--blue)"></i></div>
+        <div style="flex:1"><div style="font-size:11px;color:var(--blue);margin-bottom:4px;font-weight:600">Nº da OP de produção</div><input class="ibinp" style="color:var(--blue)" type="text" id="op-inp" oninput="uBtn()"></div>
+      </div>
+      <div class="card">
+        <div class="sl">Identificação</div>
+        <div class="hg" id="rep-id-grid"></div>
+        <div><div class="fl">Data / hora</div><div class="fv" style="font-size:12px;margin-top:2px" id="rep-dt"></div></div>
+      </div>
+      <div class="card">
+        <div class="sl">Parâmetros da máquina</div>
+        <div id="params-rep"></div>
+      </div>
+      <div class="nr">
+        <button class="bnp" onclick="ir('s-rec')"><i class="ti ti-x"></i> Cancelar</button>
+        <button class="bnn" id="btn-revisar" onclick="irRevisar()" disabled>Revisar <i class="ti ti-arrow-right"></i></button>
+      </div>
+    </div>
+
+    <!-- REVISÃO DA REPETIÇÃO -->
+    <div id="s-rev" class="sc">
+      <button class="bb" onclick="ir('s-rep')"><i class="ti ti-arrow-left"></i> Voltar ao registro</button>
+      <div id="rev-dv-banner" style="display:none" class="rev-dv-banner"><i class="ti ti-alert-triangle" style="font-size:18px;color:var(--red)"></i><div><div style="font-size:13px;font-weight:600;color:var(--red)">Desvios identificados</div><div style="font-size:11px;color:var(--red);margin-top:2px" id="rev-dv-count"></div></div></div>
+      <div id="alt-banner" style="display:none" class="alt-banner"><i class="ti ti-file-pencil" style="font-size:18px;color:var(--blue)"></i><div><div style="font-size:13px;font-weight:600;color:var(--blue)">Alteração na receita solicitada</div><div style="font-size:11px;color:var(--blue);margin-top:2px" id="alt-count"></div></div></div>
+      <div class="card"><div class="sl">Revisão dos parâmetros</div><div id="rev-params"></div></div>
+      <div class="card">
+        <div class="pin-w">
+          <div class="pin-t">Aprovação do supervisor</div>
+          <div class="pin-s">Registre sua aprovação com PIN</div>
+          <div class="pin-cx"><div class="pcl">Receita</div><div class="pcv" id="rpctx">—</div></div>
+          <div class="pin-ds"><div class="pin-d" id="pd-r-0"></div><div class="pin-d" id="pd-r-1"></div><div class="pin-d" id="pd-r-2"></div><div class="pin-d" id="pd-r-3"></div></div>
+          <div class="pin-g">
+            <button class="pib" onclick="pinR('1')">1</button><button class="pib" onclick="pinR('2')">2</button><button class="pib" onclick="pinR('3')">3</button>
+            <button class="pib" onclick="pinR('4')">4</button><button class="pib" onclick="pinR('5')">5</button><button class="pib" onclick="pinR('6')">6</button>
+            <button class="pib" onclick="pinR('7')">7</button><button class="pib" onclick="pinR('8')">8</button><button class="pib" onclick="pinR('9')">9</button>
+            <button class="pib" onclick="pinR('back')" style="font-size:16px"><i class="ti ti-backspace"></i></button>
+            <button class="pib" onclick="pinR('0')">0</button>
+            <button class="pib" onclick="pinR('ok')" style="background:var(--blue);color:#fff;border-color:var(--blue)"><i class="ti ti-check"></i></button>
+          </div>
+          <div class="pie" id="pre2"></div>
+        </div>
+      </div>
+      <div class="nr"><button class="bnp" onclick="ir('s-rep')"><i class="ti ti-arrow-left"></i> Editar</button></div>
+    </div>
+
+    <!-- SUCESSO -->
+    <div id="s-suc" class="sc">
+      <div style="padding:32px 0;text-align:center">
+        <div style="width:64px;height:64px;border-radius:50%;background:var(--green-light);display:flex;align-items:center;justify-content:center;margin:0 auto 16px"><i class="ti ti-check" style="font-size:28px;color:var(--green)"></i></div>
+        <div style="font-size:18px;font-weight:700;color:var(--text);margin-bottom:6px" id="suc-title">Salvo!</div>
+        <div style="font-size:13px;color:var(--text2);margin-bottom:24px;line-height:1.5" id="suc-sub"></div>
+        <div class="card" style="text-align:left" id="suc-box"></div>
+        <button class="bp" onclick="ir('s-lista')"><i class="ti ti-home"></i> Voltar às receitas</button>
+      </div>
+    </div>
+
+    <!-- HISTÓRICO -->
+    <div id="s-hist" class="sc">
+      <div class="sl">Histórico por receita</div>
+      <div class="fcs" id="hist-filtros"></div>
+      <div id="hist-conteudo"></div>
+    </div>
+
+    <!-- PENDÊNCIAS (com bloqueio) -->
+    <div id="s-pend-lock" class="sc">
+      <div class="lock-screen">
+        <div class="lock-ic" style="background:var(--blue-light)"><i class="ti ti-lock" style="font-size:26px;color:var(--blue)"></i></div>
+        <div style="font-size:16px;font-weight:700;margin-bottom:6px">Acesso restrito</div>
+        <div style="font-size:13px;color:var(--text2);margin-bottom:24px;line-height:1.5">Digite o PIN do supervisor para ver as pendências</div>
+        <div class="pin-ds"><div class="pin-d" id="plkd-pend-0"></div><div class="pin-d" id="plkd-pend-1"></div><div class="pin-d" id="plkd-pend-2"></div><div class="pin-d" id="plkd-pend-3"></div></div>
+        <div style="margin-bottom:16px"></div>
+        <div class="pin-g" style="max-width:300px">
+          <button class="pib" onclick="ppLock('pend','1')">1</button><button class="pib" onclick="ppLock('pend','2')">2</button><button class="pib" onclick="ppLock('pend','3')">3</button>
+          <button class="pib" onclick="ppLock('pend','4')">4</button><button class="pib" onclick="ppLock('pend','5')">5</button><button class="pib" onclick="ppLock('pend','6')">6</button>
+          <button class="pib" onclick="ppLock('pend','7')">7</button><button class="pib" onclick="ppLock('pend','8')">8</button><button class="pib" onclick="ppLock('pend','9')">9</button>
+          <button class="pib" onclick="ppLock('pend','back')" style="font-size:16px"><i class="ti ti-backspace"></i></button>
+          <button class="pib" onclick="ppLock('pend','0')">0</button>
+          <button class="pib" onclick="ppLock('pend','ok')" style="background:var(--blue);color:#fff;border-color:var(--blue)"><i class="ti ti-check"></i></button>
+        </div>
+        <div class="pie" id="plk-pend-err"></div>
+      </div>
+    </div>
+    <div id="s-pend" class="sc">
+      <div class="sl">Aguardando aprovação</div>
+      <div id="pend-list"></div>
+    </div>
+
+    <!-- PAINEL (com bloqueio) -->
+    <div id="s-painel-lock" class="sc">
+      <div class="lock-screen">
+        <div class="lock-ic" style="background:var(--blue-light)"><i class="ti ti-lock" style="font-size:26px;color:var(--blue)"></i></div>
+        <div style="font-size:16px;font-weight:700;margin-bottom:6px">Acesso restrito</div>
+        <div style="font-size:13px;color:var(--text2);margin-bottom:24px;line-height:1.5">Digite o PIN do supervisor para acessar o painel</div>
+        <div class="pin-ds"><div class="pin-d" id="plkd-p-painel-0"></div><div class="pin-d" id="plkd-p-painel-1"></div><div class="pin-d" id="plkd-p-painel-2"></div><div class="pin-d" id="plkd-p-painel-3"></div></div>
+        <div style="margin-bottom:16px"></div>
+        <div class="pin-g" style="max-width:300px">
+          <button class="pib" onclick="ppLock('painel','1')">1</button><button class="pib" onclick="ppLock('painel','2')">2</button><button class="pib" onclick="ppLock('painel','3')">3</button>
+          <button class="pib" onclick="ppLock('painel','4')">4</button><button class="pib" onclick="ppLock('painel','5')">5</button><button class="pib" onclick="ppLock('painel','6')">6</button>
+          <button class="pib" onclick="ppLock('painel','7')">7</button><button class="pib" onclick="ppLock('painel','8')">8</button><button class="pib" onclick="ppLock('painel','9')">9</button>
+          <button class="pib" onclick="ppLock('painel','back')" style="font-size:16px"><i class="ti ti-backspace"></i></button>
+          <button class="pib" onclick="ppLock('painel','0')">0</button>
+          <button class="pib" onclick="ppLock('painel','ok')" style="background:var(--blue);color:#fff;border-color:var(--blue)"><i class="ti ti-check"></i></button>
+        </div>
+        <div class="pie" id="plk-painel-err"></div>
+      </div>
+    </div>
+    <div id="s-painel" class="sc">
+      <div class="sl">Painel — Rebobinamento</div>
+      <div class="met" id="painel-met"></div>
+      <div class="sl">Receitas recentes</div>
+      <div id="painel-lista"></div>
+    </div>
+
+  </div>
+  <div class="tab-bar">
+    <button class="tab-item ta" id="tab-r" onclick="setTab('tab-r');irListaTab()"><i class="ti ti-file-text"></i><span class="tbl">Receitas</span></button>
+    <button class="tab-item" id="tab-h" onclick="setTab('tab-h');ir('s-hist')"><i class="ti ti-history"></i><span class="tbl">Histórico</span></button>
+    <button class="tab-item" id="tab-n" onclick="setTab('tab-n');irNova()"><i class="ti ti-plus"></i><span class="tbl">Nova</span></button>
+    <button class="tab-item" id="tab-pend" onclick="setTab('tab-pend');irPendLock()"><i class="ti ti-clock"></i><span class="tbl">Pendências</span><span class="tab-badge" id="pend-badge" style="display:none">0</span></button>
+    <button class="tab-item" id="tab-p" onclick="setTab('tab-p');irPainelLock()"><i class="ti ti-chart-bar"></i><span class="tbl">Painel</span></button>
+  </div>
+</div>
+const MAQUINAS_REB = ["Titan SR8", "Titan SR800", "Titan ER610", "Compack", "Rotobras I", "Rotobras II", "Permaco", "Exitus"];
+const PARAMS_REB = {"Titan": [{"id": "p0", "lbl": "Contato Enrolamento Inf.", "un": "%", "tipo": "normal"}, {"id": "p1", "lbl": "Contato Enrolamento Sup.", "un": "%", "tipo": "normal"}, {"id": "p2", "lbl": "Tensão de Fricção (Taper)", "un": "%", "tipo": "normal"}, {"id": "p3", "lbl": "Tensão de Enrolamento Sup.", "un": "%", "tipo": "normal"}, {"id": "p4", "lbl": "Tensão de Enrolamento Inf.", "un": "%", "tipo": "normal"}, {"id": "p5", "lbl": "Overspeed", "un": "%", "tipo": "normal"}, {"id": "p6", "lbl": "Tipo de Corte", "un": "", "tipo": "sel", "opts": ["Faca", "Lâmina"]}, {"id": "p7", "lbl": "Velocidade", "un": "m/min", "tipo": "normal"}, {"id": "p8", "lbl": "Freio", "un": "%", "tipo": "normal"}, {"id": "p9", "lbl": "Quant. de Faixas no Rolo Superior", "un": "", "tipo": "normal"}, {"id": "p10", "lbl": "Quant. de Faixas no Rolo Inferior", "un": "", "tipo": "normal"}, {"id": "p11", "lbl": "Dureza", "un": "", "tipo": "normal"}], "Compack": [{"id": "p0", "lbl": "Contato Enrolamento Inf.", "un": "%", "tipo": "normal"}, {"id": "p1", "lbl": "Contato Enrolamento Sup.", "un": "%", "tipo": "normal"}, {"id": "p2", "lbl": "Tensão de Fricção (Taper)", "un": "%", "tipo": "normal"}, {"id": "p3", "lbl": "Tensão de Enrolamento Sup.", "un": "%", "tipo": "normal"}, {"id": "p4", "lbl": "Tensão de Enrolamento Inf.", "un": "%", "tipo": "normal"}, {"id": "p5", "lbl": "Overspeed", "un": "%", "tipo": "normal"}, {"id": "p6", "lbl": "Tipo de Corte", "un": "", "tipo": "sel", "opts": ["Faca", "Lâmina"]}, {"id": "p7", "lbl": "Velocidade", "un": "m/min", "tipo": "normal"}, {"id": "p8", "lbl": "Freio", "un": "%", "tipo": "normal"}, {"id": "p9", "lbl": "Quant. de Faixas no Rolo Superior", "un": "", "tipo": "normal"}, {"id": "p10", "lbl": "Quant. de Faixas no Rolo Inferior", "un": "", "tipo": "normal"}, {"id": "p11", "lbl": "Dureza", "un": "", "tipo": "normal"}, {"id": "p12", "lbl": "Pressão da Prensa", "un": "bar", "tipo": "normal"}], "Rotobras": [{"id": "p0", "lbl": "Pressão do Rolo Calandra", "un": "bar", "tipo": "normal"}, {"id": "p1", "lbl": "Pressão do Braço Dianteiro", "un": "bar", "tipo": "normal"}, {"id": "p2", "lbl": "Pressão do Braço Traseiro", "un": "bar", "tipo": "normal"}, {"id": "p3", "lbl": "Tensão Inicial/Final Braço Dian.", "un": "%", "tipo": "normal"}, {"id": "p4", "lbl": "Tensão Inicial/Final Braço Tras.", "un": "%", "tipo": "normal"}, {"id": "p5", "lbl": "Tipo de Corte", "un": "", "tipo": "sel", "opts": ["Faca", "Lâmina"]}, {"id": "p6", "lbl": "Velocidade", "un": "m/min", "tipo": "normal"}, {"id": "p7", "lbl": "Freio", "un": "%", "tipo": "normal"}, {"id": "p8", "lbl": "Quant. de Faixas no Rolo Dianteiro", "un": "", "tipo": "normal"}, {"id": "p9", "lbl": "Quant. de Faixas no Rolo Traseiro", "un": "", "tipo": "normal"}, {"id": "p10", "lbl": "Diâmetro", "un": "mm", "tipo": "normal"}, {"id": "p11", "lbl": "Dureza", "un": "", "tipo": "normal"}], "Permaco/Exitus": [{"id": "p0", "lbl": "Pressão do Rolo Calandra", "un": "bar", "tipo": "normal"}, {"id": "p1", "lbl": "Pressão do Braço Superior", "un": "bar", "tipo": "normal"}, {"id": "p2", "lbl": "Pressão do Braço Inferior", "un": "bar", "tipo": "normal"}, {"id": "p3", "lbl": "Tensão Inicial/Final Braço Sup.", "un": "%", "tipo": "normal"}, {"id": "p4", "lbl": "Tensão Inicial/Final Braço Inf.", "un": "%", "tipo": "normal"}, {"id": "p5", "lbl": "Tipo de Corte", "un": "", "tipo": "sel", "opts": ["Faca", "Lâmina"]}, {"id": "p6", "lbl": "Velocidade", "un": "m/min", "tipo": "normal"}, {"id": "p7", "lbl": "Freio", "un": "%", "tipo": "normal"}, {"id": "p8", "lbl": "Quant. de Faixas no Rolo Superior", "un": "", "tipo": "normal"}, {"id": "p9", "lbl": "Quant. de Faixas no Rolo Inferior", "un": "", "tipo": "normal"}, {"id": "p10", "lbl": "Diâmetro", "un": "mm", "tipo": "normal"}, {"id": "p11", "lbl": "Dureza", "un": "", "tipo": "normal"}]};
+function chaveMaquinaReb(m){
+  if(m==='Titan SR8'||m==='Titan SR800'||m==='Titan ER610') return 'Titan';
+  if(m==='Rotobras I'||m==='Rotobras II') return 'Rotobras';
+  if(m==='Permaco'||m==='Exitus') return 'Permaco/Exitus';
+  return m;
+}
+function getParamsReb(maquina){ return PARAMS_REB[chaveMaquinaReb(maquina)] || []; }
+<script>
+const API = 'https://script.google.com/macros/s/AKfycbwci4vlWiykFbD2_-4fiopy5Yy39R_yAcWCCdnxP-x4ywjcSygIxbQgZgg0Gaa1xAQ4/exec';
+
+// ---------- Estado ----------
+let receitas=[], recIdx=0, nsn=1, receitasCarregadas=false;
+let pinBufN='', pinBufR='';
+const lockBufs={pend:'',painel:''};
+const altOpts={};
+let pendencias=[], pendPinBufs={};
+let maquinaAtual = localStorage.getItem('reb_maquina') || '';
+let novaMaquina = '';
+
+// ---------- JSONP ----------
+function jsonp(url){
+  return new Promise((resolve, reject) => {
+    const cb = 'cb_' + Date.now() + '_' + Math.random().toString(36).slice(2);
+    const timer = setTimeout(() => { cleanup(); reject(new Error('Tempo limite excedido.')); }, 30000);
+    function cleanup(){ clearTimeout(timer); delete window[cb]; const s=document.getElementById(cb); if(s)s.remove(); }
+    window[cb] = (data) => { cleanup(); if(data && data.status==='erro') reject(new Error(data.mensagem||'Erro')); else resolve(data.data); };
+    const script = document.createElement('script');
+    script.id = cb;
+    script.src = url + (url.includes('?')?'&':'?') + 'callback=' + cb;
+    script.onerror = () => { cleanup(); reject(new Error('Erro de conexão.')); };
+    document.head.appendChild(script);
+  });
+}
+function apiGet(action, extra=''){ return jsonp(`${API}?action=${action}${extra}`); }
+function apiPost(body){
+  const clean = JSON.parse(JSON.stringify(body));
+  let encoded;
+  try { encoded = encodeURIComponent(JSON.stringify(clean)); }
+  catch(e){ return Promise.reject(new Error('Erro ao processar dados: '+e.message)); }
+  return jsonp(`${API}?action=${body.action}&body=${encoded}`);
+}
+
+// ---------- Utils ----------
+function normDec(v){ return String(v==null?'':v).trim().replace(',', '.'); }
+function fmtCodPA(input){
+  let v=input.value.replace(/\D/g,'').slice(0,10);
+  let out=v;
+  if(v.length>3&&v.length<=6) out=v.slice(0,3)+'.'+v.slice(3);
+  else if(v.length>6) out=v.slice(0,3)+'.'+v.slice(3,6)+'.'+v.slice(6);
+  input.value=out;
+}
+function fmtCodPAExib(cod){
+  const v=String(cod||'').replace(/\D/g,'');
+  if(v.length>=10) return v.slice(0,3)+'.'+v.slice(3,6)+'.'+v.slice(6);
+  return cod||'—';
+}
+function showLoading(msg){ document.getElementById('overlay-msg').textContent=msg||'Carregando...'; document.getElementById('overlay-loading').classList.add('active'); }
+function hideLoading(){ document.getElementById('overlay-loading').classList.remove('active'); }
+
+// ---------- Navegação ----------
+function ir(id){
+  document.querySelectorAll('.sc').forEach(s=>s.classList.remove('active'));
+  const el=document.getElementById(id);
+  if(el)el.classList.add('active');
+  document.getElementById('main-content').scrollTop=0;
+  const tpt=document.getElementById('tpt'), tps=document.getElementById('tps');
+  const map={'s-lista':['Receitas de Produto','Rebobinamento'],'s-rec':['Detalhe da receita','Rebobinamento'],'s-nova':['Nova receita','Rebobinamento'],'s-rep':['Registrar repetição','Rebobinamento'],'s-rev':['Revisão','Rebobinamento'],'s-suc':['Concluído','Rebobinamento'],'s-hist':['Histórico','Por receita · Rebobinamento'],'s-pend':['Pendências','Aguardando aprovação'],'s-pend-lock':['Pendências','Acesso restrito'],'s-painel':['Painel','Rebobinamento'],'s-painel-lock':['Painel','Acesso restrito']};
+  if(map[id]){ tpt.textContent=map[id][0]; tps.textContent=map[id][1]; }
+  if(id==='s-hist') montarFiltrosHist();
+}
+function setTab(id){ document.querySelectorAll('.tab-item').forEach(t=>t.classList.remove('ta')); document.getElementById(id).classList.add('ta'); }
+function irListaTab(){ ir('s-lista'); }
+
+// ---------- Filtro de máquina ----------
+function renderMaqBar(){
+  const bar = document.getElementById('maq-bar');
+  if(!maquinaAtual){ bar.style.display='none'; return; }
+  bar.style.display='flex';
+  document.getElementById('maq-bar-nome').textContent = maquinaAtual;
+}
+function filtrarPorMaquina(lista){
+  if(!maquinaAtual) return lista;
+  return lista.filter(r => r.MAQUINA === maquinaAtual);
+}
+function montarBotoesMaquina(comCancelar){
+  const cont = document.getElementById('maq-setup-btns');
+  cont.innerHTML = MAQUINAS_REB.map(m=>{
+    const sel = m===maquinaAtual;
+    return `<div class="maq-item${sel?' sel':''}" onclick="selecionarMaquina('${m}')"><span class="maq-item-nm">${m}</span>${sel?'<i class="ti ti-check" style="color:var(--blue)"></i>':''}</div>`;
+  }).join('');
+  document.getElementById('maq-setup-cancel').style.display = comCancelar ? 'block' : 'none';
+}
+function selecionarMaquina(m){
+  maquinaAtual = m;
+  localStorage.setItem('reb_maquina', m);
+  renderMaqBar();
+  const si = document.getElementById('si');
+  if(si) si.value='';
+  rL(filtrarPorMaquina(receitas));
+  setTab('tab-r');
+  ir('s-lista');
+}
+function irTrocarMaquina(){
+  montarBotoesMaquina(true);
+  document.getElementById('tpt').textContent='Máquina deste tablet';
+  document.getElementById('tps').textContent='Toque para trocar';
+  ir('s-maquina-setup');
+}
+function exigirMaquinaSeNecessario(){
+  montarBotoesMaquina(false);
+  document.getElementById('tpt').textContent='Selecione a máquina';
+  document.getElementById('tps').textContent='Tablet desta máquina';
+  ir('s-maquina-setup');
+  return true;
+}
+
+// ---------- Init / Lista ----------
+async function carregarReceitas() {
+  try {
+    receitas = await apiGet('getReceitasLista');
+    receitasCarregadas = true;
+    renderMaqBar();
+    rL(filtrarPorMaquina(receitas));
+    try { atualizarHistorico(); } catch(e2) { console.warn(e2); }
+    try { atualizarPainel(); } catch(e3) { console.warn(e3); }
+  } catch(e) {
+    document.getElementById('lw').innerHTML = `<div style="padding:20px 0;text-align:center;font-size:13px;color:var(--red)">Erro ao carregar receitas: ${e.message}</div>`;
+  }
+}
+function initApp(){
+  exigirMaquinaSeNecessario();
+  carregarReceitas();
+  carregarPendencias();
+}
+async function carregarPendencias(){
+  try{
+    pendencias = await apiGet('getPendencias') || [];
+    const badge=document.getElementById('pend-badge');
+    if(pendencias.length>0){ badge.style.display='block'; badge.textContent=pendencias.length; }
+    else badge.style.display='none';
+  }catch(e){ console.warn('pendencias', e.message); }
+}
+
+function rL(lista) {
+  if(!receitasCarregadas){
+    document.getElementById('lw').innerHTML = '<div class="loading-wrap"><div class="spinner"></div><span style="font-size:13px;color:var(--text3)">Carregando receitas...</span></div>';
+    return;
+  }
+  document.getElementById('lw').innerHTML = lista.length
+    ? lista.map(r=>`<div class="li" onclick="abrirRec(${r.ID})"><div class="lic"><i class="ti ti-refresh"></i></div><div class="lb"><div class="lt">${r.CLIENTE} — ${fmtCodPAExib(r.COD_PA)}</div><div class="ls">${r.SERVICO} · ${r.MAQUINA}</div></div><span class="bok">Ativa</span></div>`).join('')
+    : '<div style="padding:20px 0;text-align:center;font-size:13px;color:var(--text3)">Nenhuma receita encontrada</div>';
+}
+function filtrar() {
+  const q = document.getElementById('si').value.toLowerCase().trim();
+  const base = filtrarPorMaquina(receitas);
+  if(!q){rL(base);return;}
+  rL(base.filter(r=>{
+    const cli=(r.CLIENTE||'').toLowerCase();
+    const cod=fmtCodPAExib(r.COD_PA).toLowerCase();
+    const cod2=String(r.COD_PA||'').toLowerCase();
+    const serv=(r.SERVICO||'').toLowerCase();
+    return cli.includes(q)||cod.includes(q)||cod2.includes(q)||serv.includes(q);
+  }));
+}
+</script>
+<script>
+// ---------- Detalhe da receita ----------
+async function abrirRec(id){
+  recIdx = id;
+  let r = receitas.find(x => String(x.ID) === String(id));
+  if (!r) return;
+  ir('s-rec');
+  if (!r._detalhesCarregados) {
+    document.getElementById('rec-id').innerHTML = `<div style="padding:40px 0;text-align:center"><div class="spinner"></div><div style="font-size:13px;color:var(--text3);margin-top:12px">Carregando receita...</div></div>`;
+    document.getElementById('rec-params-box').innerHTML='';
+    try {
+      const det = await apiGet('getReceitaDetalhe', `&id=${id}`);
+      det.parametros = Array.isArray(det.parametros) ? det.parametros : [];
+      det.versoes = Array.isArray(det.versoes) ? det.versoes : [];
+      det._detalhesCarregados = true;
+      const idx2 = receitas.findIndex(x => String(x.ID) === String(id));
+      if (idx2 >= 0) receitas[idx2] = det;
+      r = det;
+    } catch(e) {
+      document.getElementById('rec-id').innerHTML = `<div style="padding:20px 0;text-align:center;font-size:13px;color:var(--red)">Erro ao carregar: ${e.message}</div>`;
+      return;
+    }
+  }
+  renderRec(r);
+}
+function renderRec(r){
+  document.getElementById('rec-id').innerHTML = `
+    <div class="sl">Identificação</div>
+    <div class="hg">
+      <div><div class="fl">Cliente</div><div class="fv">${r.CLIENTE||'—'}</div></div>
+      <div><div class="fl">Cód. PA</div><div class="fv">${fmtCodPAExib(r.COD_PA)}</div></div>
+      <div><div class="fl">OP de criação</div><div class="fv">${r.OP_CRIACAO||'—'}</div></div>
+      <div><div class="fl">Máquina</div><div class="fv fvac">${r.MAQUINA||'—'}</div></div>
+      <div><div class="fl">Operador</div><div class="fv">${r.OPERADOR||'—'}</div></div>
+      <div><div class="fl">Aprovador</div><div class="fv">${r.APROVADOR||'—'}</div></div>
+    </div>
+    <div style="margin-top:10px"><div class="fl">Serviço</div><div class="fv">${r.SERVICO||'—'}</div></div>`;
+  const params = r.parametros||[];
+  document.getElementById('rec-params-box').innerHTML = params.length
+    ? params.map(p=>`<div class="pbox"><div class="pl">${p.CAMPO}</div><div class="pv">${p.VALOR||'—'}</div></div>`).join('')
+    : `<div style="font-size:12px;color:var(--text3)">Sem parâmetros</div>`;
+  const obsEl=document.getElementById('rec-obs');
+  if(r.OBSERVACOES && String(r.OBSERVACOES).trim()){
+    obsEl.style.display='block';
+    obsEl.innerHTML=`<div class="sl">Observações técnicas</div><div style="font-size:13px;color:var(--text2);line-height:1.5">${r.OBSERVACOES}</div>`;
+  } else obsEl.style.display='none';
+}
+
+// ---------- Nova receita ----------
+function irNova(){
+  novaMaquina=''; nsn=1; pinBufN='';
+  ['n-cli','n-cod','n-op','n-serv','n-oper','n-obs'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
+  document.getElementById('ns1-maq-btns').innerHTML = MAQUINAS_REB.map(m=>
+    `<div class="maq-item" id="nsmaq-${m.replace(/\s+/g,'_')}" onclick="selMaquinaNova('${m}')"><span class="maq-item-nm">${m}</span></div>`
+  ).join('');
+  document.getElementById('pne').textContent='';
+  ['ns1','ns2','ns3'].forEach((id,i)=>document.getElementById(id).style.display=i===0?'block':'none');
+  document.getElementById('param-campos').innerHTML='';
+  uNs1();
+  ir('s-nova');
+}
+function selMaquinaNova(m){
+  novaMaquina=m;
+  MAQUINAS_REB.forEach(mm=>{
+    const el=document.getElementById('nsmaq-'+mm.replace(/\s+/g,'_'));
+    if(!el) return;
+    const sel=mm===m;
+    el.className='maq-item'+(sel?' sel':'');
+    el.innerHTML=`<span class="maq-item-nm">${mm}</span>${sel?'<i class="ti ti-check" style="color:var(--blue)"></i>':''}`;
+  });
+  uNs1();
+}
+function uNs1(){
+  const cli=document.getElementById('n-cli').value.trim();
+  const cod=document.getElementById('n-cod').value.trim();
+  const serv=document.getElementById('n-serv').value.trim();
+  const oper=document.getElementById('n-oper').value.trim();
+  document.getElementById('btn-ns1').disabled = !(cli&&cod&&serv&&oper&&novaMaquina);
+}
+
+function nStep(n){
+  nsn=n;
+  ['ns1','ns2','ns3'].forEach((id,i)=>document.getElementById(id).style.display=(i+1)===n?'block':'none');
+  document.getElementById('main-content').scrollTop=0;
+  if(n===2) montarParamCampos();
+  if(n===3) bRv();
+}
+function montarParamCampos(){
+  const params = getParamsReb(novaMaquina);
+  const cont=document.getElementById('param-campos');
+  if(cont.dataset.maq === novaMaquina) return;
+  cont.dataset.maq = novaMaquina;
+  cont.innerHTML = params.map(p=>{
+    const inp = p.tipo==='sel'
+      ? `<select id="pinp-${p.id}" style="width:100%;font-size:12px;padding:7px 9px;border:0.5px solid var(--border2);border-radius:var(--rad);background:var(--card);color:var(--text)"><option value="">—</option>${p.opts.map(o=>`<option>${o}</option>`).join('')}</select>`
+      : `<input id="pinp-${p.id}" type="text" inputmode="decimal" style="width:100%;font-size:12px;padding:7px 9px;border:0.5px solid var(--border2);border-radius:var(--rad);background:var(--card);color:var(--text)">`;
+    return `<div style="margin-bottom:8px"><div style="font-size:11px;color:var(--text3);margin-bottom:4px;font-weight:500">${p.lbl}${p.un?' ('+p.un+')':''}</div>${inp}</div>`;
+  }).join('');
+}
+
+// ---------- Revisão + PIN nova receita ----------
+function bRv(){
+  const params = getParamsReb(novaMaquina);
+  const cli=document.getElementById('n-cli').value.trim();
+  const cod=document.getElementById('n-cod').value.trim();
+  const op=document.getElementById('n-op').value.trim();
+  const serv=document.getElementById('n-serv').value.trim();
+  const oper=document.getElementById('n-oper').value.trim();
+  const obs=document.getElementById('n-obs').value.trim();
+
+  const vals = params.map(p=>({campo:`${p.lbl}${p.un?' ('+p.un+')':''}`, valor:document.getElementById('pinp-'+p.id)?.value||'—'}));
+
+  document.getElementById('pnc').textContent = `${cli} — ${fmtCodPAExib(cod)}`;
+  document.getElementById('rvw').innerHTML = `
+    <div class="sl">Revisão da receita</div>
+    <div class="hg">
+      <div><div class="fl">Cliente</div><div class="fv">${cli}</div></div>
+      <div><div class="fl">Cód. PA</div><div class="fv">${fmtCodPAExib(cod)}</div></div>
+      <div><div class="fl">OP criação</div><div class="fv">${op||'—'}</div></div>
+      <div><div class="fl">Máquina</div><div class="fv fvac">${novaMaquina}</div></div>
+      <div><div class="fl">Operador</div><div class="fv">${oper}</div></div>
+    </div>
+    <div style="margin-top:8px"><div class="fl">Serviço</div><div class="fv">${serv}</div></div>
+    <div class="sl" style="margin-top:16px">Parâmetros da máquina</div>
+    <div class="pb">${vals.map(v=>`<div class="pbox"><div class="pl">${v.campo}</div><div class="pv">${v.valor||'—'}</div></div>`).join('')}</div>
+    ${obs?`<div class="sl" style="margin-top:16px">Observações</div><div style="font-size:13px;color:var(--text2);line-height:1.5">${obs}</div>`:''}
+  `;
+}
+function updDotsN(){ for(let i=0;i<4;i++){ const d=document.getElementById('pd-n-'+i); if(d)d.className='pin-d'+(i<pinBufN.length?' f':''); } }
+async function pinN(v){
+  const err=document.getElementById('pne');
+  if(v==='back'){ pinBufN=pinBufN.slice(0,-1); updDotsN(); return; }
+  if(v==='ok'){
+    if(pinBufN.length<4){ err.textContent='Digite os 4 dígitos'; return; }
+    const pin=pinBufN;
+    showLoading('Validando PIN...');
+    try{
+      const res = await apiPost({action:'validarPin', pin});
+      hideLoading();
+      if(!res.valido){ err.textContent='PIN incorreto. Tente novamente.'; pinBufN=''; updDotsN(); return; }
+      err.textContent=''; pinBufN=''; updDotsN();
+      salvarNovaReceita(res.nome);
+    }catch(e){ hideLoading(); err.textContent='Erro: '+e.message; pinBufN=''; updDotsN(); }
+    return;
+  }
+  if(pinBufN.length<4) pinBufN+=v;
+  updDotsN();
+}
+async function salvarNovaReceita(aprovador){
+  showLoading('Salvando receita...');
+  const params = getParamsReb(novaMaquina);
+  const cli=document.getElementById('n-cli').value.trim();
+  const cod=document.getElementById('n-cod').value.trim();
+  const parametros = params.map(p=>({
+    campo: `${p.lbl}${p.un?' ('+p.un+')':''}`,
+    valor: p.tipo==='sel' ? (document.getElementById('pinp-'+p.id)?.value||'') : normDec(document.getElementById('pinp-'+p.id)?.value||'')
+  }));
+  const receita = {
+    cliente:cli, codPA:cod,
+    opCriacao:document.getElementById('n-op').value.trim(),
+    servico:document.getElementById('n-serv').value.trim(),
+    maquina:novaMaquina,
+    operador:document.getElementById('n-oper').value.trim(),
+    observacoes:document.getElementById('n-obs').value.trim()
+  };
+  try{
+    await apiPost({action:'salvarReceita', receita, parametros, aprovador});
+    hideLoading();
+    document.getElementById('suc-title').textContent='Receita salva!';
+    document.getElementById('suc-sub').textContent=`${cli} · ${cod} está disponível para os operadores.`;
+    document.getElementById('suc-box').innerHTML=`
+      <div class="trr"><span class="trl">Máquina</span><span class="trv">${novaMaquina}</span></div>
+      <div class="trr"><span class="trl">Aprovador</span><span class="trv">${aprovador}</span></div>
+      <div class="trr"><span class="trl">Status</span><span class="trv">Ativa</span></div>`;
+    ir('s-suc');
+    await carregarReceitas();
+  }catch(e){ hideLoading(); document.getElementById('pne').textContent='Erro ao salvar: '+e.message; }
+}
+</script>
+<script>
+// ---------- Registro de repetição ----------
+function irRep(){
+  const r = receitas.find(x => String(x.ID) === String(recIdx));
+  if (!r) return;
+  document.getElementById('oper-inp').value='';
+  document.getElementById('op-inp').value='';
+  document.getElementById('rep-dt').textContent = new Date().toLocaleString('pt-BR');
+  document.getElementById('rep-id-grid').innerHTML = `
+    <div><div class="fl">Cliente</div><div class="fv">${r.CLIENTE||'—'}</div></div>
+    <div><div class="fl">Cód. PA</div><div class="fv">${fmtCodPAExib(r.COD_PA)}</div></div>
+    <div><div class="fl">Máquina</div><div class="fv fvac">${r.MAQUINA||'—'}</div></div>`;
+
+  const params = r.parametros||[];
+  document.getElementById('params-rep').innerHTML = params.map((p,i)=>{
+    const ref = String(p.VALOR||'');
+    const isSel = ['Faca','Lâmina'].includes(ref) || p.CAMPO==='Tipo de Corte';
+    const inp = isSel
+      ? `<select class="param-sel" id="rpar-${i}" onchange="chkP(${i},'${ref.replace(/'/g,"\\'")}')"><option value="">—</option><option>Faca</option><option>Lâmina</option></select>`
+      : `<input class="param-inp" id="rpar-${i}" type="text" inputmode="decimal" oninput="chkP(${i},'${ref.replace(/'/g,"\\'")}')">`;
+    return `<div class="param-row"><div class="param-top"><div class="param-lbl">${p.CAMPO}<div style="font-size:10px;color:var(--text3);margin-top:2px">Receita: ${ref||'—'}</div></div>${inp}</div><div id="jprow-${i}" style="display:none" class="just-inp"><label><i class="ti ti-alert-triangle" style="font-size:11px;vertical-align:-1px"></i> Fora do especificado — justifique</label><textarea id="jparam-${i}" rows="2" placeholder="Justifique..."></textarea></div></div>`;
+  }).join('');
+  uPrg();
+  ir('s-rep');
+}
+function uPrg(){
+  const r = receitas.find(x => String(x.ID) === String(recIdx));
+  const params = r?(r.parametros||[]):[];
+  let f=0;
+  params.forEach((p,i)=>{ if(document.getElementById('rpar-'+i)?.value.trim()!=='') f++; });
+  uBtn();
+}
+function uBtn(){
+  const r = receitas.find(x => String(x.ID) === String(recIdx));
+  const params = r?(r.parametros||[]):[];
+  const operOk=document.getElementById('oper-inp')?.value.trim()!=='';
+  const opOk=document.getElementById('op-inp')?.value.trim()!=='';
+  const pOk = params.every((p,i)=>document.getElementById('rpar-'+i)?.value.trim()!=='');
+  const jOk = getDvF().every(d=>d.just.trim()!=='');
+  document.getElementById('btn-revisar').disabled = !(operOk&&opOk&&pOk&&jOk);
+}
+function chkP(i, ref){
+  const el=document.getElementById('rpar-'+i);
+  const just=document.getElementById('jprow-'+i);
+  const v=el.value.trim();
+  if(!v){ el.className=el.tagName==='SELECT'?'param-sel':'param-inp'; just.style.display='none'; uPrg(); return; }
+  const isSel = el.tagName==='SELECT';
+  const vCmp = isSel? v : normDec(v);
+  const refCmp = isSel? String(ref) : normDec(String(ref));
+  const dv = vCmp!==refCmp;
+  el.className=(isSel?'param-sel':'param-inp')+(dv?' dv':'');
+  just.style.display = dv?'block':'none';
+  uPrg();
+}
+function getDvF(){
+  const r = receitas.find(x => String(x.ID) === String(recIdx));
+  const params = r?(r.parametros||[]):[];
+  const dvs=[];
+  params.forEach((p,i)=>{
+    const el=document.getElementById('rpar-'+i);
+    if(!el) return;
+    const v=el.value.trim();
+    const ref=String(p.VALOR||'');
+    if(!v) return;
+    const isSel = el.tagName==='SELECT';
+    const vCmp = isSel? v : normDec(v);
+    const refCmp = isSel? ref : normDec(ref);
+    if(vCmp!==refCmp){
+      const j=document.getElementById('jparam-'+i);
+      dvs.push({ idx:i, key:i, parametro:p.CAMPO, valorReceita:ref, valorReal:v, just: j?j.value.trim():'' });
+    }
+  });
+  return dvs;
+}
+
+// ---------- Revisão da repetição ----------
+function irRevisar(){
+  const r = receitas.find(x => String(x.ID) === String(recIdx));
+  const params = r?(r.parametros||[]):[];
+  document.getElementById('rpctx').textContent = `${r.CLIENTE} — ${fmtCodPAExib(r.COD_PA)}`;
+  const dvs = getDvF();
+
+  const dvBanner=document.getElementById('rev-dv-banner');
+  if(dvs.length){ dvBanner.style.display='flex'; document.getElementById('rev-dv-count').textContent=`${dvs.length} parâmetro(s) com desvio`; }
+  else dvBanner.style.display='none';
+
+  Object.keys(altOpts).forEach(k=>delete altOpts[k]);
+
+  document.getElementById('rev-params').innerHTML = params.map((p,i)=>{
+    const el=document.getElementById('rpar-'+i);
+    const val=el?el.value.trim():'';
+    const ref=String(p.VALOR||'');
+    const isSel = el && el.tagName==='SELECT';
+    const vCmp = isSel? val : normDec(val);
+    const refCmp = isSel? ref : normDec(ref);
+    const isDesvio = val!=='' && vCmp!==refCmp;
+    if(!isDesvio){
+      return `<div class="rev-row"><div class="rev-row-top"><div class="rev-lbl">${p.CAMPO}</div><div class="rev-right"><div class="rev-real">${val||'—'}</div></div></div></div>`;
+    }
+    const j=document.getElementById('jparam-'+i);
+    const just=j?j.value.trim():'';
+    return `<div class="rev-row">
+      <div class="rev-row-top">
+        <div class="rev-lbl">${p.CAMPO}<div style="font-size:10px;color:var(--text3);margin-top:2px">Receita: ${ref}</div></div>
+        <div class="rev-right"><div class="rev-real dv">${val} <span class="rev-dv-pill">desvio</span></div></div>
+      </div>
+      <div class="rev-just"><div class="rev-just-lbl">Justificativa</div>${just}</div>
+      <div class="alt-opts">
+        <div class="alt-btn sel-pont" id="alt-pont-${i}" onclick="selAlt(${i},'pontual')"><i class="ti ti-bolt"></i>Desvio pontual</div>
+        <div class="alt-btn" id="alt-rec-${i}" onclick="selAlt(${i},'receita')"><i class="ti ti-file-pencil"></i>Alterar receita</div>
+      </div>
+    </div>`;
+  }).join('');
+
+  dvs.forEach(d=>{ altOpts[d.idx]='pontual'; });
+  updAltBanner();
+  pinBufR=''; updDotsR();
+  document.getElementById('pre2').textContent='';
+  ir('s-rev');
+}
+function selAlt(i, tipo){
+  altOpts[i]=tipo;
+  document.getElementById('alt-pont-'+i).className='alt-btn'+(tipo==='pontual'?' sel-pont':'');
+  document.getElementById('alt-rec-'+i).className='alt-btn'+(tipo==='receita'?' sel-rec':'');
+  updAltBanner();
+}
+function updAltBanner(){
+  const nAlt=Object.values(altOpts).filter(v=>v==='receita').length;
+  const banner=document.getElementById('alt-banner');
+  if(nAlt>0){ banner.style.display='flex'; document.getElementById('alt-count').textContent=`${nAlt} alteração(ões) irão para aprovação dupla`; }
+  else banner.style.display='none';
+}
+
+function updDotsR(){ for(let i=0;i<4;i++){ const d=document.getElementById('pd-r-'+i); if(d)d.className='pin-d'+(i<pinBufR.length?' f':''); } }
+async function pinR(v){
+  const err=document.getElementById('pre2');
+  if(v==='back'){ pinBufR=pinBufR.slice(0,-1); updDotsR(); return; }
+  if(v==='ok'){
+    if(pinBufR.length<4){ err.textContent='Digite os 4 dígitos'; return; }
+    const pin=pinBufR;
+    showLoading('Validando PIN...');
+    try{
+      const res = await apiPost({action:'validarPin', pin});
+      hideLoading();
+      if(!res.valido){ err.textContent='PIN incorreto. Tente novamente.'; pinBufR=''; updDotsR(); return; }
+      err.textContent=''; pinBufR=''; updDotsR();
+      salvarRepeticao(res.nome);
+    }catch(e){ hideLoading(); err.textContent='Erro: '+e.message; pinBufR=''; updDotsR(); }
+    return;
+  }
+  if(pinBufR.length<4) pinBufR+=v;
+  updDotsR();
+}
+async function salvarRepeticao(aprovador){
+  showLoading('Salvando repetição...');
+  const op=document.getElementById('op-inp')?.value||'—';
+  const oper=document.getElementById('oper-inp')?.value||'—';
+  const dvs=getDvF();
+  const altCnt=Object.values(altOpts).filter(v=>v==='receita').length;
+
+  const desvios=dvs.map(d=>({
+    parametro:d.parametro, valorReceita:d.valorReceita, valorReal:d.valorReal,
+    tipo:'DESVIO', tipoAlteracao: altOpts[d.idx]==='receita'?'ALTERAR_RECEITA':'PONTUAL',
+    justificativa:d.just
+  }));
+  const pends=dvs.filter(d=>altOpts[d.idx]==='receita').map(d=>({
+    parametro:d.parametro, valorAtual:d.valorReceita, valorProposto:d.valorReal, justificativa:d.just
+  }));
+
+  try{
+    await apiPost({action:'salvarRepeticao', idReceita:recIdx, opProducao:op, operador:oper, aprovador, temDesvio:dvs.length>0, desvios, pendencias:pends});
+    if(altCnt>0) await carregarPendencias();
+    const r = receitas.find(x => String(x.ID) === String(recIdx));
+    const idx2 = receitas.findIndex(x => String(x.ID) === String(recIdx));
+    if(idx2>=0) receitas[idx2]._detalhesCarregados=false;
+    hideLoading();
+    document.getElementById('suc-title').textContent='Repetição salva!';
+    document.getElementById('suc-sub').textContent=`OP ${op} · ${dvs.length} desvio(s)`;
+    document.getElementById('suc-box').innerHTML=`
+      <div class="trr"><span class="trl">Operador</span><span class="trv">${oper}</span></div>
+      <div class="trr"><span class="trl">Aprovador</span><span class="trv">${aprovador}</span></div>
+      <div class="trr"><span class="trl">Desvios</span><span class="trv">${dvs.length}</span></div>
+      ${altCnt?`<div class="trr"><span class="trl">Enviado para pendência</span><span class="trv">${altCnt}</span></div>`:''}`;
+    ir('s-suc');
+  }catch(e){ hideLoading(); document.getElementById('pre2').textContent='Erro ao salvar: '+e.message; }
+}
+</script>
+<script>
+// ---------- Histórico ----------
+let histFiltroId = null;
+function montarFiltrosHist(){
+  const fc=document.getElementById('hist-filtros');
+  fc.innerHTML = `<div class="fc fca" onclick="setHistFiltro(null,this)">Todas</div>` +
+    receitas.slice(0,12).map(r=>`<div class="fc" onclick="setHistFiltro(${r.ID},this)">${r.CLIENTE}</div>`).join('');
+  renderHist();
+}
+function setHistFiltro(id, el){
+  histFiltroId=id;
+  document.querySelectorAll('#hist-filtros .fc').forEach(f=>f.classList.remove('fca'));
+  if(el)el.classList.add('fca');
+  renderHist();
+}
+async function atualizarHistorico(){ if(document.getElementById('s-hist').classList.contains('active')) renderHist(); }
+async function renderHist(){
+  const cont=document.getElementById('hist-conteudo');
+  let lista = histFiltroId ? receitas.filter(r=>String(r.ID)===String(histFiltroId)) : receitas.slice(0,8);
+  if(!lista.length){ cont.innerHTML=`<div style="padding:24px 0;text-align:center;font-size:13px;color:var(--text3)">Nenhuma receita</div>`; return; }
+  cont.innerHTML='<div class="loading-wrap"><div class="spinner"></div></div>';
+  let html='';
+  for(const r of lista){
+    let det=r;
+    if(!r._detalhesCarregados){
+      try{
+        det = await apiGet('getReceitaDetalhe',`&id=${r.ID}`);
+        det.versoes=Array.isArray(det.versoes)?det.versoes:[];
+        det.parametros=Array.isArray(det.parametros)?det.parametros:[];
+        det._detalhesCarregados=true;
+        const ix=receitas.findIndex(x=>String(x.ID)===String(r.ID)); if(ix>=0)receitas[ix]=det;
+      }catch(e){ continue; }
+    }
+    const versoes=det.versoes||[];
+    html += `<div class="hist-card">
+      <div class="hist-hdr">
+        <div><div class="hist-v">${det.CLIENTE} — ${fmtCodPAExib(det.COD_PA)}</div><div style="font-size:11px;color:var(--text3);margin-top:2px">${det.MAQUINA||''}</div></div>
+      </div>
+      <div style="padding:10px 14px">
+        ${versoes.length ? versoes.map(v=>{
+          const reps=v.reps||[];
+          return `<div style="margin-bottom:8px">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+              <span class="hist-vb ${(v.ATIVA===true||v.ATIVA==='TRUE')?'hist-vb-a':'hist-vb-o'}">Versão ${v.NUMERO_VERSAO}${(v.ATIVA===true||v.ATIVA==='TRUE')?' · ativa':''}</span>
+              <span style="font-size:11px;color:var(--text3)">${reps.length} repetição(ões)</span>
+            </div>
+            ${reps.map(rep=>`<div class="trr"><span class="trl">OP ${rep.OP_PRODUCAO} · ${rep.OPERADOR}</span><span class="trv">${rep.TEM_DESVIO===true||rep.TEM_DESVIO==='TRUE'?'⚠ desvio':'✓'}</span></div>`).join('')}
+          </div>`;
+        }).join('') : `<div style="font-size:12px;color:var(--text3)">Sem versões registradas</div>`}
+      </div>
+    </div>`;
+  }
+  cont.innerHTML = html || `<div style="padding:24px 0;text-align:center;font-size:13px;color:var(--text3)">Nenhuma receita</div>`;
+}
+
+// ---------- Lock (pendências e painel) ----------
+function irPendLock(){ lockBufs.pend=''; updLockDots('pend'); document.getElementById('plk-pend-err').textContent=''; ir('s-pend-lock'); }
+function irPainelLock(){ lockBufs.painel=''; updLockDots('painel'); document.getElementById('plk-painel-err').textContent=''; ir('s-painel-lock'); }
+function updLockDots(ctx){
+  const pfx = ctx==='pend'?'plkd-pend':'plkd-p-painel';
+  for(let i=0;i<4;i++){ const d=document.getElementById(pfx+'-'+i); if(d)d.className='pin-d'+(i<lockBufs[ctx].length?' f':''); }
+}
+async function ppLock(ctx, v){
+  const err=document.getElementById('plk-'+ctx+'-err');
+  if(v==='back'){ lockBufs[ctx]=lockBufs[ctx].slice(0,-1); updLockDots(ctx); return; }
+  if(v==='ok'){
+    if(lockBufs[ctx].length<4){ err.textContent='Digite os 4 dígitos'; return; }
+    showLoading('Validando...');
+    try{
+      const res=await apiPost({action:'validarPin', pin:lockBufs[ctx]});
+      hideLoading();
+      if(!res.valido){ err.textContent='PIN incorreto.'; lockBufs[ctx]=''; updLockDots(ctx); return; }
+      err.textContent=''; lockBufs[ctx]='';
+      if(ctx==='pend'){ renderPend(); ir('s-pend'); }
+      else { renderPainel(); ir('s-painel'); }
+    }catch(e){ hideLoading(); err.textContent='Erro: '+e.message; lockBufs[ctx]=''; updLockDots(ctx); }
+    return;
+  }
+  if(lockBufs[ctx].length<4) lockBufs[ctx]+=v;
+  updLockDots(ctx);
+}
+
+// ---------- Pendências ----------
+function renderPend(){
+  const cont=document.getElementById('pend-list');
+  if(!pendencias.length){ cont.innerHTML=`<div style="padding:24px 0;text-align:center;font-size:13px;color:var(--text3)">Nenhuma pendência</div>`; return; }
+  cont.innerHTML = pendencias.map(p=>`
+    <div class="pend-card">
+      <div class="pend-hdr">
+        <div class="pend-ic"><i class="ti ti-file-pencil"></i></div>
+        <div class="pend-bd"><div class="pend-title">${p.PARAMETRO}</div><div class="pend-sub">Pendência #${p.ID} · Rep. #${p.ID_REPETICAO}</div></div>
+        <span class="pend-badge">Pendente</span>
+      </div>
+      <div class="pend-body">
+        <div class="pend-row"><div class="pend-lbl">Valor atual (receita)</div><div class="pend-vals"><div class="pend-de">${p.VALOR_ATUAL||'—'}</div></div></div>
+        <div class="pend-row"><div class="pend-lbl">Valor proposto</div><div class="pend-vals"><div class="pend-para">${p.VALOR_PROPOSTO||'—'}</div></div></div>
+        <div class="pend-row"><div class="pend-lbl">Justificativa</div><div class="pend-just">${p.JUSTIFICATIVA||'—'}</div></div>
+        <div class="pend-row"><div class="pend-lbl">Solicitante</div><div class="pend-vals"><div class="pend-de">${p.SOLICITANTE||'—'}</div></div></div>
+      </div>
+      <div class="pend-footer">
+        <div class="pend-meta">Requer 2ª aprovação</div>
+        <button class="pend-apr" onclick="abrirPinPend(${p.ID})">Aprovar com PIN</button>
+      </div>
+      <div class="pend-pin-wrap" id="ppw-${p.ID}">
+        <div class="pin-w">
+          <div class="pin-s">Digite seu PIN para aprovar (deve ser diferente do 1º aprovador)</div>
+          <div class="pin-ds"><div class="pin-d" id="ppd-${p.ID}-0"></div><div class="pin-d" id="ppd-${p.ID}-1"></div><div class="pin-d" id="ppd-${p.ID}-2"></div><div class="pin-d" id="ppd-${p.ID}-3"></div></div>
+          <div class="pin-g">
+            ${[1,2,3,4,5,6,7,8,9].map(n=>`<button class="pib" onclick="pinPend(${p.ID},'${n}')">${n}</button>`).join('')}
+            <button class="pib" onclick="pinPend(${p.ID},'back')"><i class="ti ti-backspace"></i></button>
+            <button class="pib" onclick="pinPend(${p.ID},'0')">0</button>
+            <button class="pib" onclick="pinPend(${p.ID},'ok')" style="background:var(--blue);color:#fff;border-color:var(--blue)"><i class="ti ti-check"></i></button>
+          </div>
+          <div class="pie" id="ppe-${p.ID}"></div>
+        </div>
+      </div>
+    </div>`).join('');
+}
+function abrirPinPend(id){
+  const w=document.getElementById('ppw-'+id);
+  document.querySelectorAll('.pend-pin-wrap').forEach(x=>{ if(x!==w)x.classList.remove('open'); });
+  w.classList.toggle('open');
+  pendPinBufs[id]='';
+  updPendDots(id);
+}
+function updPendDots(id){
+  const buf=pendPinBufs[id]||'';
+  for(let i=0;i<4;i++){ const d=document.getElementById(`ppd-${id}-${i}`); if(d)d.className='pin-d'+(i<buf.length?' f':''); }
+}
+async function pinPend(id, v){
+  const err=document.getElementById('ppe-'+id);
+  if(!pendPinBufs[id]) pendPinBufs[id]='';
+  if(v==='back'){ pendPinBufs[id]=pendPinBufs[id].slice(0,-1); updPendDots(id); return; }
+  if(v==='ok'){
+    if(pendPinBufs[id].length<4){ err.textContent='Digite os 4 dígitos'; return; }
+    const pend=pendencias.find(p=>String(p.ID)===String(id));
+    showLoading('Validando PIN...');
+    try{
+      const res=await apiPost({action:'validarPin', pin:pendPinBufs[id]});
+      if(!res.valido){ hideLoading(); err.textContent='PIN incorreto.'; pendPinBufs[id]=''; updPendDots(id); return; }
+      if(pend && res.nome===pend.SOLICITANTE){ hideLoading(); err.textContent='Deve ser diferente do 1º aprovador.'; pendPinBufs[id]=''; updPendDots(id); return; }
+      showLoading('Aprovando...');
+      await apiPost({action:'aprovarPendencia', idPendencia:id, aprovador2:res.nome, idReceita:pend?pend.ID_RECEITA:null});
+      hideLoading();
+      pendencias = pendencias.filter(p=>String(p.ID)!==String(id));
+      const rec = receitas.find(r=>String(r.ID)===String(pend?.ID_RECEITA));
+      if(rec) rec._detalhesCarregados=false;
+      carregarPendencias();
+      renderPend();
+    }catch(e){ hideLoading(); err.textContent='Erro: '+e.message; pendPinBufs[id]=''; updPendDots(id); }
+    return;
+  }
+  if(pendPinBufs[id].length<4) pendPinBufs[id]+=v;
+  updPendDots(id);
+}
+
+// ---------- Painel ----------
+async function renderPainel(){
+  const total=receitas.length;
+  document.getElementById('painel-met').innerHTML = `
+    <div class="mt"><div class="ml">Receitas ativas</div><div class="mv">${total}</div></div>
+    <div class="mt"><div class="ml">Pendências</div><div class="mv">${pendencias.length}</div></div>`;
+  document.getElementById('painel-lista').innerHTML = receitas.slice(0,8).map(r=>`
+    <div class="li" onclick="setTab('tab-r');abrirRec(${r.ID})">
+      <div class="lic"><i class="ti ti-refresh"></i></div>
+      <div class="lb"><div class="lt">${r.CLIENTE} — ${fmtCodPAExib(r.COD_PA)}</div><div class="ls">${r.MAQUINA||''}</div></div>
+    </div>`).join('');
+}
+
+// ---------- Init ----------
+initApp();
+</script>
+</body>
+</html>
