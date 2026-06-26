@@ -1836,10 +1836,12 @@ function atualizarComplementos(){
   const c=document.getElementById('camisa-rows');if(c)c.innerHTML=rowHtml('camisa');
   const r=document.getElementById('rolo-rows');if(r)r.innerHTML=rowHtml('rolo');
   const fa=document.getElementById('faca-rows');if(fa)fa.innerHTML=rowHtml('faca');
-  // Estufas: sempre 9 fixas, independente das tintas
+  // Estufas: sempre 9 fixas, independente das tintas — mostra o nome da cor quando houver
   const estufaHtml=[1,2,3,4,5,6,7,8,9].map((n,i)=>{
     const isLast=n===9;
-    return `<div style="display:flex;align-items:center;gap:8px;padding:7px 0;${isLast?'':'border-bottom:0.5px solid var(--border)'}"><div class="nc">${n}</div><div style="flex:1;font-size:12px;color:var(--text2)">Estufa ${n}</div><input id="estufa-${n}" type="text" inputmode="numeric" style="width:80px;font-size:12px;padding:6px 9px;text-align:center;border:0.5px solid var(--border2);border-radius:var(--rad);background:var(--card);color:var(--text);outline:none;font-family:var(--font-sans)"></div>`;
+    const tinta=tg.find(t=>t.n===n);
+    const label=tinta?tinta.nome:'Sem tinta';
+    return `<div style="display:flex;align-items:center;gap:8px;padding:7px 0;${isLast?'':'border-bottom:0.5px solid var(--border)'}"><div class="nc">${n}</div><div style="flex:1;font-size:12px;color:${tinta?'var(--text)':'var(--text3)'}">${label}</div><input id="estufa-${n}" type="text" inputmode="numeric" style="width:80px;font-size:12px;padding:6px 9px;text-align:center;border:0.5px solid var(--border2);border-radius:var(--rad);background:var(--card);color:var(--text);outline:none;font-family:var(--font-sans)"></div>`;
   }).join('');
   const e=document.getElementById('estufa-rows');if(e)e.innerHTML=estufaHtml;
 }
