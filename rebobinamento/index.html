@@ -38,6 +38,7 @@ body{font-family:'SF Pro Display',-apple-system,BlinkMacSystemFont,'Segoe UI',sa
 .card{background:var(--card);border:0.5px solid var(--border);border-radius:var(--rad-lg);padding:14px;margin-bottom:10px}
 .sl{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);margin-bottom:10px}
 .bb{display:flex;align-items:center;gap:6px;background:transparent;border:none;cursor:pointer;color:var(--blue);font-size:13px;padding:0;margin-bottom:12px;font-family:var(--font-sans)}
+.bs{width:100%;background:transparent;color:var(--text2);border:0.5px solid var(--border2);border-radius:var(--rad);padding:12px;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;font-family:var(--font-sans)}
 .bp{width:100%;background:var(--blue);color:#fff;border:none;border-radius:var(--rad);padding:14px;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:8px;font-family:var(--font-sans)}
 .bp:disabled{opacity:.4;pointer-events:none}
 .nr{display:flex;gap:8px;margin-top:4px;margin-bottom:16px}
@@ -276,25 +277,30 @@ textarea{resize:none;line-height:1.5;width:100%}
 
       <div id="ns3" style="display:none">
         <div class="card" id="rvw"></div>
-        <div class="card">
-          <div class="pin-w">
-            <div class="pin-t">Aprovação</div>
-            <div class="pin-s">Digite o PIN do supervisor para aprovar e salvar a receita</div>
-            <div class="pin-cx"><div class="pcl">Receita</div><div class="pcv" id="pnc">—</div></div>
-            <div class="pin-ds"><div class="pin-d" id="pd-n-0"></div><div class="pin-d" id="pd-n-1"></div><div class="pin-d" id="pd-n-2"></div><div class="pin-d" id="pd-n-3"></div></div>
-            <div class="pin-g">
-              <button class="pib" onclick="pinN('1')">1</button><button class="pib" onclick="pinN('2')">2</button><button class="pib" onclick="pinN('3')">3</button>
-              <button class="pib" onclick="pinN('4')">4</button><button class="pib" onclick="pinN('5')">5</button><button class="pib" onclick="pinN('6')">6</button>
-              <button class="pib" onclick="pinN('7')">7</button><button class="pib" onclick="pinN('8')">8</button><button class="pib" onclick="pinN('9')">9</button>
-              <button class="pib" onclick="pinN('back')" style="font-size:16px"><i class="ti ti-backspace"></i></button>
-              <button class="pib" onclick="pinN('0')">0</button>
-              <button class="pib" onclick="pinN('ok')" style="background:var(--blue);color:#fff;border-color:var(--blue)"><i class="ti ti-check"></i></button>
-            </div>
-            <div class="pie" id="pne"></div>
-          </div>
-        </div>
-        <div class="nr"><button class="bnp" onclick="nStep(2)"><i class="ti ti-arrow-left"></i> Editar</button></div>
+        <button class="bp" onclick="ir('s-pin-n')"><i class="ti ti-lock"></i> Salvar com aprovação por PIN</button>
+        <div class="nr" style="margin-top:0"><button class="bnp" onclick="nStep(2)"><i class="ti ti-arrow-left"></i> Editar</button></div>
       </div>
+    </div>
+
+    <!-- PIN NOVA -->
+    <div id="s-pin-n" class="sc">
+      <div class="card"><div class="pin-w">
+        <div class="pin-t">Aprovação do supervisor</div>
+        <div class="pin-s">Digite o PIN do supervisor para aprovar e salvar a receita</div>
+        <div class="pin-cx"><div class="pcl">Receita</div><div class="pcv" id="pnc">—</div></div>
+        <div class="pin-ds"><div class="pin-d" id="pd-n-0"></div><div class="pin-d" id="pd-n-1"></div><div class="pin-d" id="pd-n-2"></div><div class="pin-d" id="pd-n-3"></div></div>
+        <div class="pin-g">
+          <button class="pib" onclick="pinN('1')">1</button><button class="pib" onclick="pinN('2')">2</button><button class="pib" onclick="pinN('3')">3</button>
+          <button class="pib" onclick="pinN('4')">4</button><button class="pib" onclick="pinN('5')">5</button><button class="pib" onclick="pinN('6')">6</button>
+          <button class="pib" onclick="pinN('7')">7</button><button class="pib" onclick="pinN('8')">8</button><button class="pib" onclick="pinN('9')">9</button>
+          <button class="pib" onclick="pinN('back')" style="font-size:16px"><i class="ti ti-backspace"></i></button>
+          <button class="pib" onclick="pinN('0')">0</button>
+          <button class="pib" onclick="pinN('ok')" style="background:var(--blue);color:#fff;border-color:var(--blue)"><i class="ti ti-check"></i></button>
+        </div>
+        <div class="pie" id="pne"></div>
+      </div></div>
+      <button class="bs" onclick="nStep(3);ir('s-nova')"><i class="ti ti-arrow-left"></i> Voltar à revisão</button>
+      <div style="height:16px"></div>
     </div>
 
     <!-- REGISTRO DE REPETIÇÃO -->
