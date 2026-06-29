@@ -537,6 +537,11 @@ function fmtCodPAExib(cod){
   if(v.length>=10) return v.slice(0,3)+'.'+v.slice(3,6)+'.'+v.slice(6);
   return cod||'—';
 }
+function fmtDataHora(s){
+  if(!s) return '—';
+  const m = String(s).match(/(\d{2})\/(\d{2})\/\d{4},?\s*(\d{2}):(\d{2})/);
+  return m ? `${m[1]}/${m[2]} às ${m[3]}:${m[4]}` : String(s);
+}
 function showLoading(msg){ document.getElementById('overlay-msg').textContent=msg||'Carregando...'; document.getElementById('overlay-loading').classList.add('active'); }
 function hideLoading(){ document.getElementById('overlay-loading').classList.remove('active'); }
 
@@ -1084,37 +1089,45 @@ function renderH(q, filtro){
   if(filtro==='desvio') dados = dados.map(r=>({...r, versoes:(r.versoes||[]).map(v=>({...v, reps:(v.reps||[]).filter(rep=>rep.TEM_DESVIO===true||rep.TEM_DESVIO==='TRUE')})).filter(v=>v.reps.length>0)})).filter(r=>(r.versoes||[]).length>0);
   const wrap=document.getElementById('hres');
   if(!dados.length){ wrap.innerHTML=`<div class="card" style="text-align:center;font-size:13px;color:var(--text3);padding:20px">Nenhum resultado encontrado</div>`; return; }
-  wrap.innerHTML = dados.map(r=>`
-    <div style="margin-bottom:14px">
-      <div style="background:var(--blue-light);border:0.5px solid var(--border);border-radius:var(--rad-lg) var(--rad-lg) 0 0;padding:10px 14px;display:flex;justify-content:space-between;align-items:center">
-        <div><div style="font-size:13px;font-weight:700;color:var(--blue)">${r.CLIENTE} — ${fmtCodPAExib(r.COD_PA)}</div><div style="font-size:11px;color:var(--blue);opacity:.7;margin-top:2px">${r.MAQUINA}</div></div>
-        <span style="font-size:11px;color:var(--blue);font-weight:600">${(r.versoes||[]).reduce((s,v)=>s+(v.reps||[]).length,0)} rep.</span>
-      </div>
-      ${(r.versoes||[]).map((v,vi)=>{
-        const ativa = v.ATIVA===true||v.ATIVA==='TRUE';
-        const porAlteracao = v.ORIGEM==='ALTERACAO_APROVADA';
-        return `
+  wrap.innerHTML = dados.map(r=>{
+    const versoesDesc = (r.versoes||[]).slice().reverse();
+    return `
+    <div class="card" style="padding:14px 16px 4px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px">
         <div>
-          <div class="ver-hdr-block ${ativa?'vigente':'obsoleta'}" style="${vi===0?'':'border-radius:0'}">
-            <div class="ver-hdr-lbl"><i class="ti ti-${ativa?'check-circle':'history'}"></i>v${v.NUMERO_VERSAO} · ${ativa?'Receita vigente':'Receita anterior'}${porAlteracao?' <span style="font-size:9px;background:rgba(255,255,255,0.25);padding:1px 6px;border-radius:20px;margin-left:4px;font-weight:700">ALTERAÇÃO APROVADA</span>':''}</div>
-            <div class="ver-hdr-right">
-              <span class="ver-hdr-date">${v.DATA_CRIACAO||'—'}</span>
-              <span class="ver-aprov">Aprov. 1: ${v.APROVADOR_1||'—'}${v.APROVADOR_2?' · Aprov. 2: '+v.APROVADOR_2:''}</span>
-            </div>
-          </div>
-          <div class="ver-body-block" style="${vi<(r.versoes||[]).length-1?'border-radius:0':''}">
-            ${(v.reps||[]).length===0?`<div style="padding:10px 14px;font-size:12px;color:var(--text3);background:var(--${ativa?'card':'bg'})">Nenhuma repetição.</div>`:(v.reps||[]).map(rep=>`
-              <div class="rep-item-hist ${ativa?'vigente':'obsoleta'}">
-                <div style="flex:1">
-                  <div class="rep-num-h">OP ${rep.OP_PRODUCAO||'—'}</div>
-                  <div class="rep-meta-h">${rep.OPERADOR||'—'} · ${rep.DATA_HORA||'—'} · Aprov: ${rep.APROVADOR||'—'}</div>
-                </div>
-                <span class="rep-pill-h ${rep.TEM_DESVIO===true||rep.TEM_DESVIO==='TRUE'?'pill-dv':'pill-ok'}">${rep.TEM_DESVIO===true||rep.TEM_DESVIO==='TRUE'?'Com desvio':'Sem desvio'}</span>
-              </div>`).join('')}
-          </div>
-        </div>`;
-      }).join('')}
-    </div>`).join('');
+          <div style="font-size:14px;font-weight:700;color:var(--text)">${r.CLIENTE} — ${fmtCodPAExib(r.COD_PA)}</div>
+          <div style="font-size:12px;color:var(--text2);margin-top:3px;line-height:1.4">${r.SERVICO||'—'}</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:2px">${r.MAQUINA||'—'}</div>
+        </div>
+        <span style="font-size:11px;font-weight:600;color:var(--blue);background:var(--blue-light);padding:3px 10px;border-radius:20px;white-space:nowrap">${(r.versoes||[]).reduce((s,v)=>s+(v.reps||[]).length,0)} rep.</span>
+      </div>
+      <div style="position:relative;padding-left:20px;padding-bottom:8px">
+        <div style="position:absolute;left:4px;top:6px;bottom:6px;width:2px;background:var(--border2)"></div>
+        ${versoesDesc.map(v=>{
+          const ativa = v.ATIVA===true||v.ATIVA==='TRUE';
+          const porAlteracao = v.ORIGEM==='ALTERACAO_APROVADA';
+          const repsDesc = (v.reps||[]).slice().reverse();
+          return `
+          <div style="position:relative;margin-bottom:16px">
+            <div style="position:absolute;left:-20px;top:2px;width:11px;height:11px;border-radius:50%;background:${ativa?'#993C1D':'var(--text3)'};border:2px solid var(--card)"></div>
+            <div style="font-size:13px;font-weight:600;color:${ativa?'var(--text)':'var(--text2)'}">v${v.NUMERO_VERSAO} · ${ativa?'receita vigente':'receita anterior'}</div>
+            ${porAlteracao?'<span style="display:inline-block;margin-top:4px;font-size:10px;font-weight:600;color:var(--blue);background:var(--blue-light);padding:2px 8px;border-radius:20px">alteração aprovada</span>':''}
+            <div style="font-size:11px;color:var(--text3);margin-top:5px">${fmtDataHora(v.DATA_CRIACAO)} · aprov. 1: ${v.APROVADOR_1||'—'}${v.APROVADOR_2?' · aprov. 2: '+v.APROVADOR_2:''}</div>
+            ${repsDesc.length===0?`<div style="font-size:12px;color:var(--text3);margin-top:8px;padding:8px 10px;background:var(--bg);border-radius:8px">Nenhuma repetição registrada nesta versão.</div>`:repsDesc.map(rep=>{
+              const dv = rep.TEM_DESVIO===true||rep.TEM_DESVIO==='TRUE';
+              return `
+              <div style="position:relative;margin-top:12px;${dv?'border-left:2px solid var(--red-mid);padding-left:10px;margin-left:-10px':''}">
+                <div style="position:absolute;left:${dv?'-19px':'-17px'};top:3px;width:6px;height:6px;border-radius:50%;background:var(--text3)"></div>
+                <div style="font-size:12px;font-weight:600;color:var(--text2)">OP ${rep.OP_PRODUCAO||'—'} · ${rep.OPERADOR||'—'}</div>
+                <div style="font-size:11px;color:var(--text3);margin-top:2px">${fmtDataHora(rep.DATA_HORA)} · aprov: ${rep.APROVADOR||'—'}</div>
+                ${dv?'<span style="display:inline-block;margin-top:4px;font-size:10px;font-weight:600;color:var(--red);background:var(--red-light);padding:2px 8px;border-radius:20px">com desvio</span>':''}
+              </div>`;
+            }).join('')}
+          </div>`;
+        }).join('')}
+      </div>
+    </div>`;
+  }).join('');
 }
 
 // ---------- Lock (pendências e painel) ----------
@@ -1149,34 +1162,49 @@ function renderPend(){
   if(pendencias.length===0){ document.getElementById('pend-list').innerHTML='<div style="padding:24px 0;text-align:center;font-size:13px;color:var(--text3)">Nenhuma pendência no momento.</div>'; return; }
   document.getElementById('pend-list').innerHTML = pendencias.map(p=>`
     <div class="pend-card" id="pc-${p.ID}">
-      <div class="pend-hdr"><div class="pend-ic"><i class="ti ti-file-pencil"></i></div><div class="pend-bd"><div class="pend-title">${p.CLIENTE||'—'} — ${fmtCodPAExib(p.COD_PA)}</div><div class="pend-sub">${p.MAQUINA||'—'} · OP <b>${p.OP_PRODUCAO||'—'}</b></div></div><span class="pend-badge">pendente</span></div>
-      <div class="pend-body"><div class="pend-row"><div class="pend-lbl">${p.PARAMETRO}</div><div class="pend-vals"><span class="pend-de">De: ${p.VALOR_ATUAL}</span><span class="pend-para">Para: ${p.VALOR_PROPOSTO}</span><div class="pend-just">${p.JUSTIFICATIVA}</div></div></div></div>
-      <div class="pend-footer"><div class="pend-meta">Solicitante: <b>${p.SOLICITANTE}</b></div><div class="pend-actions"><button class="pend-rej" onclick="rejPend('${p.ID}')">Rejeitar</button><button class="pend-apr" onclick="abrirPendPin('${p.ID}')">Aprovar</button></div></div>
+      <div class="pend-hdr"><div class="pend-ic"><i class="ti ti-file-pencil"></i></div><div class="pend-bd"><div class="pend-title">${p.CLIENTE||'—'} — ${fmtCodPAExib(p.COD_PA)}</div><div class="pend-sub">${p.SERVICO||'—'}</div><div class="pend-sub" style="margin-top:2px">${p.MAQUINA||'—'} · OP <b>${p.OP_PRODUCAO||'—'}</b></div></div><span class="pend-badge">pendente</span></div>
+      <div class="pend-body">
+        <div class="pend-row"><div class="pend-lbl">Solicitado por</div><div class="pend-vals"><span style="font-size:13px;font-weight:600;color:var(--text)">${p.SOLICITANTE||'—'}</span><span style="font-size:11px;color:var(--text3)">${fmtDataHora(p.DATA_SOLICITACAO)}</span></div></div>
+        <div class="pend-row"><div class="pend-lbl">${p.PARAMETRO}</div><div class="pend-vals"><span class="pend-de">De: ${p.VALOR_ATUAL}</span><span class="pend-para">Para: ${p.VALOR_PROPOSTO}</span><div class="pend-just">${p.JUSTIFICATIVA}</div></div></div>
+      </div>
+      <div class="pend-footer"><div class="pend-meta">Requer 2ª aprovação</div><div class="pend-actions"><button class="pend-rej" onclick="abrirRejPin('${p.ID}')">Rejeitar</button><button class="pend-apr" onclick="abrirPendPin('${p.ID}')">Aprovar</button></div></div>
       <div class="pend-pin-wrap" id="ppw-${p.ID}">
-        <div style="font-size:12px;color:var(--text2);margin-bottom:8px;line-height:1.5">Digite seu PIN. Aprovador não pode ser <b>${p.SOLICITANTE}</b>.</div>
+        <div style="font-size:12px;color:var(--text2);margin-bottom:8px;line-height:1.5" id="pptxt-${p.ID}">Digite seu PIN. Aprovador não pode ser <b>${p.SOLICITANTE}</b>.</div>
         <div style="display:flex;gap:8px;margin-bottom:10px"><div class="pin-d" id="ppd-${p.ID}-0"></div><div class="pin-d" id="ppd-${p.ID}-1"></div><div class="pin-d" id="ppd-${p.ID}-2"></div><div class="pin-d" id="ppd-${p.ID}-3"></div></div>
         <div class="pin-g" style="gap:6px">
           ${[1,2,3,4,5,6,7,8,9].map(n=>`<button class="pib" onclick="pinPend('${p.ID}','${n}')">${n}</button>`).join('')}
           <button class="pib" onclick="pinPend('${p.ID}','back')"><i class="ti ti-backspace"></i></button>
           <button class="pib" onclick="pinPend('${p.ID}','0')">0</button>
-          <button class="pib" style="background:var(--blue-light);color:var(--blue)" onclick="pinPend('${p.ID}','ok')"><i class="ti ti-check"></i></button>
+          <button class="pib" id="ppok-${p.ID}" style="background:var(--blue-light);color:var(--blue)" onclick="pinPend('${p.ID}','ok')"><i class="ti ti-check"></i></button>
         </div>
         <div class="pie" id="ppe-${p.ID}"></div>
       </div>
     </div>`).join('');
 }
+let pendActionMode = {};
 function abrirPendPin(id){
+  pendActionMode[id]='aprovar';
   if(!pendPinBufs[id])pendPinBufs[id]='';
   document.querySelectorAll('.pend-pin-wrap').forEach(p=>p.classList.remove('open'));
   document.getElementById('ppw-'+id)?.classList.add('open');
+  const pend=pendencias.find(p=>String(p.ID)===String(id));
+  document.getElementById('pptxt-'+id).innerHTML=`Digite seu PIN para <b>aprovar</b>. Não pode ser <b>${pend?.SOLICITANTE||'—'}</b>.`;
+  const ok=document.getElementById('ppok-'+id); if(ok){ ok.style.background='var(--blue-light)'; ok.style.color='var(--blue)'; }
+  pendPinBufs[id]='';
   updPendDots(id);
 }
-function rejPend(id){
-  pendencias = pendencias.filter(p=>String(p.ID)!==String(id));
-  const cntEl=document.getElementById('pend-rej-cnt'); if(cntEl) cntEl.textContent = (parseInt(cntEl.textContent)||0)+1;
-  uPendBadge();
-  renderPend();
+function abrirRejPin(id){
+  pendActionMode[id]='rejeitar';
+  if(!pendPinBufs[id])pendPinBufs[id]='';
+  document.querySelectorAll('.pend-pin-wrap').forEach(p=>p.classList.remove('open'));
+  document.getElementById('ppw-'+id)?.classList.add('open');
+  const pend=pendencias.find(p=>String(p.ID)===String(id));
+  document.getElementById('pptxt-'+id).innerHTML=`Digite seu PIN para <b>rejeitar</b> esta solicitação de <b>${pend?.SOLICITANTE||'—'}</b>.`;
+  const ok=document.getElementById('ppok-'+id); if(ok){ ok.style.background='var(--red-light)'; ok.style.color='var(--red)'; }
+  pendPinBufs[id]='';
+  updPendDots(id);
 }
+
 function updPendDots(id){
   const buf=pendPinBufs[id]||'';
   for(let i=0;i<4;i++){ const d=document.getElementById(`ppd-${id}-${i}`); if(d)d.className='pin-d'+(i<buf.length?' f':''); }
@@ -1188,18 +1216,24 @@ async function pinPend(id, v){
   if(v==='ok'){
     if(pendPinBufs[id].length<4){ err.textContent='Digite os 4 dígitos'; return; }
     const pend=pendencias.find(p=>String(p.ID)===String(id));
+    const modo=pendActionMode[id]||'aprovar';
     showLoading('Validando PIN...');
     try{
       const res=await apiPost({action:'validarPin', pin:pendPinBufs[id]});
       if(!res.valido){ hideLoading(); err.textContent='PIN incorreto.'; pendPinBufs[id]=''; updPendDots(id); return; }
-      if(pend && res.nome===pend.SOLICITANTE){ hideLoading(); err.textContent='Deve ser diferente do 1º aprovador.'; pendPinBufs[id]=''; updPendDots(id); return; }
-      showLoading('Aprovando...');
-      await apiPost({action:'aprovarPendencia', idPendencia:id, aprovador2:res.nome});
+      if(pend && res.nome===pend.SOLICITANTE){ hideLoading(); err.textContent='Deve ser diferente de quem solicitou.'; pendPinBufs[id]=''; updPendDots(id); return; }
+      if(modo==='aprovar'){
+        showLoading('Aprovando...');
+        await apiPost({action:'aprovarPendencia', idPendencia:id, aprovador2:res.nome});
+        const rec = receitas.find(r=>String(r.ID)===String(pend?.ID_RECEITA));
+        if(rec) rec._detalhesCarregados=false;
+        receitasCompletasCarregadas=false;
+      } else {
+        showLoading('Rejeitando...');
+        await apiPost({action:'rejeitarPendencia', idPendencia:id, rejeitadoPor:res.nome});
+      }
       hideLoading();
       pendencias = pendencias.filter(p=>String(p.ID)!==String(id));
-      const rec = receitas.find(r=>String(r.ID)===String(pend?.ID_RECEITA));
-      if(rec) rec._detalhesCarregados=false;
-      receitasCompletasCarregadas=false;
       carregarPendencias();
       renderPend();
     }catch(e){ hideLoading(); err.textContent='Erro: '+e.message; pendPinBufs[id]=''; updPendDots(id); }
