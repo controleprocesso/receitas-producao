@@ -335,24 +335,35 @@ textarea{resize:none;line-height:1.5;width:100%}
       <div id="rev-dv-banner" style="display:none" class="rev-dv-banner"><i class="ti ti-alert-triangle" style="font-size:18px;color:var(--red)"></i><div><div style="font-size:13px;font-weight:600;color:var(--red)">Desvios identificados</div><div style="font-size:11px;color:var(--red);margin-top:2px" id="rev-dv-count"></div></div></div>
       <div id="alt-banner" style="display:none" class="alt-banner"><i class="ti ti-file-pencil" style="font-size:18px;color:var(--blue)"></i><div><div style="font-size:13px;font-weight:600;color:var(--blue)">Alteração na receita solicitada</div><div style="font-size:11px;color:var(--blue);margin-top:2px" id="alt-count"></div></div></div>
       <div class="card"><div class="sl">Revisão dos parâmetros</div><div id="rev-params"></div></div>
-      <div class="card">
-        <div class="pin-w">
-          <div class="pin-t">Aprovação do supervisor</div>
-          <div class="pin-s">Registre sua aprovação com PIN</div>
-          <div class="pin-cx"><div class="pcl">Receita</div><div class="pcv" id="rpctx">—</div></div>
-          <div class="pin-ds"><div class="pin-d" id="pd-r-0"></div><div class="pin-d" id="pd-r-1"></div><div class="pin-d" id="pd-r-2"></div><div class="pin-d" id="pd-r-3"></div></div>
-          <div class="pin-g">
-            <button class="pib" onclick="pinR('1')">1</button><button class="pib" onclick="pinR('2')">2</button><button class="pib" onclick="pinR('3')">3</button>
-            <button class="pib" onclick="pinR('4')">4</button><button class="pib" onclick="pinR('5')">5</button><button class="pib" onclick="pinR('6')">6</button>
-            <button class="pib" onclick="pinR('7')">7</button><button class="pib" onclick="pinR('8')">8</button><button class="pib" onclick="pinR('9')">9</button>
-            <button class="pib" onclick="pinR('back')" style="font-size:16px"><i class="ti ti-backspace"></i></button>
-            <button class="pib" onclick="pinR('0')">0</button>
-            <button class="pib" onclick="pinR('ok')" style="background:var(--blue);color:#fff;border-color:var(--blue)"><i class="ti ti-check"></i></button>
-          </div>
-          <div class="pie" id="pre2"></div>
-        </div>
+      <div class="nr">
+        <button class="bnp" onclick="ir('s-rep')"><i class="ti ti-arrow-left"></i> Editar</button>
+        <button class="bnn" id="btn-pin-r" onclick="irPinR()" disabled><i class="ti ti-lock"></i> Aprovar com PIN</button>
       </div>
-      <div class="nr"><button class="bnp" onclick="ir('s-rep')"><i class="ti ti-arrow-left"></i> Editar</button></div>
+    </div>
+
+    <!-- PIN REPETIÇÃO -->
+    <div id="s-pin-r" class="sc">
+      <div class="card"><div class="pin-w">
+        <div class="pin-t">Aprovação do supervisor</div>
+        <div class="pin-s" id="rps">Supervisor, revise e aprove com PIN.</div>
+        <div class="pin-cx">
+          <div class="pcl">Repetição sendo aprovada</div>
+          <div class="pcv" id="rpctx">—</div>
+          <div id="rpd" style="margin-top:6px;display:flex;flex-wrap:wrap;gap:4px"></div>
+        </div>
+        <div class="pin-ds"><div class="pin-d" id="pd-r-0"></div><div class="pin-d" id="pd-r-1"></div><div class="pin-d" id="pd-r-2"></div><div class="pin-d" id="pd-r-3"></div></div>
+        <div class="pin-g">
+          <button class="pib" onclick="pinR('1')">1</button><button class="pib" onclick="pinR('2')">2</button><button class="pib" onclick="pinR('3')">3</button>
+          <button class="pib" onclick="pinR('4')">4</button><button class="pib" onclick="pinR('5')">5</button><button class="pib" onclick="pinR('6')">6</button>
+          <button class="pib" onclick="pinR('7')">7</button><button class="pib" onclick="pinR('8')">8</button><button class="pib" onclick="pinR('9')">9</button>
+          <button class="pib" onclick="pinR('back')" style="font-size:16px"><i class="ti ti-backspace"></i></button>
+          <button class="pib" onclick="pinR('0')">0</button>
+          <button class="pib" onclick="pinR('ok')" style="background:var(--blue);color:#fff;border-color:var(--blue)"><i class="ti ti-check"></i></button>
+        </div>
+        <div class="pie" id="pre2"></div>
+      </div></div>
+      <button class="bs" onclick="ir('s-rev')"><i class="ti ti-arrow-left"></i> Voltar à revisão</button>
+      <div style="height:16px"></div>
     </div>
 
     <!-- SUCESSO -->
@@ -838,7 +849,7 @@ function irRep(){
     const inp = isSel
       ? `<select class="param-sel" id="rpar-${i}" onchange="chkP(${i},'${ref.replace(/'/g,"\\'")}')"><option value="">—</option><option>Faca</option><option>Lâmina</option></select>`
       : `<input class="param-inp" id="rpar-${i}" type="text" inputmode="decimal" oninput="chkP(${i},'${ref.replace(/'/g,"\\'")}')">`;
-    return `<div class="param-row"><div class="param-top"><div class="param-lbl">${p.CAMPO}<div style="font-size:10px;color:var(--text3);margin-top:2px">Receita: ${ref||'—'}</div></div>${inp}</div><div id="jprow-${i}" style="display:none" class="just-inp"><label><i class="ti ti-alert-triangle" style="font-size:11px;vertical-align:-1px"></i> Fora do especificado — justifique</label><textarea id="jparam-${i}" rows="2" placeholder="Justifique..."></textarea></div></div>`;
+    return `<div class="param-row"><div class="param-top"><div class="param-lbl">${p.CAMPO}</div>${inp}</div><div id="jprow-${i}" style="display:none" class="just-inp"><label><i class="ti ti-alert-triangle" style="font-size:11px;vertical-align:-1px"></i> Fora do especificado — justifique</label><textarea id="jparam-${i}" rows="2" placeholder="Justifique..."></textarea></div></div>`;
   }).join('');
   uPrg();
   ir('s-rep');
@@ -850,6 +861,9 @@ function uPrg(){
   params.forEach((p,i)=>{ if(document.getElementById('rpar-'+i)?.value.trim()!=='') f++; });
   uBtn();
 }
+document.addEventListener('input', e => {
+  if (e.target.id && e.target.id.startsWith('jparam-')) uBtn();
+});
 function uBtn(){
   const r = receitas.find(x => String(x.ID) === String(recIdx));
   const params = r?(r.parametros||[]):[];
@@ -934,15 +948,32 @@ function irRevisar(){
 
   dvs.forEach(d=>{ altOpts[d.idx]='pontual'; });
   updAltBanner();
+  uRevPinBtn();
+  ir('s-rev');
+}
+function uRevPinBtn(){
+  const dvs=getDvF();
+  const allSet=dvs.length===0||dvs.every(d=>altOpts[d.idx]);
+  document.getElementById('btn-pin-r').disabled=!allSet;
+}
+function irPinR(){
   pinBufR=''; updDotsR();
   document.getElementById('pre2').textContent='';
-  ir('s-rev');
+  const dvs=getDvF();
+  const altCnt=Object.values(altOpts).filter(v=>v==='receita').length;
+  const di=document.getElementById('rpd'); di.innerHTML='';
+  if(dvs.length-altCnt>0) di.innerHTML+=`<span style="display:inline-flex;align-items:center;gap:4px;font-size:11px;background:var(--amber-light);color:var(--amber);padding:2px 8px;border-radius:20px;font-weight:600"><i class="ti ti-alert-triangle" style="font-size:10px"></i> ${dvs.length-altCnt} pontual(is)</span> `;
+  if(altCnt>0) di.innerHTML+=`<span style="display:inline-flex;align-items:center;gap:4px;font-size:11px;background:var(--blue-light);color:var(--blue);padding:2px 8px;border-radius:20px;font-weight:600"><i class="ti ti-clock" style="font-size:10px"></i> ${altCnt} para pendência</span>`;
+  const r = receitas.find(x => String(x.ID) === String(recIdx));
+  document.getElementById('rpctx').textContent = r ? `${r.CLIENTE} — ${fmtCodPAExib(r.COD_PA)}` : '—';
+  ir('s-pin-r');
 }
 function selAlt(i, tipo){
   altOpts[i]=tipo;
   document.getElementById('alt-pont-'+i).className='alt-btn'+(tipo==='pontual'?' sel-pont':'');
   document.getElementById('alt-rec-'+i).className='alt-btn'+(tipo==='receita'?' sel-rec':'');
   updAltBanner();
+  uRevPinBtn();
 }
 function updAltBanner(){
   const nAlt=Object.values(altOpts).filter(v=>v==='receita').length;
