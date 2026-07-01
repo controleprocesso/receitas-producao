@@ -1200,18 +1200,23 @@ function irPinR(){
 
 // ── PIN NOVA RECEITA ─────────────────────────────────────
 
-function ppN(v){
+async function ppN(v){
   const err=document.getElementById('pne');
-  if(v==='back'){pinBufN=pinBufN.slice(0,-1);}
-  else if(v==='ok'){
+  if(v==='back'){pinBufN=pinBufN.slice(0,-1);updDotsN();return;}
+  if(v==='ok'){
     if(pinBufN.length<4){err.textContent='PIN deve ter 4 dígitos';return;}
-    apiPost({action:'validarPin',pin:pinBufN}).then(res=>{
+    const pin=pinBufN;
+    showLoading('Validando PIN...');
+    try{
+      const res=await apiPost({action:'validarPin',pin});
+      hideLoading();
       if(!res.valido){err.textContent='PIN incorreto. Tente novamente.';pinBufN='';updDotsN();return;}
       err.textContent='';pinBufN='';updDotsN();
       salvarNovaReceita(res.nome);
-    }).catch(e=>{err.textContent='Erro: '+e.message;pinBufN='';updDotsN();});
+    }catch(e){hideLoading();err.textContent='Erro: '+e.message;pinBufN='';updDotsN();}
     return;
-  }else{if(pinBufN.length<4)pinBufN+=v;}
+  }
+  if(pinBufN.length<4)pinBufN+=v;
   updDotsN();
 }
 
@@ -1625,7 +1630,11 @@ function showSuc(t,s,rows,w,dest){
   document.getElementById('suc-ic').innerHTML=w?`<i class="ti ti-alert-triangle" style="font-size:28px;color:var(--amber)"></i>`:`<i class="ti ti-check" style="font-size:30px;color:var(--green)"></i>`;
   document.getElementById('suc-t').textContent=t;document.getElementById('suc-s').textContent=s;
   document.getElementById('suc-tr').innerHTML=rows.map(r=>`<div class="trr"><span class="trl">${r.l}</span><span class="trv" style="color:${r.b?'var(--blue)':'var(--text)'}">${r.v}</span></div>`).join('');
-  document.getElementById('suc-btn').onclick=()=>{ir(dest||'s-lista');rst();};
+  document.getElementById('suc-btn').onclick=()=>{
+    ir(dest||'s-lista');
+    rL(filtrarPorMaquina(receitas));
+    rst();
+  };
   ir('s-suc');
 }
 
