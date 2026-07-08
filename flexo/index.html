@@ -785,6 +785,27 @@ function aplicarRegraCompactador(container){
   update();
 }
 
+const DF_OPTS = ['1720','1520','1020','1320','1920','SLEEV'];
+const ANILOX_GRUPOS = {
+  '400': ['Z16','Z17','Z20','Z21','Z22','Z23','Z24','Z25','Z32','Z33','Z34','Z35','A959','A655','A307','A462','12A','A305','A958','L681','A292','A308'],
+  '380': ['A062','A654','A598','L079','A379'],
+  '340': ['L078','A261','P630','A377','A960'],
+  '260': ['A924','P000','A961'],
+  '200': ['A238','A260','A376','A029'],
+  '170': ['A233','A923','A880','A962','A429'],
+  '140': ['A229','A964','A017','A957'],
+  '120': ['A798','A956','A809'],
+  '100': ['A259'],
+  '80': ['A263','A050','L273','7-12'],
+  '70': ['A381'],
+};
+function optsHtml(list){ return '<option value="">—</option>' + list.map(o=>`<option>${o}</option>`).join(''); }
+function anioxOptsHtml(){
+  return '<option value="">—</option>' + Object.entries(ANILOX_GRUPOS).map(([linha,codes])=>
+    `<optgroup label="${linha}">${codes.map(c=>`<option value="${linha} ${c}">${linha} ${c}</option>`).join('')}</optgroup>`
+  ).join('');
+}
+
 // ── API ──────────────────────────────────────────────────
 
 function apiGet(action, extraParams='') {
@@ -1021,16 +1042,16 @@ function rRep() {
   aplicarRegraCompactador(document.getElementById('params-rep'));
 
   // Anilox, Dupla Face, Faca: com detecção de desvio e justificativa
-  const repDesvioRow = (prefix, refFn, unit, isSel=false) => tintas.map(t=>{
+  const repDesvioRow = (prefix, refFn, unit, opts=null) => tintas.map(t=>{
     const ref = String(refFn(t)||'');
-    const inp = isSel
-      ? `<select id="${prefix}-${t.ESTACAO}" style="width:90px;font-size:12px;padding:5px 6px;border:0.5px solid var(--border2);border-radius:var(--rad);background:var(--card);color:var(--text)" onchange="chkComplem('${prefix}',${t.ESTACAO},'${ref}')"><option value="">—</option><option>1720</option><option>1520</option><option>1020</option><option>1320</option><option>1920</option><option>SLEEV</option></select>`
-      : `<input id="${prefix}-${t.ESTACAO}" type="text" inputmode="${prefix==='repanilox'?'text':'decimal'}" style="width:72px;font-size:12px;padding:6px 9px;text-align:center;border:0.5px solid var(--border2);border-radius:var(--rad);background:var(--card);color:var(--text);outline:none" oninput="chkComplem('${prefix}',${t.ESTACAO},'${ref}')">`;
+    const inp = opts
+      ? `<select id="${prefix}-${t.ESTACAO}" style="width:130px;font-size:12px;padding:5px 6px;border:0.5px solid var(--border2);border-radius:var(--rad);background:var(--card);color:var(--text)" onchange="chkComplem('${prefix}',${t.ESTACAO},'${ref}')">${opts}</select>`
+      : `<input id="${prefix}-${t.ESTACAO}" type="text" inputmode="decimal" style="width:72px;font-size:12px;padding:6px 9px;text-align:center;border:0.5px solid var(--border2);border-radius:var(--rad);background:var(--card);color:var(--text);outline:none" oninput="chkComplem('${prefix}',${t.ESTACAO},'${ref}')">`;
     return `<div id="reprow-${prefix}-${t.ESTACAO}" style="padding:7px 0;border-bottom:0.5px solid var(--border)"><div style="display:flex;align-items:center;gap:8px"><div class="nc">${t.ESTACAO}</div><div style="flex:1;font-size:12px;color:var(--text2)">${t.NOME_COR}</div>${inp}${unit?`<span style="font-size:11px;color:var(--text3);margin-left:4px">${unit}</span>`:''}</div><div id="jreprow-${prefix}-${t.ESTACAO}" style="display:none;margin-top:6px;margin-left:30px" class="just-inp"><label><i class="ti ti-alert-triangle" style="font-size:11px;vertical-align:-1px"></i> Desvio — justifique</label><textarea id="jrep-${prefix}-${t.ESTACAO}" rows="2" placeholder="Justifique o desvio..."></textarea></div></div>`;
   }).join('');
 
-  const ra=document.getElementById('rep-anilox-rows');if(ra)ra.innerHTML=repDesvioRow('repanilox',t=>t.ANILOX,'');
-  const rdf=document.getElementById('rep-df-rows');if(rdf)rdf.innerHTML=repDesvioRow('repdf',t=>t.DUPLA_FACE,'',true);
+  const ra=document.getElementById('rep-anilox-rows');if(ra)ra.innerHTML=repDesvioRow('repanilox',t=>t.ANILOX,'',anioxOptsHtml());
+  const rdf=document.getElementById('rep-df-rows');if(rdf)rdf.innerHTML=repDesvioRow('repdf',t=>t.DUPLA_FACE,'',optsHtml(DF_OPTS));
   const rfa=document.getElementById('rep-faca-rows');if(rfa)rfa.innerHTML=repDesvioRow('repfaca',t=>t.PRESSAO_FACA,'Bar');
   uPrg();
 }
@@ -1498,15 +1519,15 @@ function atualizarComplementos(){
   const blocos=Array.from(document.querySelectorAll('.tbloco'));
   if(!blocos.length)return;
   const tg=blocos.map(tb=>{const n=parseInt(tb.querySelector('.nc').textContent);return{n,nome:tb.querySelectorAll('input')[1]?.value||'Estação '+n};});
-  const rowHtml=(prefix,isSel=false)=>tg.map((t,i)=>{
+  const rowHtml=(prefix,opts=null)=>tg.map((t,i)=>{
     const isLast=i===tg.length-1;
-    const inp=isSel
-      ?`<select id="${prefix}-${t.n}" style="width:90px;font-size:12px;padding:5px 6px;border:0.5px solid var(--border2);border-radius:var(--rad);background:var(--card);color:var(--text)"><option value="">—</option><option>1720</option><option>1520</option><option>1020</option><option>1320</option><option>1920</option><option>SLEEV</option></select>`
+    const inp=opts
+      ?`<select id="${prefix}-${t.n}" style="width:130px;font-size:12px;padding:5px 6px;border:0.5px solid var(--border2);border-radius:var(--rad);background:var(--card);color:var(--text)">${opts}</select>`
       :`<input id="${prefix}-${t.n}" type="text" inputmode="text" style="width:80px;font-size:12px;padding:6px 9px;text-align:center;border:0.5px solid var(--border2);border-radius:var(--rad);background:var(--card);color:var(--text);outline:none">`;
     return `<div style="display:flex;align-items:center;gap:8px;padding:7px 0;${isLast?'':'border-bottom:0.5px solid var(--border)'}"><div class="nc">${t.n}</div><div style="flex:1;font-size:12px;color:var(--text2)">${t.nome}</div>${inp}</div>`;
   }).join('');
-  const a=document.getElementById('anilox-rows');if(a)a.innerHTML=rowHtml('anilox');
-  const d=document.getElementById('df-rows');if(d)d.innerHTML=rowHtml('df',true);
+  const a=document.getElementById('anilox-rows');if(a)a.innerHTML=rowHtml('anilox',anioxOptsHtml());
+  const d=document.getElementById('df-rows');if(d)d.innerHTML=rowHtml('df',optsHtml(DF_OPTS));
   const f=document.getElementById('faca-rows');if(f)f.innerHTML=rowHtml('faca');
 }
 
