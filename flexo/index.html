@@ -337,6 +337,7 @@ textarea{resize:none;line-height:1.5;width:100%}
         <div class="pb"><div class="pbox"><div class="pl">Entre Cores</div><div class="pv" id="rec-sec-ec">—</div></div><div class="pbox"><div class="pl">Superior</div><div class="pv" id="rec-sec-sup">—</div></div></div>
       </div>
       <div class="card" style="overflow:hidden;padding:0" id="rec-faca-vis"></div>
+      <div class="card" id="rec-estufas"></div>
       <div class="card" id="rec-obs" style="display:none"></div>
       <button class="bp" onclick="ir('s-rep')"><i class="ti ti-clipboard-check"></i> Registrar repetição</button>
       <div style="height:16px"></div>
@@ -952,17 +953,20 @@ async function abrirRec(id) {
   const tintaMap={};
   tintas.filter(t=>t.NOME_COR&&t.COD_TINTA).forEach(t=>{tintaMap[String(t.ESTACAO)]=t.NOME_COR;});
   const estufaRows=[1,2,3,4,5,6,7,8].filter(n=>estufaMap[String(n)]).map(n=>`<div class="er"><div class="en">${n}</div><div style="flex:1"><div style="font-size:13px;font-weight:600;color:var(--text)">${tintaMap[String(n)]||'— sem tinta —'}</div></div><div class="tbdg tbon"><i class="ti ti-flame" style="font-size:11px;vertical-align:-1px"></i> ${estufaMap[String(n)]}°C</div></div>`).join('');
-  const estufaHtml=preHotRow+estufaRows+posHotRow;document.getElementById('rec-estufas').innerHTML=`<div class="sl">Estufas por estação</div>${estufaHtml}`;
+  const estufaHtml=preHotRow+estufaRows+posHotRow;
+  const estufasEl=document.getElementById('rec-estufas');
+  if(estufasEl) estufasEl.innerHTML=`<div class="sl">Estufas por estação</div>${estufaHtml}`;
 
 
   document.getElementById('tpt').textContent=`${r.CLIENTE} · ${fmtCodPAExib(r.COD_PA)}`;
   document.getElementById('tps').textContent=`${r.MAQUINA} · Flexografia`;
   // Observações técnicas
+  const obsVal = r.OBSERVACOES || r.OBSERVACAO || '';
   const obsEl=document.getElementById('rec-obs');
   if(obsEl){
-    if(r.OBSERVACOES){
+    if(obsVal){
       obsEl.style.display='';
-      obsEl.innerHTML=`<div class="sl">Observações técnicas</div>${String(r.OBSERVACOES).split('\n').filter(l=>l.trim()).map(l=>`<div class="oi"><div class="od"></div><div class="ot">${l.trim()}</div></div>`).join('')}`;
+      obsEl.innerHTML=`<div class="sl">Observações técnicas</div>${String(obsVal).split('\n').filter(l=>l.trim()).map(l=>`<div class="oi"><div class="od"></div><div class="ot">${l.trim()}</div></div>`).join('')}`;
     } else {
       obsEl.style.display='none';
     }
