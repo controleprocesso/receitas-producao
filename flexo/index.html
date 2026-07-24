@@ -295,7 +295,7 @@ textarea{resize:none;line-height:1.5;width:100%}
 // Receitas Flexografia — Frontend v2
 // ══════════════════════════════════════════════════════════
 const API='https://script.google.com/macros/s/AKfycbyA-xZut53iVKu5KVvfD5SwZtqKsjIJBAiWsJC2BPMALin07i2KipXP-hlNdeKslk4R/exec';
-const SUPERVISORES={'1721':'Edicarlos Pereira','3360':'Vander Amaro','1113':'Bruno Simões','2652':'Erlan Antonioli','4353':'José Cardoso','1518':'Marcos Brito','2707':'João Victor','1023':'Abiner Filho'};
+const SUPERVISORES={'1995':'Edicarlos Pereira','2424':'Carlos Rafael','3360':'Vander Amaro','1113':'Bruno Simões','2652':'Erlan Antonioli','4353':'José Cardoso','1518':'Marcos Brito','2707':'João Victor','1023':'Abiner Filho'};
 const TOL_VISC=1,TOL_SEC=20;
 const MAQUINAS_FLEXO=['Miraflex 1','Miraflex 2','Primaflex'];
 const DF_OPTS=['1720','1520','1020','1320','1920','SLEEV'];
@@ -545,7 +545,7 @@ async function salvarNovaReceita(aprovador){
 }
 
 // ── PIN REP ──
-function ppR(v){const err=document.getElementById('pre2');if(v==='back')pinBufR=pinBufR.slice(0,-1);else if(v==='ok'){if(salvando)return;if(pinBufR.length<4){err.textContent='PIN deve ter 4 dígitos';return}salvando=true;apiPost({action:'validarPin',pin:pinBufR}).then(res=>{if(!res.valido){err.textContent='PIN incorreto.';pinBufR='';updDotsR();salvando=false;return}err.textContent='';pinBufR='';updDotsR();salvarRepeticao(res.nome)}).catch(e=>{err.textContent='Erro: '+e.message;pinBufR='';updDotsR();salvando=false});return}else{if(pinBufR.length<4)pinBufR+=v}updDotsR()}
+function ppR(v){const err=document.getElementById('pre2');if(v==='back')pinBufR=pinBufR.slice(0,-1);else if(v==='ok'){if(salvando)return;if(pinBufR.length<4){err.textContent='PIN deve ter 4 dígitos';return}salvando=true;showLoading('Validando PIN...');apiPost({action:'validarPin',pin:pinBufR}).then(res=>{if(!res.valido){hideLoading();err.textContent='PIN incorreto.';pinBufR='';updDotsR();salvando=false;return}err.textContent='';pinBufR='';updDotsR();salvarRepeticao(res.nome)}).catch(e=>{hideLoading();err.textContent='Erro: '+e.message;pinBufR='';updDotsR();salvando=false});return}else{if(pinBufR.length<4)pinBufR+=v}updDotsR()}
 
 async function salvarRepeticao(aprovador){
   showLoading('Salvando repetição...');const r=receitas.find(x=>String(x.ID)===String(recIdx));if(!r)return;
