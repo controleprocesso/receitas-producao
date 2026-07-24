@@ -579,10 +579,10 @@ function updPendDots(id){for(let i=0;i<4;i++){const d=document.getElementById(`p
 function filtrarHistSel(){const q=document.getElementById('hs').value.toLowerCase().trim();const base=filtrarPorMaquina(receitas);const lista=q?base.filter(r=>{const c=(r.CLIENTE||'').toLowerCase(),k=fmtCodPAExib(r.COD_PA).toLowerCase(),s=(r.SERVICO||'').toLowerCase();return c.includes(q)||k.includes(q)||s.includes(q)}):base;renderHistSel(lista)}
 function renderHistSel(lista){document.getElementById('hist-sel-list').innerHTML=lista.length?lista.map(r=>`<div class="li" onclick="abrirHistorico(${r.ID})"><div class="lic"><i class="ti ti-history"></i></div><div class="lb"><div class="lt">${r.CLIENTE} — ${fmtCodPAExib(r.COD_PA)}</div><div class="ls">${r.SERVICO} · ${r.MAQUINA}</div></div></div>`).join(''):'<div style="padding:20px 0;text-align:center;font-size:13px;color:var(--text3)">Nenhuma receita encontrada</div>'}
 async function abrirHistorico(id){
-  document.getElementById('hist-sel').style.display='none';document.getElementById('hist-det').style.display='block';
+  irRaw('s-hist');document.getElementById('hist-sel').style.display='none';document.getElementById('hist-det').style.display='block';
   document.getElementById('hres').innerHTML='<div class="loading-wrap"><div class="spinner"></div><span style="font-size:13px;color:var(--text3)">Carregando histórico...</span></div>';
   document.querySelectorAll('.tab-item').forEach(x=>x.classList.remove('ta'));document.getElementById('tab-h').classList.add('ta');
-  document.getElementById('tpt').textContent='Histórico de Repetição';document.getElementById('tps').textContent='Por receita · Flexografia';document.getElementById('tpp').style.display='none';
+  document.getElementById('tpt').textContent='Histórico de Repetição';document.getElementById('tps').textContent='Por receita · Flexografia';document.getElementById('tpp').style.display='none';document.getElementById('sbw').innerHTML='';
   try{histDados=await apiGet('getHistoricoReceita',`&id=${id}`);filtroH='todos';document.querySelectorAll('#hist-filtros .fc').forEach((c,i)=>c.classList.toggle('fa',i===0));renderHistDet()}catch(e){document.getElementById('hres').innerHTML=`<div style="padding:20px 0;text-align:center;font-size:13px;color:var(--red)">Erro: ${e.message}</div>`}
 }
 function voltarHistSel(){document.getElementById('hist-sel').style.display='block';document.getElementById('hist-det').style.display='none';histDados=null}
