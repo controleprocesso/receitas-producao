@@ -896,8 +896,8 @@ async function carregarReceitas() {
   }
 }
 
-function initApp(){
-  carregarMaquinas();
+async function initApp(){
+  await carregarMaquinas();
   exigirMaquinaSeNecessario();
   carregarReceitas();
   carregarPendencias();
@@ -924,7 +924,7 @@ function renderLista(lista) {
     return;
   }
   document.getElementById('lw').innerHTML = lista.length
-    ? lista.map(r=>`<div class="li" onclick="abrirRec(${r.ID})"><div class="lic"><i class="ti ti-file-description"></i></div><div class="lb"><div class="lt">${r.CLIENTE} — ${formatarCodPAExibicao(r.COD_PA)}</div><div class="ls">${r.SERVICO} · ${r.MAQUINA}${r.ITENS_CONJUGACAO?' · <i class="ti ti-layers-linked" style="font-size:10px;color:var(--amber);vertical-align:-1px"></i>':''}</div></div><span class="bok">Aprovada</span></div>`).join('')
+    ? lista.map(r=>`<div class="li" onclick="abrirRec(${r.ID})"><div class="lic"><i class="ti ti-file-description"></i></div><div class="lb"><div class="lt">${r.CLIENTE} — ${formatarCodPAExibicao(r.COD_PA)}</div><div class="ls">${r.SERVICO} · ${r.MAQUINA}${r.ITENS_CONJUGACAO?` · <span style="color:var(--amber)"><i class="ti ti-layers-linked" style="font-size:10px;vertical-align:-1px"></i> ${r.ITENS_CONJUGACAO}</span>`:''}</div></div><span class="bok">Aprovada</span></div>`).join('')
     : '<div style="padding:20px 0;text-align:center;font-size:13px;color:var(--text3)">Nenhuma receita encontrada</div>';
 }
 
@@ -1536,7 +1536,7 @@ let histReceita=null;
 
 function renderHistSel(lista){
   document.getElementById('hist-sel-list').innerHTML=lista.length
-    ?lista.map(r=>`<div class="li" onclick="abrirHistorico(${r.ID})"><div class="lic"><i class="ti ti-history"></i></div><div class="lb"><div class="lt">${r.CLIENTE} — ${formatarCodPAExibicao(r.COD_PA)}</div><div class="ls">${r.SERVICO} · ${r.MAQUINA}${r.ITENS_CONJUGACAO?' · <i class="ti ti-layers-linked" style="font-size:10px;color:var(--amber);vertical-align:-1px"></i>':''}</div></div></div>`).join('')
+    ?lista.map(r=>`<div class="li" onclick="abrirHistorico(${r.ID})"><div class="lic"><i class="ti ti-history"></i></div><div class="lb"><div class="lt">${r.CLIENTE} — ${formatarCodPAExibicao(r.COD_PA)}</div><div class="ls">${r.SERVICO} · ${r.MAQUINA}${r.ITENS_CONJUGACAO?` · <span style="color:var(--amber)"><i class="ti ti-layers-linked" style="font-size:10px;vertical-align:-1px"></i> ${r.ITENS_CONJUGACAO}</span>`:''}</div></div></div>`).join('')
     :'<div style="padding:20px 0;text-align:center;font-size:13px;color:var(--text3)">Nenhuma receita encontrada</div>';
 }
 
