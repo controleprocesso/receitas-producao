@@ -361,7 +361,7 @@ textarea{resize:none;line-height:1.5;width:100%}
           <div class="sl">Máquina</div>
           <div class="fr">
             
-            <div class="fd"><div class="fdl">Máquina <span>*</span></div><select id="n-maq"><option value="">Selecione</option><option>Heliostar 1</option><option>Heliostar 2</option></select></div>
+            <div class="fd"><div class="fdl">Máquina <span>*</span></div><select id="n-maq"><option value="">Selecione</option></select></div>
           </div>
           <div class="fd"><div class="fdl">Operador</div><input type="text" id="n-oper" placeholder="" style="width:100%"></div>
         </div>
@@ -764,8 +764,23 @@ let sbwHTML='';
 let repTintasAtivas=[];
 let salvando=false;
 const paramRefs={}, compRefs={};
-const MAQUINAS_ROTO = ['Heliostar 1', 'Heliostar 2'];
+let MAQUINAS_ROTO = [];
 let maquinaAtual = localStorage.getItem('roto_maquina') || '';
+
+async function carregarMaquinas() {
+  try {
+    const lista = await apiGet('getMaquinas');
+    MAQUINAS_ROTO = lista.map(m => m.NOME);
+    // Popula o select da nova receita
+    const sel = document.getElementById('n-maq');
+    if (sel) {
+      sel.innerHTML = '<option value="">Selecione</option>' + MAQUINAS_ROTO.map(m => `<option>${m}</option>`).join('');
+    }
+  } catch (e) {
+    MAQUINAS_ROTO = ['Heliostar 1', 'Heliostar 2'];
+    console.warn('Fallback máquinas:', e.message);
+  }
+}
 
 function renderMaqBar(){
   const bar = document.getElementById('maq-bar');
@@ -882,7 +897,8 @@ async function carregarReceitas() {
 }
 
 function initApp(){
-  exigirMaquinaSeNecessario(); // sempre pede para confirmar a máquina ao abrir o app
+  carregarMaquinas();
+  exigirMaquinaSeNecessario();
   carregarReceitas();
   carregarPendencias();
 }
