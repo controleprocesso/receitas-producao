@@ -319,13 +319,13 @@ textarea{resize:none;line-height:1.5;width:100%}
         <div style="font-size:16px;font-weight:700;margin-bottom:6px">Selecione a máquina</div>
         <div style="font-size:13px;color:var(--text2);margin-bottom:24px;line-height:1.5">Isso define quais receitas irão aparecer. Você pode alternar de máquina quando quiser.</div>
         <div id="maq-setup-btns" style="width:100%;display:flex;flex-direction:column;align-items:center"></div>
-        <button class="bb" id="maq-setup-cancel" style="margin-top:6px;display:none" onclick="ir('s-lista')"><i class="ti ti-x"></i> Cancelar</button>
+        <button class="bb" id="maq-setup-cancel" style="margin-top:6px;display:none" onclick="navegarTela('s-lista')"><i class="ti ti-x"></i> Cancelar</button>
       </div>
     </div>
 
     <!-- LISTA -->
     <div id="s-lista" class="sc active">
-      <div class="sw"><i class="ti ti-search"></i><input type="text" placeholder="Buscar por Cód. PA, cliente ou serviço..." id="si" oninput="filtrar()"></div>
+      <div class="sw"><i class="ti ti-search"></i><input type="text" placeholder="Buscar por Cód. PA, cliente ou serviço..." id="si" oninput="filtrarReceitas()""></div>
       <div class="sl">Receitas cadastradas</div>
       <div class="card" style="padding:0 14px" id="lw">
         <div class="loading-wrap"><div class="spinner"></div><span style="font-size:13px;color:var(--text3)">Carregando receitas...</span></div>
@@ -334,7 +334,7 @@ textarea{resize:none;line-height:1.5;width:100%}
 
     <!-- DETALHE -->
     <div id="s-rec" class="sc">
-      <button class="bb" onclick="ir('s-lista')"><i class="ti ti-arrow-left"></i> Receitas de Produto</button>
+      <button class="bb" onclick="navegarTela('s-lista')"><i class="ti ti-arrow-left"></i> Receitas de Produto</button>
       <div class="card" id="rec-id"></div>
       <div class="card" id="rec-tintas"></div>
       <div class="card" id="rec-conjugacoes" style="display:none"></div>
@@ -343,7 +343,7 @@ textarea{resize:none;line-height:1.5;width:100%}
       <div class="card" style="overflow:hidden;padding:0" id="rec-rolo"></div>
       <div class="card" style="overflow:hidden;padding:0" id="rec-faca"></div>
       <div class="card" id="rec-obs" style="display:none"></div>
-      <button class="bp" onclick="ir('s-rep')"><i class="ti ti-clipboard-check"></i> Registrar repetição</button>
+      <button class="bp" onclick="navegarTela('s-rep')"><i class="ti ti-clipboard-check"></i> Registrar repetição</button>
       <button class="bs" onclick="abrirHistorico(recIdx)" style="margin-bottom:8px"><i class="ti ti-history"></i> Ver histórico desta receita</button>
       <div style="height:16px"></div>
     </div>
@@ -354,7 +354,7 @@ textarea{resize:none;line-height:1.5;width:100%}
         <div class="card">
           <div class="sl">Identificação do produto</div>
           <div class="fd"><div class="fdl">Cliente <span>*</span></div><input type="text" id="n-cli" placeholder=""></div>
-          <div class="fr"><div class="fd"><div class="fdl">Cód. PA <span>*</span></div><input type="text" id="n-cod" placeholder="" oninput="fmtCodPA(this)" maxlength="12"></div><div class="fd"><div class="fdl">OP de criação</div><input type="text" id="n-op" placeholder=""></div></div>
+          <div class="fr"><div class="fd"><div class="fdl">Cód. PA <span>*</span></div><input type="text" id="n-cod" placeholder="" oninput="formatarInputCodPA(this)" maxlength="12"></div><div class="fd"><div class="fdl">OP de criação</div><input type="text" id="n-op" placeholder=""></div></div>
           <div class="fd"><div class="fdl">Descrição do serviço <span>*</span></div><input type="text" id="n-serv" placeholder=""></div>
         </div>
         <div class="card">
@@ -375,14 +375,14 @@ textarea{resize:none;line-height:1.5;width:100%}
             <input type="text" id="n-conj-itens" placeholder="Ex: Wafer Chocolate + Wafer Morango" style="width:100%">
           </div>
         </div>
-        <div class="nr"><button class="bnn" onclick="nStep(2)">Próximo: tintas <i class="ti ti-arrow-right"></i></button></div>
+        <div class="nr"><button class="bnn" onclick="validarStep1()">Próximo: tintas <i class="ti ti-arrow-right"></i></button></div>
       </div>
       <div id="ns2" style="display:none">
         <div class="card" style="overflow:hidden;padding:0">
           <div style="padding:10px 14px;display:flex;align-items:center;gap:10px;background:var(--amber-light);border-bottom:0.5px solid var(--border)">
             <div style="width:32px;height:32px;border-radius:var(--rad);background:rgba(255,255,255,0.5);display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="ti ti-flame" style="font-size:17px;color:var(--amber)"></i></div>
             <div style="flex:1"><div style="font-size:13px;font-weight:600;color:var(--amber)">PRÉ HOT</div><div style="font-size:11px;color:var(--amber);opacity:.8;margin-top:1px">Aquecimento antes da impressão</div></div>
-            <div class="htog"><button class="to tof" id="hof-preHot" onclick="sHF('preHot',false)">Não</button><button class="to" id="hon-preHot" onclick="sHF('preHot',true)">Sim</button></div>
+            <div class="htog"><button class="to tof" id="hof-preHot" onclick="toggleOpcao('preHot',false)">Não</button><button class="to" id="hon-preHot" onclick="toggleOpcao('preHot',true)">Sim</button></div>
           </div>
           <div class="htr" id="htr-preHot" style="display:none;padding:10px 14px">
             <span style="font-size:12px;color:var(--text2);flex:1">Temperatura</span>
@@ -405,7 +405,7 @@ textarea{resize:none;line-height:1.5;width:100%}
           <div style="padding:10px 14px;display:flex;align-items:center;gap:10px;background:var(--amber-light);border-bottom:0.5px solid var(--border)">
             <div style="width:32px;height:32px;border-radius:var(--rad);background:rgba(255,255,255,0.5);display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="ti ti-flame" style="font-size:17px;color:var(--amber)"></i></div>
             <div style="flex:1"><div style="font-size:13px;font-weight:600;color:var(--amber)">PÓS HOT</div><div style="font-size:11px;color:var(--amber);opacity:.8;margin-top:1px">Aquecimento após a impressão · independente da última estação</div></div>
-            <div class="htog"><button class="to tof" id="hof-posHot" onclick="sHF('posHot',false)">Não</button><button class="to" id="hon-posHot" onclick="sHF('posHot',true)">Sim</button></div>
+            <div class="htog"><button class="to tof" id="hof-posHot" onclick="toggleOpcao('posHot',false)">Não</button><button class="to" id="hon-posHot" onclick="toggleOpcao('posHot',true)">Sim</button></div>
           </div>
           <div class="htr" id="htr-posHot" style="display:none;padding:10px 14px">
             <span style="font-size:12px;color:var(--text2);flex:1">Temperatura</span>
@@ -445,7 +445,7 @@ textarea{resize:none;line-height:1.5;width:100%}
           <div style="padding:12px 14px" id="estufa-rows"></div>
         </div>
         <!-- PÓS HOT FIXO -->
-        <div class="nr"><button class="bnp" onclick="nStep(1)"><i class="ti ti-arrow-left"></i> Voltar</button><button class="bnn" onclick="nStep(3)">Parâmetros <i class="ti ti-arrow-right"></i></button></div>
+        <div class="nr"><button class="bnp" onclick="navegarStep(1)"><i class="ti ti-arrow-left"></i> Voltar</button><button class="bnn" onclick="navegarStep(3)">Parâmetros <i class="ti ti-arrow-right"></i></button></div>
       </div>
       <div id="ns3" style="display:none">
         <div class="card">
@@ -470,12 +470,12 @@ textarea{resize:none;line-height:1.5;width:100%}
           <input type="text" id="n-material" style="width:100%" placeholder="Ex: PET 12µ / BOPP 20µ">
         </div>
         <div class="card"><div class="sl">Observações técnicas</div><textarea id="n-obs" rows="4" placeholder="Anotações importantes para o operador..."></textarea></div>
-        <div class="nr"><button class="bnp" onclick="nStep(2)"><i class="ti ti-arrow-left"></i> Voltar</button><button class="bnn" onclick="nStep(4)">Revisar <i class="ti ti-arrow-right"></i></button></div>
+        <div class="nr"><button class="bnp" onclick="navegarStep(2)"><i class="ti ti-arrow-left"></i> Voltar</button><button class="bnn" onclick="navegarStep(4)">Revisar <i class="ti ti-arrow-right"></i></button></div>
       </div>
       <div id="ns4" style="display:none">
         <div class="card" id="rvw"></div>
-        <button class="bp" onclick="ir('s-pin-n')"><i class="ti ti-lock"></i> Salvar com aprovação por PIN</button>
-        <div class="nr" style="margin-top:0"><button class="bnp" onclick="nStep(3)"><i class="ti ti-arrow-left"></i> Editar</button></div>
+        <button class="bp" onclick="navegarTela('s-pin-n')"><i class="ti ti-lock"></i> Salvar com aprovação por PIN</button>
+        <div class="nr" style="margin-top:0"><button class="bnp" onclick="navegarStep(3)"><i class="ti ti-arrow-left"></i> Editar</button></div>
       </div>
     </div>
 
@@ -487,22 +487,22 @@ textarea{resize:none;line-height:1.5;width:100%}
         <div class="pin-cx"><div class="pcl">Receita sendo aprovada</div><div class="pcv" id="pnc">—</div></div>
         <div class="pin-ds"><div class="pin-d" id="pnd0"></div><div class="pin-d" id="pnd1"></div><div class="pin-d" id="pnd2"></div><div class="pin-d" id="pnd3"></div></div>
         <div class="pin-g">
-          <button class="pib" onclick="ppN('1')">1</button><button class="pib" onclick="ppN('2')">2</button><button class="pib" onclick="ppN('3')">3</button>
-          <button class="pib" onclick="ppN('4')">4</button><button class="pib" onclick="ppN('5')">5</button><button class="pib" onclick="ppN('6')">6</button>
-          <button class="pib" onclick="ppN('7')">7</button><button class="pib" onclick="ppN('8')">8</button><button class="pib" onclick="ppN('9')">9</button>
-          <button class="pib" style="font-size:15px" onclick="ppN('back')">⌫</button>
-          <button class="pib" onclick="ppN('0')">0</button>
-          <button class="pib" style="background:var(--blue-light);color:var(--blue);font-size:13px;font-weight:700" onclick="ppN('ok')">OK</button>
+          <button class="pib" onclick="pinNovaReceita('1')">1</button><button class="pib" onclick="pinNovaReceita('2')">2</button><button class="pib" onclick="pinNovaReceita('3')">3</button>
+          <button class="pib" onclick="pinNovaReceita('4')">4</button><button class="pib" onclick="pinNovaReceita('5')">5</button><button class="pib" onclick="pinNovaReceita('6')">6</button>
+          <button class="pib" onclick="pinNovaReceita('7')">7</button><button class="pib" onclick="pinNovaReceita('8')">8</button><button class="pib" onclick="pinNovaReceita('9')">9</button>
+          <button class="pib" style="font-size:15px" onclick="pinNovaReceita('back')">⌫</button>
+          <button class="pib" onclick="pinNovaReceita('0')">0</button>
+          <button class="pib" style="background:var(--blue-light);color:var(--blue);font-size:13px;font-weight:700" onclick="pinNovaReceita('ok')">OK</button>
         </div>
         <div class="pie" id="pne"></div>
       </div></div>
-      <button class="bs" onclick="nStep(4);ir('s-nova')"><i class="ti ti-arrow-left"></i> Voltar à revisão</button>
+      <button class="bs" onclick="navegarStep(4);navegarTela('s-nova')"><i class="ti ti-arrow-left"></i> Voltar à revisão</button>
       <div style="height:16px"></div>
     </div>
 
     <!-- REGISTRO -->
     <div id="s-rep" class="sc">
-      <button class="bb" onclick="ir('s-rec')"><i class="ti ti-arrow-left"></i> Voltar à receita</button>
+      <button class="bb" onclick="navegarTela('s-rec')"><i class="ti ti-arrow-left"></i> Voltar à receita</button>
       <div class="ibox" style="background:var(--green-light);border:0.5px solid #C0DD97">
         <div class="ibic ibic-op"><i class="ti ti-user"></i></div>
         <div style="flex:1"><div style="font-size:11px;color:var(--green);margin-bottom:4px;font-weight:600">Operador</div><input class="ibinp ibinp-op" type="text" id="oper-inp" placeholder="Digite seu nome"></div>
@@ -570,14 +570,14 @@ textarea{resize:none;line-height:1.5;width:100%}
         <input type="text" id="rep-material" style="width:100%" placeholder="Ex: PET 12µ / BOPP 20µ">
       </div>
       <div class="nr">
-        <button class="bnp" onclick="ir('s-rec')"><i class="ti ti-x"></i> Cancelar</button>
+        <button class="bnp" onclick="navegarTela('s-rec')"><i class="ti ti-x"></i> Cancelar</button>
         <button class="bnn" id="btn-revisar" onclick="irRevisar()" disabled>Revisar <i class="ti ti-arrow-right"></i></button>
       </div>
     </div>
 
     <!-- REVISÃO -->
     <div id="s-rev" class="sc">
-      <button class="bb" onclick="ir('s-rep')"><i class="ti ti-arrow-left"></i> Voltar ao registro</button>
+      <button class="bb" onclick="navegarTela('s-rep')"><i class="ti ti-arrow-left"></i> Voltar ao registro</button>
       <div id="rev-dv-banner" style="display:none" class="rev-dv-banner">
         <i class="ti ti-alert-triangle" style="font-size:18px;color:var(--red);flex-shrink:0"></i>
         <div><div style="font-size:13px;font-weight:600;color:var(--red)"><span id="rev-dv-count">0</span> parâmetro(s) com desvio</div><div style="font-size:11px;color:var(--red);margin-top:1px;opacity:.8">Para cada desvio, escolha: alteração pontual ou alterar na receita.</div></div>
@@ -590,8 +590,8 @@ textarea{resize:none;line-height:1.5;width:100%}
         <div><div style="font-size:13px;font-weight:600;color:var(--blue)"><span id="alt-count">0</span> alteração(ões) enviadas para pendência</div><div style="font-size:11px;color:var(--blue);margin-top:1px;opacity:.8">Um segundo supervisor aprovará na tela de Pendências.</div></div>
       </div>
       <div class="nr">
-        <button class="bnp" onclick="ir('s-rep')"><i class="ti ti-arrow-left"></i> Editar</button>
-        <button class="bnn" id="btn-pin-r" onclick="irPinR()" disabled><i class="ti ti-lock"></i> Aprovar com PIN</button>
+        <button class="bnp" onclick="navegarTela('s-rep')"><i class="ti ti-arrow-left"></i> Editar</button>
+        <button class="bnn" id="btn-pin-r" onclick="irPinRepeticao()" disabled><i class="ti ti-lock"></i> Aprovar com PIN</button>
       </div>
     </div>
 
@@ -609,16 +609,16 @@ textarea{resize:none;line-height:1.5;width:100%}
         </div>
         <div class="pin-ds"><div class="pin-d" id="prd0"></div><div class="pin-d" id="prd1"></div><div class="pin-d" id="prd2"></div><div class="pin-d" id="prd3"></div></div>
         <div class="pin-g">
-          <button class="pib" onclick="ppR('1')">1</button><button class="pib" onclick="ppR('2')">2</button><button class="pib" onclick="ppR('3')">3</button>
-          <button class="pib" onclick="ppR('4')">4</button><button class="pib" onclick="ppR('5')">5</button><button class="pib" onclick="ppR('6')">6</button>
-          <button class="pib" onclick="ppR('7')">7</button><button class="pib" onclick="ppR('8')">8</button><button class="pib" onclick="ppR('9')">9</button>
-          <button class="pib" style="font-size:15px" onclick="ppR('back')">⌫</button>
-          <button class="pib" onclick="ppR('0')">0</button>
-          <button class="pib" style="background:var(--blue-light);color:var(--blue);font-size:13px;font-weight:700" onclick="ppR('ok')">OK</button>
+          <button class="pib" onclick="pinRepeticao('1')">1</button><button class="pib" onclick="pinRepeticao('2')">2</button><button class="pib" onclick="pinRepeticao('3')">3</button>
+          <button class="pib" onclick="pinRepeticao('4')">4</button><button class="pib" onclick="pinRepeticao('5')">5</button><button class="pib" onclick="pinRepeticao('6')">6</button>
+          <button class="pib" onclick="pinRepeticao('7')">7</button><button class="pib" onclick="pinRepeticao('8')">8</button><button class="pib" onclick="pinRepeticao('9')">9</button>
+          <button class="pib" style="font-size:15px" onclick="pinRepeticao('back')">⌫</button>
+          <button class="pib" onclick="pinRepeticao('0')">0</button>
+          <button class="pib" style="background:var(--blue-light);color:var(--blue);font-size:13px;font-weight:700" onclick="pinRepeticao('ok')">OK</button>
         </div>
         <div class="pie" id="pre2"></div>
       </div></div>
-      <button class="bs" onclick="ir('s-rev')"><i class="ti ti-arrow-left"></i> Voltar à revisão</button>
+      <button class="bs" onclick="navegarTela('s-rev')"><i class="ti ti-arrow-left"></i> Voltar à revisão</button>
       <div style="height:16px"></div>
     </div>
 
@@ -636,7 +636,7 @@ textarea{resize:none;line-height:1.5;width:100%}
 
     <!-- HISTÓRICO DETALHE -->
     <div id="s-hist-det" class="sc">
-      <button class="bb" onclick="ir('s-hist')"><i class="ti ti-arrow-left"></i> Histórico</button>
+      <button class="bb" onclick="navegarTela('s-hist')"><i class="ti ti-arrow-left"></i> Histórico</button>
       <div class="fcs">
         <div class="fc fa" onclick="setFH(this,'todos')">Todos</div>
         <div class="fc" onclick="setFH(this,'ok')">Sem desvio</div>
@@ -654,12 +654,12 @@ textarea{resize:none;line-height:1.5;width:100%}
         <div style="font-size:13px;color:var(--text2);margin-bottom:24px;line-height:1.6">A tela de pendências é exclusiva para supervisores. Digite o PIN para acessar.</div>
         <div class="pin-ds"><div class="pin-d" id="plkd0"></div><div class="pin-d" id="plkd1"></div><div class="pin-d" id="plkd2"></div><div class="pin-d" id="plkd3"></div></div>
         <div class="pin-g" style="max-width:280px">
-          <button class="pib" onclick="ppLock('pend','1')">1</button><button class="pib" onclick="ppLock('pend','2')">2</button><button class="pib" onclick="ppLock('pend','3')">3</button>
-          <button class="pib" onclick="ppLock('pend','4')">4</button><button class="pib" onclick="ppLock('pend','5')">5</button><button class="pib" onclick="ppLock('pend','6')">6</button>
-          <button class="pib" onclick="ppLock('pend','7')">7</button><button class="pib" onclick="ppLock('pend','8')">8</button><button class="pib" onclick="ppLock('pend','9')">9</button>
-          <button class="pib" style="font-size:15px" onclick="ppLock('pend','back')">⌫</button>
-          <button class="pib" onclick="ppLock('pend','0')">0</button>
-          <button class="pib" style="background:var(--blue-light);color:var(--blue);font-size:13px;font-weight:700" onclick="ppLock('pend','ok')">OK</button>
+          <button class="pib" onclick="pinLock('pend','1')">1</button><button class="pib" onclick="pinLock('pend','2')">2</button><button class="pib" onclick="pinLock('pend','3')">3</button>
+          <button class="pib" onclick="pinLock('pend','4')">4</button><button class="pib" onclick="pinLock('pend','5')">5</button><button class="pib" onclick="pinLock('pend','6')">6</button>
+          <button class="pib" onclick="pinLock('pend','7')">7</button><button class="pib" onclick="pinLock('pend','8')">8</button><button class="pib" onclick="pinLock('pend','9')">9</button>
+          <button class="pib" style="font-size:15px" onclick="pinLock('pend','back')">⌫</button>
+          <button class="pib" onclick="pinLock('pend','0')">0</button>
+          <button class="pib" style="background:var(--blue-light);color:var(--blue);font-size:13px;font-weight:700" onclick="pinLock('pend','ok')">OK</button>
         </div>
         <div class="pie" id="plk-pend-err"></div>
       </div>
@@ -673,7 +673,7 @@ textarea{resize:none;line-height:1.5;width:100%}
           <div class="mt"><div class="ml">Aprovadas</div><div class="mv" style="color:var(--green)" id="pend-aprov">0</div></div>
           <div class="mt"><div class="ml">Rejeitadas</div><div class="mv" id="pend-rej-cnt">0</div></div>
         </div>
-        <button onclick="sairLock('pend')" style="background:transparent;border:none;cursor:pointer;color:var(--text3);padding:4px;margin-left:10px;flex-shrink:0"><i class="ti ti-lock" style="font-size:19px"></i></button>
+        <button onclick="sairTelaRestrita('pend')" style="background:transparent;border:none;cursor:pointer;color:var(--text3);padding:4px;margin-left:10px;flex-shrink:0"><i class="ti ti-lock" style="font-size:19px"></i></button>
       </div>
       <div class="sl">Aguardando aprovação</div>
       <div id="pend-list"></div>
@@ -688,12 +688,12 @@ textarea{resize:none;line-height:1.5;width:100%}
         <div style="font-size:13px;color:var(--text2);margin-bottom:24px;line-height:1.6">O painel de supervisão é exclusivo para supervisores. Digite o PIN para acessar.</div>
         <div class="pin-ds"><div class="pin-d" id="plkd-p0"></div><div class="pin-d" id="plkd-p1"></div><div class="pin-d" id="plkd-p2"></div><div class="pin-d" id="plkd-p3"></div></div>
         <div class="pin-g" style="max-width:280px">
-          <button class="pib" onclick="ppLock('painel','1')">1</button><button class="pib" onclick="ppLock('painel','2')">2</button><button class="pib" onclick="ppLock('painel','3')">3</button>
-          <button class="pib" onclick="ppLock('painel','4')">4</button><button class="pib" onclick="ppLock('painel','5')">5</button><button class="pib" onclick="ppLock('painel','6')">6</button>
-          <button class="pib" onclick="ppLock('painel','7')">7</button><button class="pib" onclick="ppLock('painel','8')">8</button><button class="pib" onclick="ppLock('painel','9')">9</button>
-          <button class="pib" style="font-size:15px" onclick="ppLock('painel','back')">⌫</button>
-          <button class="pib" onclick="ppLock('painel','0')">0</button>
-          <button class="pib" style="background:var(--blue-light);color:var(--blue);font-size:13px;font-weight:700" onclick="ppLock('painel','ok')">OK</button>
+          <button class="pib" onclick="pinLock('painel','1')">1</button><button class="pib" onclick="pinLock('painel','2')">2</button><button class="pib" onclick="pinLock('painel','3')">3</button>
+          <button class="pib" onclick="pinLock('painel','4')">4</button><button class="pib" onclick="pinLock('painel','5')">5</button><button class="pib" onclick="pinLock('painel','6')">6</button>
+          <button class="pib" onclick="pinLock('painel','7')">7</button><button class="pib" onclick="pinLock('painel','8')">8</button><button class="pib" onclick="pinLock('painel','9')">9</button>
+          <button class="pib" style="font-size:15px" onclick="pinLock('painel','back')">⌫</button>
+          <button class="pib" onclick="pinLock('painel','0')">0</button>
+          <button class="pib" style="background:var(--blue-light);color:var(--blue);font-size:13px;font-weight:700" onclick="pinLock('painel','ok')">OK</button>
         </div>
         <div class="pie" id="plk-painel-err"></div>
       </div>
@@ -704,8 +704,8 @@ textarea{resize:none;line-height:1.5;width:100%}
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
         <div><div style="font-size:14px;font-weight:700;color:var(--text)">Painel de supervisão</div><div style="font-size:11px;color:var(--text2);margin-top:1px" id="per-sub">Rotogravura</div></div>
         <div style="display:flex;align-items:center;gap:8px">
-          <select style="font-size:12px;color:var(--blue);background:var(--blue-light);border:none;border-radius:var(--rad);padding:5px 9px;cursor:pointer;outline:none;font-weight:600" onchange="chPer(this)"><option value="7">7 dias</option><option value="30" selected>30 dias</option><option value="90">90 dias</option></select>
-          <button onclick="sairLock('painel')" style="background:transparent;border:none;cursor:pointer;color:var(--text3);padding:2px"><i class="ti ti-lock" style="font-size:17px"></i></button>
+          <select style="font-size:12px;color:var(--blue);background:var(--blue-light);border:none;border-radius:var(--rad);padding:5px 9px;cursor:pointer;outline:none;font-weight:600" onchange="alterarPeriodo(this)"><option value="7">7 dias</option><option value="30" selected>30 dias</option><option value="90">90 dias</option></select>
+          <button onclick="sairTelaRestrita('painel')" style="background:transparent;border:none;cursor:pointer;color:var(--text3);padding:2px"><i class="ti ti-lock" style="font-size:17px"></i></button>
         </div>
       </div>
       <div class="met" id="painel-met">
@@ -739,11 +739,11 @@ textarea{resize:none;line-height:1.5;width:100%}
     <div class="overlay-msg" id="overlay-msg">Salvando...</div>
   </div>
   <div class="tab-bar">
-    <button class="tab-item ta" id="tab-r" onclick="tIr('s-lista','tab-r','Receitas de Produto','Impressão · Rotogravura')"><i class="ti ti-file-text"></i><span class="tbl">Receitas</span></button>
-    <button class="tab-item" id="tab-h" onclick="tIr('s-hist','tab-h','Histórico de Repetição','Por receita · Rotogravura')"><i class="ti ti-history"></i><span class="tbl">Histórico</span></button>
-    <button class="tab-item" id="tab-n" onclick="tIr('s-nova','tab-n','Nova Receita','Cadastro com aprovação por PIN')"><i class="ti ti-plus"></i><span class="tbl">Nova</span></button>
-    <button class="tab-item" id="tab-pend" onclick="abrirRestrito('pend')"><i class="ti ti-clock"></i><span class="tbl">Pendências</span><span class="tab-badge" id="pend-badge" style="display:none">0</span></button>
-    <button class="tab-item" id="tab-p" onclick="abrirRestrito('painel')"><i class="ti ti-chart-bar"></i><span class="tbl">Painel</span></button>
+    <button class="tab-item ta" id="tab-r" onclick="navegarTab('s-lista','tab-r','Receitas de Produto','Impressão · Rotogravura')"><i class="ti ti-file-text"></i><span class="tbl">Receitas</span></button>
+    <button class="tab-item" id="tab-h" onclick="navegarTab('s-hist','tab-h','Histórico de Repetição','Por receita · Rotogravura')"><i class="ti ti-history"></i><span class="tbl">Histórico</span></button>
+    <button class="tab-item" id="tab-n" onclick="navegarTab('s-nova','tab-n','Nova Receita','Cadastro com aprovação por PIN')"><i class="ti ti-plus"></i><span class="tbl">Nova</span></button>
+    <button class="tab-item" id="tab-pend" onclick="abrirTelaRestrita('pend')"><i class="ti ti-clock"></i><span class="tbl">Pendências</span><span class="tab-badge" id="pend-badge" style="display:none">0</span></button>
+    <button class="tab-item" id="tab-p" onclick="abrirTelaRestrita('painel')"><i class="ti ti-chart-bar"></i><span class="tbl">Painel</span></button>
   </div>
 </div>
 
@@ -751,6 +751,10 @@ textarea{resize:none;line-height:1.5;width:100%}
 const API = 'https://script.google.com/macros/s/AKfycbygAYWLqal-_szb_alVDvOL3vtWzIfqhD4fsi0m6jHkZMZxgp4z2syX4bEIwd1e32_eFA/exec';
 const SUPERVISORES_OBSOLETO_REMOVIDO = null; // PINs agora validados via API (action: validarPin)
 const TOL_VISC=1, TOL_SEC=20;
+// ══════════════════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════════════════
+
 let receitas=[], recIdx=0, filtroH='todos', nsn=1, receitasCarregadas=false;
 let pinBufN='', pinBufR='';
 const lockBufs={pend:'',painel:''};
@@ -790,8 +794,8 @@ function selecionarMaquina(m){
   renderMaqBar();
   const si = document.getElementById('si');
   if(si) si.value='';
-  rL(filtrarPorMaquina(receitas));
-  tIr('s-lista','tab-r','Receitas de Produto','Impressão · Rotogravura');
+  renderLista(filtrarPorMaquina(receitas));
+  navegarTab('s-lista','tab-r','Receitas de Produto','Impressão · Rotogravura');
 }
 
 function irTrocarMaquina(){
@@ -799,7 +803,7 @@ function irTrocarMaquina(){
   document.getElementById('tpt').textContent='Máquina deste tablet';
   document.getElementById('tps').textContent='Toque para trocar';
   document.getElementById('tpp').style.display='none';
-  ir('s-maquina-setup');
+  navegarTela('s-maquina-setup');
 }
 
 function exigirMaquinaSeNecessario(){
@@ -807,7 +811,7 @@ function exigirMaquinaSeNecessario(){
   document.getElementById('tpt').textContent='Selecione a máquina';
   document.getElementById('tps').textContent='Tablet desta máquina';
   document.getElementById('tpp').style.display='none';
-  ir('s-maquina-setup');
+  navegarTela('s-maquina-setup');
   return true;
 }
 
@@ -825,7 +829,9 @@ const paramsDef=[
   {id:'p10',lbl:'Pressão Cil. Borracha',un:'',ref:'200',tipo:'normal'},
 ];
 
-// ── API ──────────────────────────────────────────────────
+// ══════════════════════════════════════════════════════════
+// API
+// ══════════════════════════════════════════════════════════
 
 function apiGet(action, extraParams='') {
   return new Promise((resolve, reject) => {
@@ -859,13 +865,17 @@ function apiPost(body) {
 
 // ── CARREGAR RECEITAS ────────────────────────────────────
 
+// ══════════════════════════════════════════════════════════
+// INICIALIZAÇÃO E CARGA DE DADOS
+// ══════════════════════════════════════════════════════════
+
 async function carregarReceitas() {
   try {
     // Carrega apenas dados leves para a lista
     receitas = await apiGet('getReceitasLista');
     receitasCarregadas = true;
     renderMaqBar();
-    rL(filtrarPorMaquina(receitas));
+    renderLista(filtrarPorMaquina(receitas));
   } catch(e) {
     document.getElementById('lw').innerHTML = `<div style="padding:20px 0;text-align:center;font-size:13px;color:var(--red)">Erro ao carregar receitas: ${e.message}</div>`;
   }
@@ -880,7 +890,7 @@ function initApp(){
 async function carregarPendencias() {
   try {
     pendencias = await apiGet('getPendencias');
-    uPendBadge();
+    atualizarBadgePendencias();
   } catch(e) {
     console.error('Erro ao carregar pendências:', e);
   }
@@ -888,23 +898,27 @@ async function carregarPendencias() {
 
 // ── LISTA ────────────────────────────────────────────────
 
-function rL(lista) {
+// ══════════════════════════════════════════════════════════
+// LISTA DE RECEITAS
+// ══════════════════════════════════════════════════════════
+
+function renderLista(lista) {
   if(!receitasCarregadas){
     document.getElementById('lw').innerHTML = '<div class="loading-wrap"><div class="spinner"></div><span style="font-size:13px;color:var(--text3)">Carregando receitas...</span></div>';
     return;
   }
   document.getElementById('lw').innerHTML = lista.length
-    ? lista.map(r=>`<div class="li" onclick="abrirRec(${r.ID})"><div class="lic"><i class="ti ti-file-description"></i></div><div class="lb"><div class="lt">${r.CLIENTE} — ${fmtCodPAExib(r.COD_PA)}</div><div class="ls">${r.SERVICO} · ${r.MAQUINA}${r.ITENS_CONJUGACAO?' · <i class="ti ti-layers-linked" style="font-size:10px;color:var(--amber);vertical-align:-1px"></i>':''}</div></div><span class="bok">Aprovada</span></div>`).join('')
+    ? lista.map(r=>`<div class="li" onclick="abrirRec(${r.ID})"><div class="lic"><i class="ti ti-file-description"></i></div><div class="lb"><div class="lt">${r.CLIENTE} — ${formatarCodPAExibicao(r.COD_PA)}</div><div class="ls">${r.SERVICO} · ${r.MAQUINA}${r.ITENS_CONJUGACAO?' · <i class="ti ti-layers-linked" style="font-size:10px;color:var(--amber);vertical-align:-1px"></i>':''}</div></div><span class="bok">Aprovada</span></div>`).join('')
     : '<div style="padding:20px 0;text-align:center;font-size:13px;color:var(--text3)">Nenhuma receita encontrada</div>';
 }
 
-function filtrar() {
+function filtrarReceitas() {
   const q = document.getElementById('si').value.toLowerCase().trim();
   const base = filtrarPorMaquina(receitas);
-  if(!q){rL(base);return;}
-  rL(base.filter(r=>{
+  if(!q){renderLista(base);return;}
+  renderLista(base.filter(r=>{
     const cli=(r.CLIENTE||'').toLowerCase();
-    const cod=fmtCodPAExib(r.COD_PA).toLowerCase();
+    const cod=formatarCodPAExibicao(r.COD_PA).toLowerCase();
     const cod2=String(r.COD_PA||'').toLowerCase();
     const serv=(r.SERVICO||'').toLowerCase();
     return cli.includes(q)||cod.includes(q)||cod2.includes(q)||serv.includes(q);
@@ -913,6 +927,10 @@ function filtrar() {
 
 // ── DETALHE RECEITA ──────────────────────────────────────
 
+// ══════════════════════════════════════════════════════════
+// DETALHE DA RECEITA
+// ══════════════════════════════════════════════════════════
+
 async function abrirRec(id) {
   recIdx = id;
   let r = receitas.find(x => String(x.ID) === String(id));
@@ -920,7 +938,7 @@ async function abrirRec(id) {
 
   // Se ainda não tem detalhes carregados, buscar agora
   if (!r._detalhesCarregados) {
-    ir('s-rec');
+    navegarTela('s-rec');
     document.getElementById('rec-id').innerHTML = `<div style="padding:40px 0;text-align:center"><div class="spinner"></div><div style="font-size:13px;color:var(--text3);margin-top:12px">Carregando receita...</div></div>`;
     try {
       const detalhe = await apiGet('getReceitaDetalhe', `&id=${id}`);
@@ -939,7 +957,7 @@ async function abrirRec(id) {
     }
   }
 
-  document.getElementById('rec-id').innerHTML=`<div class="sl">Identificação</div><div class="hg"><div><div class="fl">Cliente</div><div class="fv fvac">${r.CLIENTE}</div></div><div><div class="fl">Máquina</div><div class="fv">${r.MAQUINA}</div></div><div><div class="fl">Cód. PA</div><div class="fv">${fmtCodPAExib(r.COD_PA)}</div></div><div><div class="fl">OP Criação</div><div class="fv">${r.OP_CRIACAO||'—'}</div></div></div><div><div class="fl">Serviço</div><div class="fv" style="font-size:12px;margin-top:2px">${r.SERVICO}</div></div><div style="margin-top:10px;display:flex;gap:8px"><div style="flex:1"><div class="fl">Operador</div><div class="fv" style="font-size:12px">${r.OPERADOR||'—'}</div></div><div style="flex:1"><div class="fl">Aprovador</div><div class="fv" style="font-size:12px">${r.APROVADOR||'—'}</div></div></div>`;
+  document.getElementById('rec-id').innerHTML=`<div class="sl">Identificação</div><div class="hg"><div><div class="fl">Cliente</div><div class="fv fvac">${r.CLIENTE}</div></div><div><div class="fl">Máquina</div><div class="fv">${r.MAQUINA}</div></div><div><div class="fl">Cód. PA</div><div class="fv">${formatarCodPAExibicao(r.COD_PA)}</div></div><div><div class="fl">OP Criação</div><div class="fv">${r.OP_CRIACAO||'—'}</div></div></div><div><div class="fl">Serviço</div><div class="fv" style="font-size:12px;margin-top:2px">${r.SERVICO}</div></div><div style="margin-top:10px;display:flex;gap:8px"><div style="flex:1"><div class="fl">Operador</div><div class="fv" style="font-size:12px">${r.OPERADOR||'—'}</div></div><div style="flex:1"><div class="fl">Aprovador</div><div class="fv" style="font-size:12px">${r.APROVADOR||'—'}</div></div></div>`;
 
   const tintas = Array.isArray(r.tintas) ? r.tintas : (r.tintas ? [r.tintas] : []);
   const p = Array.isArray(r.parametros) ? (r.parametros[0]||{}) : (r.parametros||{});
@@ -953,7 +971,7 @@ async function abrirRec(id) {
   }
   const recTintasEl = document.getElementById('rec-tintas');
   recTintasEl.style.display = 'block';
-  recTintasEl.innerHTML=`<div class="sl">Tintas por estação</div>${tintas.filter(t=>t.NOME_COR).map(t=>`<div class="tr2"><div class="nc">${t.ESTACAO}</div><div><div style="font-size:13px;font-weight:600;color:var(--text)">${t.NOME_COR}</div><div style="font-size:11px;color:var(--text3);margin-top:1px">${t.COD_TINTA}${t.ID_CAMISA?' · Camisa: '+t.ID_CAMISA:''}</div><div class="chips"><div class="chip">Visc. <b>${t.VISCOSIDADE} s</b></div><div class="chip">Sec. <b>${secStr(t.SECAGEM_MIN,t.SECAGEM_SEG)}</b></div></div></div></div>`).join('')}`;
+  recTintasEl.innerHTML=`<div class="sl">Tintas por estação</div>${tintas.filter(t=>t.NOME_COR).map(t=>`<div class="tr2"><div class="nc">${t.ESTACAO}</div><div><div style="font-size:13px;font-weight:600;color:var(--text)">${t.NOME_COR}</div><div style="font-size:11px;color:var(--text3);margin-top:1px">${t.COD_TINTA}${t.ID_CAMISA?' · Camisa: '+t.ID_CAMISA:''}</div><div class="chips"><div class="chip">Visc. <b>${t.VISCOSIDADE} s</b></div><div class="chip">Sec. <b>${formatarSecagem(t.SECAGEM_MIN,t.SECAGEM_SEG)}</b></div></div></div></div>`).join('')}`;
 
   document.getElementById('rec-params-box').innerHTML=`<div class="pbox"><div class="pl">Tensão Freio Desbob.</div><div class="pv">${p.TENSAO_FREIO||'—'} <span class="pu">N</span></div></div><div class="pbox"><div class="pl">Pressão Compactador</div><div class="pv">${p.PRESSAO_COMPACTADOR||'—'} <span class="pu">Bar</span></div></div><div class="pbox"><div class="pl">Avanço CR</div><div class="pv">${p.AVANCO_CR||'—'} <span class="pu">N</span></div></div><div class="pbox"><div class="pl">Velocidade</div><div class="pv">${p.VELOCIDADE||'—'} <span class="pu">m/min</span></div></div><div class="pbox"><div class="pl">Taxa de Redução</div><div class="pv">${p.TAXA_REDUCAO||'—'} <span class="pu">%</span></div></div><div class="pbox"><div class="pl">Tensão Rebobinador</div><div class="pv">${p.TENSAO_REBOBINADOR||'—'} <span class="pu">N</span></div></div><div class="pbox"><div class="pl">Avanço</div><div class="pv">${p.AVANCO||'—'} <span class="pu">N</span></div></div><div class="pbox"><div class="pl">Posição Compactador</div><div class="pv" style="font-size:13px">${p.POSICAO_COMPACTADOR||'—'}</div></div><div class="pbox"><div class="pl">Temp. Ambiente</div><div class="pv">${p.TEMP_AMBIENTE||'—'} <span class="pu">°C</span></div></div><div class="pbox"><div class="pl">Largura do Filme</div><div class="pv">${p.LARGURA_FILME||'—'} <span class="pu">mm</span></div></div><div class="pbox"><div class="pl">Pressão Cil. Borracha</div><div class="pv">${p.PRESSAO_CIL_BORRACHA||'—'}</div></div>${p.MATERIAL?`<div class="pbox" style="grid-column:span 2"><div class="pl">Material</div><div class="pv" style="font-size:13px">${p.MATERIAL}</div></div>`:''}`;
 
@@ -975,7 +993,7 @@ async function abrirRec(id) {
   const estufaHtml=preHotRow+estufaRows+posHotRow;document.getElementById('rec-estufas').innerHTML=`<div class="sl">Estufas por estação</div>${estufaHtml}`;
 
 
-  document.getElementById('tpt').textContent=`${r.CLIENTE} · ${fmtCodPAExib(r.COD_PA)}`;
+  document.getElementById('tpt').textContent=`${r.CLIENTE} · ${formatarCodPAExibicao(r.COD_PA)}`;
   document.getElementById('tps').textContent=`${r.MAQUINA} · Rotogravura`;
   // Observações técnicas
   const obsEl=document.getElementById('rec-obs');
@@ -996,7 +1014,7 @@ async function abrirRec(id) {
   } catch(e){console.warn('rolo/faca:',e.message);}
   document.getElementById('sbw').innerHTML='';
   document.getElementById('tpp').style.display='';
-  ir('s-rec');
+  navegarTela('s-rec');
 }
 
 // ── CONJUGAÇÃO (modelo Flexo) ────────────────────────────
@@ -1010,13 +1028,13 @@ function setConj(v){
 
 // ── REGISTRO DE REPETIÇÃO ────────────────────────────────
 
-function rRep() {
+function iniciarRepeticao() {
   const r = receitas.find(x => String(x.ID) === String(recIdx));
   if (!r) return;
   const n = new Date();
   document.getElementById('rep-dt').textContent = n.toLocaleDateString('pt-BR')+' · '+n.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
-  document.getElementById('rep-id-grid').innerHTML=`<div><div class="fl">Cliente</div><div class="fv fvac">${r.CLIENTE}</div></div><div><div class="fl">Cód. PA</div><div class="fv">${fmtCodPAExib(r.COD_PA)}</div></div><div><div class="fl">Máquina</div><div class="fv">${r.MAQUINA}</div></div>`;
-  document.getElementById('rpctx').textContent=`${r.CLIENTE} · ${fmtCodPAExib(r.COD_PA)}`;
+  document.getElementById('rep-id-grid').innerHTML=`<div><div class="fl">Cliente</div><div class="fv fvac">${r.CLIENTE}</div></div><div><div class="fl">Cód. PA</div><div class="fv">${formatarCodPAExibicao(r.COD_PA)}</div></div><div><div class="fl">Máquina</div><div class="fv">${r.MAQUINA}</div></div>`;
+  document.getElementById('rpctx').textContent=`${r.CLIENTE} · ${formatarCodPAExibicao(r.COD_PA)}`;
 
   document.getElementById('rep-conj-sel-wrap').style.display = 'none';
   renderRepTintas(Array.isArray(r.tintas) ? r.tintas.filter(t=>t.NOME_COR) : []);
@@ -1027,12 +1045,12 @@ function rRep() {
     paramRefs[p.id] = refVal;
     const isSel=p.tipo==='sel', isInf=p.tipo==='info';
     const inp = isSel
-      ? `<select class="param-sel" id="pinp-${p.id}" onchange="chkP('${p.id}')"><option value="">—</option>${p.opts.map(o=>`<option>${o}</option>`).join('')}</select>`
-      : `<input class="param-inp${isInf?' inf':''}" id="pinp-${p.id}" type="text" inputmode="decimal" oninput="chkP('${p.id}')" placeholder="">`;
+      ? `<select class="param-sel" id="pinp-${p.id}" onchange="verificarParametro('${p.id}')"><option value="">—</option>${p.opts.map(o=>`<option>${o}</option>`).join('')}</select>`
+      : `<input class="param-inp${isInf?' inf':''}" id="pinp-${p.id}" type="text" inputmode="decimal" oninput="verificarParametro('${p.id}')" placeholder="">`;
     return `<div class="param-row"><div class="param-top"><div class="param-lbl">${p.lbl}${p.un?`<span class="un">(${p.un})</span>`:''}</div>${inp}</div><div id="jprow-${p.id}" style="display:none" class="just-inp"><label><i class="ti ti-alert-triangle" style="font-size:11px;vertical-align:-1px"></i> Fora do especificado — justifique</label><textarea id="jparam-${p.id}" rows="2" placeholder="Justifique..."></textarea></div></div>`;
   }).join('');
 
-  uPrg();
+  atualizarProgresso();
 }
 
 function renderRepTintas(tintas) {
@@ -1042,11 +1060,11 @@ function renderRepTintas(tintas) {
       <div class="vhdr"><div class="nc">${t.ESTACAO}</div><div><div style="font-size:13px;font-weight:600;color:var(--text)">${t.NOME_COR}</div><div style="font-size:11px;color:var(--text3)">${t.COD_TINTA}</div></div></div>
       <div class="vg">
         <div class="vf"><label>Viscosidade (s)</label>
-          <div class="vi-row"><input class="vi" id="visc-${t.ESTACAO}" type="text" inputmode="decimal" style="width:70px" oninput="chkV('${t.ESTACAO}',${t.VISCOSIDADE})"><span class="vi-sep">s</span></div>
+          <div class="vi-row"><input class="vi" id="visc-${t.ESTACAO}" type="text" inputmode="decimal" style="width:70px" oninput="verificarViscosidade('${t.ESTACAO}',${t.VISCOSIDADE})"><span class="vi-sep">s</span></div>
           <div id="vtv-${t.ESTACAO}" style="display:none" class="just-inp"><label><i class="ti ti-alert-triangle" style="font-size:11px;vertical-align:-1px"></i> Fora do especificado</label><textarea id="jvisc-${t.ESTACAO}" rows="2" placeholder="Justifique..."></textarea></div>
         </div>
         <div class="vf"><label>Secagem (min:seg)</label>
-          <div class="vi-row"><input class="vi" id="sec-${t.ESTACAO}" type="text" inputmode="numeric" placeholder="0:00" style="width:70px" oninput="chkSec('${t.ESTACAO}',${t.SECAGEM_MIN||0},${t.SECAGEM_SEG||0})" onfocus="if(!this.value)this.value='0:'" onblur="if(this.value==='0:')this.value=''"><span class="vi-sep">min:s</span></div>
+          <div class="vi-row"><input class="vi" id="sec-${t.ESTACAO}" type="text" inputmode="numeric" placeholder="0:00" style="width:70px" oninput="verificarSecagem('${t.ESTACAO}',${t.SECAGEM_MIN||0},${t.SECAGEM_SEG||0})" onfocus="if(!this.value)this.value='0:'" onblur="if(this.value==='0:')this.value=''"><span class="vi-sep">min:s</span></div>
           <div id="vts-${t.ESTACAO}" style="display:none" class="just-inp"><label><i class="ti ti-alert-triangle" style="font-size:11px;vertical-align:-1px"></i> Fora do especificado</label><textarea id="jsec-${t.ESTACAO}" rows="2" placeholder="Justifique..."></textarea></div>
         </div>
       </div>
@@ -1066,7 +1084,7 @@ function renderRepTintas(tintas) {
         <div class="nc">${t.ESTACAO}</div>
         <div style="flex:1;font-size:12px;color:var(--text2)">${t.NOME_COR}</div>
         <div style="display:flex;align-items:center;gap:4px">
-          <input id="${prefix}-${t.ESTACAO}" type="text" inputmode="decimal" placeholder="" style="width:72px;font-size:12px;padding:6px 9px;text-align:center;border:0.5px solid var(--border2);border-radius:var(--rad);background:var(--card);color:var(--text);outline:none;font-family:var(--font-sans)" oninput="chkComplem('${prefix}',${t.ESTACAO})">
+          <input id="${prefix}-${t.ESTACAO}" type="text" inputmode="decimal" placeholder="" style="width:72px;font-size:12px;padding:6px 9px;text-align:center;border:0.5px solid var(--border2);border-radius:var(--rad);background:var(--card);color:var(--text);outline:none;font-family:var(--font-sans)" oninput="verificarComplemento('${prefix}',${t.ESTACAO})">
           ${unit?`<span style="font-size:11px;color:var(--text3)">${unit}</span>`:''}
         </div>
       </div>
@@ -1088,7 +1106,11 @@ function getParamRef(pid, p) {
   return map[pid]!==undefined&&map[pid]!==''?String(map[pid]):null;
 }
 
-function chkComplem(prefix, estacao){
+// ══════════════════════════════════════════════════════════
+// VERIFICAÇÃO DE DESVIOS (VISCOSIDADE, SECAGEM, PARÂMETROS, COMPLEMENTOS)
+// ══════════════════════════════════════════════════════════
+
+function verificarComplemento(prefix, estacao){
   const ref = compRefs[prefix+'-'+estacao] || '';
   const i=document.getElementById(prefix+'-'+estacao);
   const j=document.getElementById('jreprow-'+prefix+'-'+estacao);
@@ -1100,12 +1122,12 @@ function chkComplem(prefix, estacao){
     i.style.color='var(--text)';
     i.dataset.dv='0';
     j.style.display='none';
-    uBtn();return;
+    atualizarBotaoRevisar();return;
   }
   const numerico = prefix==='reprolo'||prefix==='repfaca'||prefix==='repesufa';
   let dv;
   if(numerico){
-    const vNum=parseFloat(normDec(v)), refNum=parseFloat(normDec(String(ref)));
+    const vNum=parseFloat(normalizarDecimal(v)), refNum=parseFloat(normalizarDecimal(String(ref)));
     dv=isNaN(vNum)||isNaN(refNum)?v!==String(ref):Math.abs(vNum-refNum)>0.001;
   } else {
     dv=v!==String(ref);
@@ -1115,16 +1137,16 @@ function chkComplem(prefix, estacao){
   i.style.color=dv?'var(--red)':'var(--text)';
   i.dataset.dv=dv?'1':'0';
   j.style.display=dv?'block':'none';
-  uBtn();
+  atualizarBotaoRevisar();
 }
 
-function chkV(n,ref){const i=document.getElementById('visc-'+n),j=document.getElementById('vtv-'+n),v=parseFloat(i.value.replace(',','.'));if(isNaN(v)||i.value.trim()===''){i.className='vi';j.style.display='none';uBtn();return;}const dv=Math.abs(v-ref)>TOL_VISC;i.className='vi'+(dv?' vdv':'');j.style.display=dv?'block':'none';uBtn();}
-function chkSec(n,rM,rS){const i=document.getElementById('sec-'+n),j=document.getElementById('vts-'+n);if(!i||i.value.trim()===''){if(i)i.className='vi';j.style.display='none';uBtn();return;}const parts=i.value.split(':');const vm=parseInt(parts[0])||0,vs=parseInt(parts[1])||0;const dv=Math.abs(secTotal(vm,vs)-secTotal(rM,rS))>TOL_SEC;i.className='vi'+(dv?' vdv':'');j.style.display=dv?'block':'none';uBtn();}
-function chkP(id){const p=paramsDef.find(x=>x.id===id);if(p.tipo==='info')return;const ref=paramRefs[id]||p.ref;const i=document.getElementById('pinp-'+id),j=document.getElementById('jprow-'+id),v=i.value.trim();if(!v){i.className=p.tipo==='sel'?'param-sel':'param-inp';j.style.display='none';uPrg();return;}const vCmp=p.tipo==='sel'?v:normDec(v);const refCmp=p.tipo==='sel'?String(ref):normDec(String(ref));const dv=vCmp!==refCmp;if(p.tipo==='sel')i.className='param-sel'+(dv?' dv':'');else i.className='param-inp'+(dv?' dv':'');j.style.display=dv?'block':'none';uPrg();}
+function verificarViscosidade(n,ref){const i=document.getElementById('visc-'+n),j=document.getElementById('vtv-'+n),v=parseFloat(i.value.replace(',','.'));if(isNaN(v)||i.value.trim()===''){i.className='vi';j.style.display='none';atualizarBotaoRevisar();return;}const dv=Math.abs(v-ref)>TOL_VISC;i.className='vi'+(dv?' vdv':'');j.style.display=dv?'block':'none';atualizarBotaoRevisar();}
+function verificarSecagem(n,rM,rS){const i=document.getElementById('sec-'+n),j=document.getElementById('vts-'+n);if(!i||i.value.trim()===''){if(i)i.className='vi';j.style.display='none';atualizarBotaoRevisar();return;}const parts=i.value.split(':');const vm=parseInt(parts[0])||0,vs=parseInt(parts[1])||0;const dv=Math.abs(calcularSegundos(vm,vs)-calcularSegundos(rM,rS))>TOL_SEC;i.className='vi'+(dv?' vdv':'');j.style.display=dv?'block':'none';atualizarBotaoRevisar();}
+function verificarParametro(id){const p=paramsDef.find(x=>x.id===id);if(p.tipo==='info')return;const ref=paramRefs[id]||p.ref;const i=document.getElementById('pinp-'+id),j=document.getElementById('jprow-'+id),v=i.value.trim();if(!v){i.className=p.tipo==='sel'?'param-sel':'param-inp';j.style.display='none';atualizarProgresso();return;}const vCmp=p.tipo==='sel'?v:normalizarDecimal(v);const refCmp=p.tipo==='sel'?String(ref):normalizarDecimal(String(ref));const dv=vCmp!==refCmp;if(p.tipo==='sel')i.className='param-sel'+(dv?' dv':'');else i.className='param-inp'+(dv?' dv':'');j.style.display=dv?'block':'none';atualizarProgresso();}
 
-function uPrg(){const norm=paramsDef.filter(p=>p.tipo!=='info');const f=norm.filter(p=>document.getElementById('pinp-'+p.id)?.value.trim()!=='').length;document.getElementById('rpg').style.width=Math.round((f/norm.length)*100)+'%';uBtn();}
+function atualizarProgresso(){const norm=paramsDef.filter(p=>p.tipo!=='info');const f=norm.filter(p=>document.getElementById('pinp-'+p.id)?.value.trim()!=='').length;document.getElementById('rpg').style.width=Math.round((f/norm.length)*100)+'%';atualizarBotaoRevisar();}
 
-function uBtn(){
+function atualizarBotaoRevisar(){
   const r=receitas.find(x=>String(x.ID)===String(recIdx));
   if(!r)return;
   const tintas=repTintasAtivas||[];
@@ -1132,7 +1154,7 @@ function uBtn(){
   const opOk=document.getElementById('op-inp')?.value.trim()!=='';
   const tOk=tintas.every(t=>document.getElementById('visc-'+t.ESTACAO)?.value.trim()!==''&&document.getElementById('sec-'+t.ESTACAO)?.value.trim()!==''&&document.getElementById('repcamisa-'+t.ESTACAO)?.value.trim()!==''&&document.getElementById('reprolo-'+t.ESTACAO)?.value.trim()!==''&&document.getElementById('repesufa-'+t.ESTACAO)?.value.trim()!=='');
   const pOk=paramsDef.filter(p=>p.tipo!=='info').every(p=>document.getElementById('pinp-'+p.id)?.value.trim()!=='');
-  const jOk=getDvF().every(d=>d.just.trim()!=='');
+  const jOk=getDesvios().every(d=>d.just.trim()!=='');
   const tintas2=repTintasAtivas||[];
   const compJok=['reprolo','repesufa','repfaca'].every(prefix=>
     tintas2.every(t=>{
@@ -1148,7 +1170,11 @@ function uBtn(){
   document.getElementById('btn-revisar').disabled=!ok;
 }
 
-function getDvF(){
+// ══════════════════════════════════════════════════════════
+// REVISÃO E DETECÇÃO DE DESVIOS
+// ══════════════════════════════════════════════════════════
+
+function getDesvios(){
   const r=receitas.find(x=>String(x.ID)===String(recIdx));
   if(!r)return[];
   const tintas=repTintasAtivas||[];
@@ -1158,7 +1184,7 @@ function getDvF(){
     const vi=document.getElementById('visc-'+t.ESTACAO),ji=document.getElementById('jvisc-'+t.ESTACAO);
     if(vi?.classList.contains('vdv'))dvs.push({key:`visc-${t.ESTACAO}`,lbl:`Est. ${t.ESTACAO} — Viscosidade`,val:`${vi.value} s`,ref:`${t.VISCOSIDADE} s`,just:ji?.value||'',tipo:'VISCOSIDADE',tipoAlt:''});
     const isec=document.getElementById('sec-'+t.ESTACAO),jsi=document.getElementById('jsec-'+t.ESTACAO);
-    if(isec?.classList.contains('vdv')){const sp=(isec.value||'0:0').split(':');const vm=parseInt(sp[0])||0,vs=parseInt(sp[1])||0;dvs.push({key:`sec-${t.ESTACAO}`,lbl:`Est. ${t.ESTACAO} — Secagem`,val:`${vm} min ${vs} s`,ref:secStr(t.SECAGEM_MIN||0,t.SECAGEM_SEG||0),just:jsi?.value||'',tipo:'SECAGEM',tipoAlt:''});}
+    if(isec?.classList.contains('vdv')){const sp=(isec.value||'0:0').split(':');const vm=parseInt(sp[0])||0,vs=parseInt(sp[1])||0;dvs.push({key:`sec-${t.ESTACAO}`,lbl:`Est. ${t.ESTACAO} — Secagem`,val:`${vm} min ${vs} s`,ref:formatarSecagem(t.SECAGEM_MIN||0,t.SECAGEM_SEG||0),just:jsi?.value||'',tipo:'SECAGEM',tipoAlt:''});}
   });
   paramsDef.filter(p=>p.tipo!=='info').forEach(p=>{
     const i=document.getElementById('pinp-'+p.id),j=document.getElementById('jparam-'+p.id);
@@ -1182,7 +1208,7 @@ function irRevisar(){
   const r=receitas.find(x=>String(x.ID)===String(recIdx));
   if(!r)return;
   const tintas=repTintasAtivas||[];
-  const dvs=getDvF();const cnt=dvs.length;
+  const dvs=getDesvios();const cnt=dvs.length;
   for(const k in altOpts)delete altOpts[k];
   document.getElementById('rev-dv-banner').style.display=cnt>0?'flex':'none';
   document.getElementById('rev-dv-count').textContent=cnt;
@@ -1193,12 +1219,12 @@ function irRevisar(){
     const secVal=document.getElementById('sec-'+t.ESTACAO)?.value||'0:0';
     const secParts=secVal.split(':');const mV=secParts[0]||'0',sV=secParts[1]||'0';
     const vDv=vV!==''&&Math.abs(parseFloat(vV.replace(',','.'))-t.VISCOSIDADE)>TOL_VISC;
-    const sDv=Math.abs(secTotal(parseInt(mV),parseInt(sV))-secTotal(t.SECAGEM_MIN||0,t.SECAGEM_SEG||0))>TOL_SEC&&secVal!=='0:0';
+    const sDv=Math.abs(calcularSegundos(parseInt(mV),parseInt(sV))-calcularSegundos(t.SECAGEM_MIN||0,t.SECAGEM_SEG||0))>TOL_SEC&&secVal!=='0:0';
     const vJ=document.getElementById('jvisc-'+t.ESTACAO)?.value||'';
     const sJ=document.getElementById('jsec-'+t.ESTACAO)?.value||'';
     return `<div class="rev-tinta"><div class="rev-tinta-hdr"><div class="nc">${t.ESTACAO}</div><div><div style="font-size:13px;font-weight:600;color:var(--text)">${t.NOME_COR}</div><div style="font-size:11px;color:var(--text3)">${t.COD_TINTA}</div></div></div>
-    <div class="rev-row"><div class="rev-row-top"><div class="rev-lbl">Viscosidade</div><div class="rev-right"><span class="rev-ref">Receita: ${t.VISCOSIDADE} s</span><span class="rev-real${vDv?' dv':''}">${vV||'—'} s${vDv?' <span class="rev-dv-pill">Desvio</span>':''}</span></div></div>${vDv?`<div class="rev-just"><div class="rev-just-lbl">Justificativa</div>${vJ}</div><div class="alt-opts"><button class="alt-btn" id="ao-visc${t.ESTACAO}-pont" onclick="selAlt('visc${t.ESTACAO}','pont')"><i class="ti ti-refresh"></i>Alteração pontual</button><button class="alt-btn" id="ao-visc${t.ESTACAO}-rec" onclick="selAlt('visc${t.ESTACAO}','rec')"><i class="ti ti-file-pencil"></i>Alterar na Receita</button></div>`:''}</div>
-    <div class="rev-row"><div class="rev-row-top"><div class="rev-lbl">Secagem</div><div class="rev-right"><span class="rev-ref">Receita: ${secStr(t.SECAGEM_MIN||0,t.SECAGEM_SEG||0)}</span><span class="rev-real${sDv?' dv':''}">${secStr(parseInt(mV),parseInt(sV))}${sDv?' <span class="rev-dv-pill">Desvio</span>':''}</span></div></div>${sDv?`<div class="rev-just"><div class="rev-just-lbl">Justificativa</div>${sJ}</div><div class="alt-opts"><button class="alt-btn" id="ao-sec${t.ESTACAO}-pont" onclick="selAlt('sec${t.ESTACAO}','pont')"><i class="ti ti-refresh"></i>Alteração pontual</button><button class="alt-btn" id="ao-sec${t.ESTACAO}-rec" onclick="selAlt('sec${t.ESTACAO}','rec')"><i class="ti ti-file-pencil"></i>Alterar na Receita</button></div>`:''}</div></div>`;
+    <div class="rev-row"><div class="rev-row-top"><div class="rev-lbl">Viscosidade</div><div class="rev-right"><span class="rev-ref">Receita: ${t.VISCOSIDADE} s</span><span class="rev-real${vDv?' dv':''}">${vV||'—'} s${vDv?' <span class="rev-dv-pill">Desvio</span>':''}</span></div></div>${vDv?`<div class="rev-just"><div class="rev-just-lbl">Justificativa</div>${vJ}</div><div class="alt-opts"><button class="alt-btn" id="ao-visc${t.ESTACAO}-pont" onclick="selecionarAlteracao('visc${t.ESTACAO}','pont')"><i class="ti ti-refresh"></i>Alteração pontual</button><button class="alt-btn" id="ao-visc${t.ESTACAO}-rec" onclick="selecionarAlteracao('visc${t.ESTACAO}','rec')"><i class="ti ti-file-pencil"></i>Alterar na Receita</button></div>`:''}</div>
+    <div class="rev-row"><div class="rev-row-top"><div class="rev-lbl">Secagem</div><div class="rev-right"><span class="rev-ref">Receita: ${formatarSecagem(t.SECAGEM_MIN||0,t.SECAGEM_SEG||0)}</span><span class="rev-real${sDv?' dv':''}">${formatarSecagem(parseInt(mV),parseInt(sV))}${sDv?' <span class="rev-dv-pill">Desvio</span>':''}</span></div></div>${sDv?`<div class="rev-just"><div class="rev-just-lbl">Justificativa</div>${sJ}</div><div class="alt-opts"><button class="alt-btn" id="ao-sec${t.ESTACAO}-pont" onclick="selecionarAlteracao('sec${t.ESTACAO}','pont')"><i class="ti ti-refresh"></i>Alteração pontual</button><button class="alt-btn" id="ao-sec${t.ESTACAO}-rec" onclick="selecionarAlteracao('sec${t.ESTACAO}','rec')"><i class="ti ti-file-pencil"></i>Alterar na Receita</button></div>`:''}</div></div>`;
   }).join('');
 
   const pRef=r.parametros||{};
@@ -1207,7 +1233,7 @@ function irRevisar(){
     const refVal=getParamRef(p.id,pRef)||p.ref;
     const isDv=p.tipo!=='info'&&v!=='—'&&v!==String(refVal);
     const j=document.getElementById('jparam-'+p.id)?.value||'';
-    return `<div class="rev-row"><div class="rev-row-top"><div class="rev-lbl">${p.lbl}${p.un?` (${p.un})`:''}</div><div class="rev-right"><span class="rev-ref">Receita: ${refVal}${p.un?' '+p.un:''}</span><span class="rev-real${isDv?' dv':''}">${v}${p.un&&v!=='—'?' '+p.un:''}${isDv?' <span class="rev-dv-pill">Desvio</span>':''}</span></div></div>${isDv?`<div class="rev-just"><div class="rev-just-lbl">Justificativa</div>${j}</div><div class="alt-opts"><button class="alt-btn" id="ao-${p.id}-pont" onclick="selAlt('${p.id}','pont')"><i class="ti ti-refresh"></i>Alteração pontual</button><button class="alt-btn" id="ao-${p.id}-rec" onclick="selAlt('${p.id}','rec')"><i class="ti ti-file-pencil"></i>Alterar na Receita</button></div>`:''}</div>`;
+    return `<div class="rev-row"><div class="rev-row-top"><div class="rev-lbl">${p.lbl}${p.un?` (${p.un})`:''}</div><div class="rev-right"><span class="rev-ref">Receita: ${refVal}${p.un?' '+p.un:''}</span><span class="rev-real${isDv?' dv':''}">${v}${p.un&&v!=='—'?' '+p.un:''}${isDv?' <span class="rev-dv-pill">Desvio</span>':''}</span></div></div>${isDv?`<div class="rev-just"><div class="rev-just-lbl">Justificativa</div>${j}</div><div class="alt-opts"><button class="alt-btn" id="ao-${p.id}-pont" onclick="selecionarAlteracao('${p.id}','pont')"><i class="ti ti-refresh"></i>Alteração pontual</button><button class="alt-btn" id="ao-${p.id}-rec" onclick="selecionarAlteracao('${p.id}','rec')"><i class="ti ti-file-pencil"></i>Alterar na Receita</button></div>`:''}</div>`;
   }).join('');
   // Renderizar desvios de complementos (rolo, estufa, faca)
   const tintas3=repTintasAtivas||[];
@@ -1230,53 +1256,57 @@ function irRevisar(){
   if(revCompEl){
     if(compDesvios.length>0){
       revCompEl.style.display='block';
-      revCompEl.innerHTML=`<div class="sl">Pressão do Rolo / Estufa / Faca — revisão</div>${compDesvios.map(d=>`<div class="rev-row"><div class="rev-row-top"><div class="rev-lbl">${d.lbl}</div><div class="rev-right"><span class="rev-ref">Receita: ${d.ref}</span><span class="rev-real dv">${d.val} <span class="rev-dv-pill">Desvio</span></span></div></div><div class="rev-just"><div class="rev-just-lbl">Justificativa</div>${d.just}</div><div class="alt-opts"><button class="alt-btn" id="ao-${d.key}-pont" onclick="selAlt('${d.key}','pont')"><i class="ti ti-refresh"></i>Alteração pontual</button><button class="alt-btn" id="ao-${d.key}-rec" onclick="selAlt('${d.key}','rec')"><i class="ti ti-file-pencil"></i>Alterar na Receita</button></div></div>`).join('')}`;
+      revCompEl.innerHTML=`<div class="sl">Pressão do Rolo / Estufa / Faca — revisão</div>${compDesvios.map(d=>`<div class="rev-row"><div class="rev-row-top"><div class="rev-lbl">${d.lbl}</div><div class="rev-right"><span class="rev-ref">Receita: ${d.ref}</span><span class="rev-real dv">${d.val} <span class="rev-dv-pill">Desvio</span></span></div></div><div class="rev-just"><div class="rev-just-lbl">Justificativa</div>${d.just}</div><div class="alt-opts"><button class="alt-btn" id="ao-${d.key}-pont" onclick="selecionarAlteracao('${d.key}','pont')"><i class="ti ti-refresh"></i>Alteração pontual</button><button class="alt-btn" id="ao-${d.key}-rec" onclick="selecionarAlteracao('${d.key}','rec')"><i class="ti ti-file-pencil"></i>Alterar na Receita</button></div></div>`).join('')}`;
     } else {
       revCompEl.style.display='none';
     }
   }
-  uAltBanner();uRevPinBtn();ir('s-rev');
+  atualizarBannerAlteracoes();atualizarBotaoPinRevisao();navegarTela('s-rev');
 }
 
-function selAlt(key,tipo){altOpts[key]=tipo;const pont=document.getElementById('ao-'+key+'-pont'),rec=document.getElementById('ao-'+key+'-rec');if(pont)pont.className='alt-btn'+(tipo==='pont'?' sel-pont':'');if(rec)rec.className='alt-btn'+(tipo==='rec'?' sel-rec':'');uAltBanner();uRevPinBtn();}
-function uAltBanner(){const dvs=getDvF();const altKeys=dvs.map(d=>d.key);const cnt=Object.entries(altOpts).filter(([k,v])=>altKeys.includes(k)&&v==='rec').length;document.getElementById('alt-banner').style.display=cnt>0?'flex':'none';document.getElementById('alt-count').textContent=cnt;}
-function uRevPinBtn(){const dvs=getDvF();const allSet=dvs.length===0||dvs.every(d=>altOpts[d.key]);document.getElementById('btn-pin-r').disabled=!allSet;}
+function selecionarAlteracao(key,tipo){altOpts[key]=tipo;const pont=document.getElementById('ao-'+key+'-pont'),rec=document.getElementById('ao-'+key+'-rec');if(pont)pont.className='alt-btn'+(tipo==='pont'?' sel-pont':'');if(rec)rec.className='alt-btn'+(tipo==='rec'?' sel-rec':'');atualizarBannerAlteracoes();atualizarBotaoPinRevisao();}
+function atualizarBannerAlteracoes(){const dvs=getDesvios();const altKeys=dvs.map(d=>d.key);const cnt=Object.entries(altOpts).filter(([k,v])=>altKeys.includes(k)&&v==='rec').length;document.getElementById('alt-banner').style.display=cnt>0?'flex':'none';document.getElementById('alt-count').textContent=cnt;}
+function atualizarBotaoPinRevisao(){const dvs=getDesvios();const allSet=dvs.length===0||dvs.every(d=>altOpts[d.key]);document.getElementById('btn-pin-r').disabled=!allSet;}
 
-function irPinR(){
-  pinBufR='';updDotsR();document.getElementById('pre2').textContent='';
-  const dvs=getDvF();const altCnt=Object.values(altOpts).filter(v=>v==='rec').length;
+function irPinRepeticao(){
+  pinBufR='';atualizarDotsRepeticao();document.getElementById('pre2').textContent='';
+  const dvs=getDesvios();const altCnt=Object.values(altOpts).filter(v=>v==='rec').length;
   const di=document.getElementById('rpd');di.innerHTML='';
   if(dvs.length-altCnt>0)di.innerHTML+=`<span style="display:inline-flex;align-items:center;gap:4px;font-size:11px;background:var(--amber-light);color:var(--amber);padding:2px 8px;border-radius:20px;font-weight:600"><i class="ti ti-alert-triangle" style="font-size:10px"></i> ${dvs.length-altCnt} pontual(is)</span> `;
   if(altCnt>0)di.innerHTML+=`<span style="display:inline-flex;align-items:center;gap:4px;font-size:11px;background:var(--blue-light);color:var(--blue);padding:2px 8px;border-radius:20px;font-weight:600"><i class="ti ti-clock" style="font-size:10px"></i> ${altCnt} para pendência</span>`;
   document.getElementById('rep-oper-display').textContent=document.getElementById('oper-inp')?.value||'—';
-  ir('s-pin-r');
+  navegarTela('s-pin-r');
 }
+
+// ══════════════════════════════════════════════════════════
+// PIN E SALVAMENTO
+// ══════════════════════════════════════════════════════════
 
 // ── PIN NOVA RECEITA ─────────────────────────────────────
 
-async function ppN(v){
+async function pinNovaReceita(v){
   if(salvando)return;
   const err=document.getElementById('pne');
-  if(v==='back'){pinBufN=pinBufN.slice(0,-1);updDotsN();return;}
+  if(v==='back'){pinBufN=pinBufN.slice(0,-1);atualizarDotsNovaReceita();return;}
   if(v==='ok'){
     if(pinBufN.length<4){err.textContent='Digite os 4 dígitos';return;}
     const pin=pinBufN;
-    salvando=true;showLoading('Validando PIN...');
+    salvando=true;mostrarLoading('Validando PIN...');
     try{
       const res=await apiPost({action:'validarPin',pin});
-      if(!res.valido){hideLoading();salvando=false;err.textContent='PIN incorreto. Tente novamente.';pinBufN='';updDotsN();return;}
-      err.textContent='';pinBufN='';updDotsN();
+      if(!res.valido){ocultarLoading();salvando=false;err.textContent='PIN incorreto. Tente novamente.';pinBufN='';atualizarDotsNovaReceita();return;}
+      err.textContent='';pinBufN='';atualizarDotsNovaReceita();
       await salvarNovaReceita(res.nome);
-    }catch(e){hideLoading();err.textContent='Erro: '+e.message;pinBufN='';updDotsN();}
+    }catch(e){ocultarLoading();err.textContent='Erro: '+e.message;pinBufN='';atualizarDotsNovaReceita();}
     salvando=false;
     return;
   }
   if(pinBufN.length<4)pinBufN+=v;
-  updDotsN();
+  atualizarDotsNovaReceita();
 }
 
 async function salvarNovaReceita(aprovador) {
-  showLoading('Salvando receita...');
+  mostrarLoading('Salvando receita...');
   const cli=document.getElementById('n-cli').value,cod=document.getElementById('n-cod').value;
   const conjVal=document.getElementById('n-conj')?.value||'NAO';
   const conjItens=document.getElementById('n-conj-itens')?.value?.trim()||'';
@@ -1287,7 +1317,7 @@ async function salvarNovaReceita(aprovador) {
     const ins=tb.querySelectorAll('input');
     const secRaw=(ins[3]?.value||'0:0').split(':');
     const secM=parseInt(secRaw[0])||0,secS=parseInt(secRaw[1])||0;
-    return{estacao:n,codTinta:ins[0]?.value||'',nomeCor:ins[1]?.value||'',idCamisa:document.getElementById('camisa-'+n)?.value||'',viscosidade:parseFloat(normDec(ins[2]?.value))||0,pressaoRolo:normDec(document.getElementById('rolo-'+n)?.value||''),pressaoFaca:normDec(document.getElementById('faca-'+n)?.value||''),secagemMin:secM,secagemSeg:secS,tempEstufa:normDec(document.getElementById('estufa-'+n)?.value||''),preHot:preHotOn,preHotTemp:normDec(document.getElementById('hti-preHot')?.value||''),posHot:posHotOn,posHotTemp:normDec(document.getElementById('hti-posHot')?.value||'')};
+    return{estacao:n,codTinta:ins[0]?.value||'',nomeCor:ins[1]?.value||'',idCamisa:document.getElementById('camisa-'+n)?.value||'',viscosidade:parseFloat(normalizarDecimal(ins[2]?.value))||0,pressaoRolo:normalizarDecimal(document.getElementById('rolo-'+n)?.value||''),pressaoFaca:normalizarDecimal(document.getElementById('faca-'+n)?.value||''),secagemMin:secM,secagemSeg:secS,tempEstufa:normalizarDecimal(document.getElementById('estufa-'+n)?.value||''),preHot:preHotOn,preHotTemp:normalizarDecimal(document.getElementById('hti-preHot')?.value||''),posHot:posHotOn,posHotTemp:normalizarDecimal(document.getElementById('hti-posHot')?.value||'')};
   });
   // Adicionar estufas das estações sem tinta (estações removidas)
   const estacoesComTinta=tintas.map(t=>t.estacao);
@@ -1300,50 +1330,50 @@ async function salvarNovaReceita(aprovador) {
     }
   }
   const pbInputs=document.querySelectorAll('#ns3 .pb input:not(#n-material), #ns3 .pb select');
-  const parametros={tensaoFreio:normDec(pbInputs[0]?.value||''),pressaoCompactador:normDec(pbInputs[1]?.value||''),avancoCR:normDec(pbInputs[2]?.value||''),velocidade:normDec(pbInputs[3]?.value||''),taxaReducao:normDec(pbInputs[4]?.value||''),tensaoRebobinador:normDec(pbInputs[5]?.value||''),avanco:normDec(pbInputs[6]?.value||''),posicaoCompactador:pbInputs[7]?.value||'',tempAmbiente:normDec(pbInputs[8]?.value||''),larguraFilme:normDec(pbInputs[9]?.value||''),pressaoCilBorracha:normDec(pbInputs[10]?.value||''),material:document.getElementById('n-material')?.value||''};
+  const parametros={tensaoFreio:normalizarDecimal(pbInputs[0]?.value||''),pressaoCompactador:normalizarDecimal(pbInputs[1]?.value||''),avancoCR:normalizarDecimal(pbInputs[2]?.value||''),velocidade:normalizarDecimal(pbInputs[3]?.value||''),taxaReducao:normalizarDecimal(pbInputs[4]?.value||''),tensaoRebobinador:normalizarDecimal(pbInputs[5]?.value||''),avanco:normalizarDecimal(pbInputs[6]?.value||''),posicaoCompactador:pbInputs[7]?.value||'',tempAmbiente:normalizarDecimal(pbInputs[8]?.value||''),larguraFilme:normalizarDecimal(pbInputs[9]?.value||''),pressaoCilBorracha:normalizarDecimal(pbInputs[10]?.value||''),material:document.getElementById('n-material')?.value||''};
   try {
     const obsVal=document.getElementById('n-obs')?.value||'';
     await apiPost({action:'salvarReceita',receita:{cliente:cli,codPA:cod,opCriacao:document.getElementById('n-op').value,servico:document.getElementById('n-serv').value,processo:'Rotogravura',maquina:document.getElementById('n-maq').value,operador:document.getElementById('n-oper').value,observacoes:obsVal,conjugacao:conjVal,itensConjugacao:conjItens},tintas,parametros,aprovador});
     await carregarReceitas();
-    hideLoading();
-    showSuc('Receita aprovada e salva!',`${cli} · ${cod} está disponível para os operadores.`,[{l:'Produto',v:`${cli} · ${cod}`},{l:'Aprovador',v:aprovador},{l:'Status',v:'Aprovada'}],false,'s-lista');
+    ocultarLoading();
+    mostrarSucesso('Receita aprovada e salva!',`${cli} · ${cod} está disponível para os operadores.`,[{l:'Produto',v:`${cli} · ${cod}`},{l:'Aprovador',v:aprovador},{l:'Status',v:'Aprovada'}],false,'s-lista');
   } catch(e){
-    hideLoading();
+    ocultarLoading();
     document.getElementById('pne').textContent='Erro ao salvar: '+e.message;
   }
 }
 
 // ── PIN REPETIÇÃO ────────────────────────────────────────
 
-async function ppR(v){
+async function pinRepeticao(v){
   if(salvando)return;
   const err=document.getElementById('pre2');
-  if(v==='back'){pinBufR=pinBufR.slice(0,-1);updDotsR();return;}
+  if(v==='back'){pinBufR=pinBufR.slice(0,-1);atualizarDotsRepeticao();return;}
   if(v==='ok'){
     if(pinBufR.length<4){err.textContent='Digite os 4 dígitos';return;}
     const pin=pinBufR;
-    salvando=true;showLoading('Validando PIN...');
+    salvando=true;mostrarLoading('Validando PIN...');
     try{
       const res=await apiPost({action:'validarPin',pin});
-      if(!res.valido){hideLoading();salvando=false;err.textContent='PIN incorreto. Tente novamente.';pinBufR='';updDotsR();return;}
-      err.textContent='';pinBufR='';updDotsR();
+      if(!res.valido){ocultarLoading();salvando=false;err.textContent='PIN incorreto. Tente novamente.';pinBufR='';atualizarDotsRepeticao();return;}
+      err.textContent='';pinBufR='';atualizarDotsRepeticao();
       await salvarRepeticao(res.nome);
-    }catch(e){hideLoading();err.textContent='Erro: '+e.message;pinBufR='';updDotsR();}
+    }catch(e){ocultarLoading();err.textContent='Erro: '+e.message;pinBufR='';atualizarDotsRepeticao();}
     salvando=false;
     return;
   }
   if(pinBufR.length<4)pinBufR+=v;
-  updDotsR();
+  atualizarDotsRepeticao();
 }
 
 async function salvarRepeticao(aprovador) {
-  showLoading('Salvando repetição...');
+  mostrarLoading('Salvando repetição...');
   const r=receitas.find(x=>String(x.ID)===String(recIdx));
   if(!r)return;
   const tintas=repTintasAtivas||[];
   const op=document.getElementById('op-inp')?.value||'—';
   const oper=document.getElementById('oper-inp')?.value||'—';
-  const dvs=getDvF();
+  const dvs=getDesvios();
   const altCnt=Object.values(altOpts).filter(v=>v==='rec').length;
 
   const desvios=dvs.map(d=>({
@@ -1358,7 +1388,7 @@ async function salvarRepeticao(aprovador) {
 
   try {
     const tintas2=repTintasAtivas||[];
-    const complementos=tintas2.map(t=>({estacao:t.ESTACAO,idCamisa:document.getElementById('repcamisa-'+t.ESTACAO)?.value||'',pressaoRolo:normDec(document.getElementById('reprolo-'+t.ESTACAO)?.value||''),pressaoFaca:normDec(document.getElementById('repfaca-'+t.ESTACAO)?.value||''),tempEstufa:normDec(document.getElementById('repesufa-'+t.ESTACAO)?.value||'')}));
+    const complementos=tintas2.map(t=>({estacao:t.ESTACAO,idCamisa:document.getElementById('repcamisa-'+t.ESTACAO)?.value||'',pressaoRolo:normalizarDecimal(document.getElementById('reprolo-'+t.ESTACAO)?.value||''),pressaoFaca:normalizarDecimal(document.getElementById('repfaca-'+t.ESTACAO)?.value||''),tempEstufa:normalizarDecimal(document.getElementById('repesufa-'+t.ESTACAO)?.value||'')}));
     const matRep=document.getElementById('rep-material')?.value||'';
     await apiPost({action:'salvarRepeticao',idReceita:recIdx,opProducao:op,operador:oper,aprovador,temDesvio:dvs.length>0,desvios,pendencias:pends,complementos,material:matRep});
     if(altCnt>0)await carregarPendencias();
@@ -1366,119 +1396,123 @@ async function salvarRepeticao(aprovador) {
     const rows=[{l:'Cód. PA',v:r.COD_PA},{l:'OP',v:op},{l:'Operador',v:oper},{l:'Aprovador',v:aprovador}];
     if(dvs.length-altCnt>0)rows.push({l:'Desvios pontuais',v:`${dvs.length-altCnt}`});
     if(altCnt>0)rows.push({l:'Enviado para pendência',v:`${altCnt} alteração(ões)`,b:true});
-    hideLoading();
-    showSuc('Repetição salva!',altCnt>0?`${altCnt} alteração(ões) aguardando aprovação.`:'Todos os parâmetros registrados.',rows,dvs.length-altCnt>0,'s-lista');
+    ocultarLoading();
+    mostrarSucesso('Repetição salva!',altCnt>0?`${altCnt} alteração(ões) aguardando aprovação.`:'Todos os parâmetros registrados.',rows,dvs.length-altCnt>0,'s-lista');
   } catch(e){
-    hideLoading();
+    ocultarLoading();
     document.getElementById('pre2').textContent='Erro ao salvar: '+e.message;
   }
 }
 
-function updDotsN(){for(let i=0;i<4;i++)document.getElementById('pnd'+i).classList.toggle('f',i<pinBufN.length);}
-function updDotsR(){for(let i=0;i<4;i++)document.getElementById('prd'+i).classList.toggle('f',i<pinBufR.length);}
+function atualizarDotsNovaReceita(){for(let i=0;i<4;i++)document.getElementById('pnd'+i).classList.toggle('f',i<pinBufN.length);}
+function atualizarDotsRepeticao(){for(let i=0;i<4;i++)document.getElementById('prd'+i).classList.toggle('f',i<pinBufR.length);}
 
 // ── LOCK ─────────────────────────────────────────────────
 
-async function ppLock(ctx,v){
+async function pinLock(ctx,v){
   const errId=`plk-${ctx}-err`;const dotPfx=ctx==='pend'?'plkd':'plkd-p';
   const err=document.getElementById(errId);
-  if(v==='back'){lockBufs[ctx]=lockBufs[ctx].slice(0,-1);updLockDots(ctx,dotPfx);return;}
+  if(v==='back'){lockBufs[ctx]=lockBufs[ctx].slice(0,-1);atualizarDotsLock(ctx,dotPfx);return;}
   if(v==='ok'){
     if(lockBufs[ctx].length<4){err.textContent='Digite os 4 dígitos';return;}
     const pin=lockBufs[ctx];
-    showLoading('Validando PIN...');
+    mostrarLoading('Validando PIN...');
     try{
       const res=await apiPost({action:'validarPin',pin});
-      hideLoading();
-      if(!res.valido){err.textContent='PIN incorreto.';lockBufs[ctx]='';updLockDots(ctx,dotPfx);return;}
-      err.textContent='';lockBufs[ctx]='';updLockDots(ctx,dotPfx);
-      if(ctx==='pend'){renderPend();document.querySelectorAll('.tab-item').forEach(x=>x.classList.remove('ta'));document.getElementById('tab-pend').classList.add('ta');irRaw('s-pend');document.getElementById('tpt').textContent='Pendências de Alteração';document.getElementById('tps').textContent='Aguardando aprovação';document.getElementById('tpp').style.display='none';document.getElementById('sbw').innerHTML='';}
-      else{document.querySelectorAll('.tab-item').forEach(x=>x.classList.remove('ta'));document.getElementById('tab-p').classList.add('ta');irRaw('s-painel');document.getElementById('tpt').textContent='Painel de Supervisão';document.getElementById('tps').textContent='Rotogravura';document.getElementById('tpp').style.display='none';document.getElementById('sbw').innerHTML='';atualizarPainel();}
-    }catch(e){hideLoading();err.textContent='Erro: '+e.message;lockBufs[ctx]='';updLockDots(ctx,dotPfx);}
+      ocultarLoading();
+      if(!res.valido){err.textContent='PIN incorreto.';lockBufs[ctx]='';atualizarDotsLock(ctx,dotPfx);return;}
+      err.textContent='';lockBufs[ctx]='';atualizarDotsLock(ctx,dotPfx);
+      if(ctx==='pend'){renderPendencias();document.querySelectorAll('.tab-item').forEach(x=>x.classList.remove('ta'));document.getElementById('tab-pend').classList.add('ta');mostrarTela('s-pend');document.getElementById('tpt').textContent='Pendências de Alteração';document.getElementById('tps').textContent='Aguardando aprovação';document.getElementById('tpp').style.display='none';document.getElementById('sbw').innerHTML='';}
+      else{document.querySelectorAll('.tab-item').forEach(x=>x.classList.remove('ta'));document.getElementById('tab-p').classList.add('ta');mostrarTela('s-painel');document.getElementById('tpt').textContent='Painel de Supervisão';document.getElementById('tps').textContent='Rotogravura';document.getElementById('tpp').style.display='none';document.getElementById('sbw').innerHTML='';atualizarPainel();}
+    }catch(e){ocultarLoading();err.textContent='Erro: '+e.message;lockBufs[ctx]='';atualizarDotsLock(ctx,dotPfx);}
     return;
   }
   if(lockBufs[ctx].length<4)lockBufs[ctx]+=v;
-  updLockDots(ctx,dotPfx);
+  atualizarDotsLock(ctx,dotPfx);
 }
 
-function updLockDots(ctx,pfx){for(let i=0;i<4;i++)document.getElementById(pfx+i).classList.toggle('f',i<lockBufs[ctx].length);}
-function abrirRestrito(ctx){lockBufs[ctx]='';document.getElementById(`plk-${ctx}-err`).textContent='';const dotPfx=ctx==='pend'?'plkd':'plkd-p';for(let i=0;i<4;i++)document.getElementById(dotPfx+i).classList.remove('f');document.querySelectorAll('.tab-item').forEach(x=>x.classList.remove('ta'));document.getElementById(ctx==='pend'?'tab-pend':'tab-p').classList.add('ta');irRaw(ctx==='pend'?'s-pend-lock':'s-painel-lock');document.getElementById('tpt').textContent=ctx==='pend'?'Pendências':'Painel de Supervisão';document.getElementById('tps').textContent='Acesso restrito';document.getElementById('tpp').style.display='none';document.getElementById('sbw').innerHTML='';}
-function sairLock(ctx){lockBufs[ctx]='';tIr('s-lista','tab-r','Receitas de Produto','Impressão · Rotogravura');}
+function atualizarDotsLock(ctx,pfx){for(let i=0;i<4;i++)document.getElementById(pfx+i).classList.toggle('f',i<lockBufs[ctx].length);}
+function abrirTelaRestrita(ctx){lockBufs[ctx]='';document.getElementById(`plk-${ctx}-err`).textContent='';const dotPfx=ctx==='pend'?'plkd':'plkd-p';for(let i=0;i<4;i++)document.getElementById(dotPfx+i).classList.remove('f');document.querySelectorAll('.tab-item').forEach(x=>x.classList.remove('ta'));document.getElementById(ctx==='pend'?'tab-pend':'tab-p').classList.add('ta');mostrarTela(ctx==='pend'?'s-pend-lock':'s-painel-lock');document.getElementById('tpt').textContent=ctx==='pend'?'Pendências':'Painel de Supervisão';document.getElementById('tps').textContent='Acesso restrito';document.getElementById('tpp').style.display='none';document.getElementById('sbw').innerHTML='';}
+function sairTelaRestrita(ctx){lockBufs[ctx]='';navegarTab('s-lista','tab-r','Receitas de Produto','Impressão · Rotogravura');}
 
 // ── PENDÊNCIAS ───────────────────────────────────────────
 
-function uPendBadge(){const cnt=pendencias.length;document.getElementById('pend-cnt').textContent=cnt;const b=document.getElementById('pend-badge');b.textContent=cnt;b.style.display=cnt>0?'':'none';}
+// ══════════════════════════════════════════════════════════
+// PENDÊNCIAS
+// ══════════════════════════════════════════════════════════
 
-function renderPend(){
+function atualizarBadgePendencias(){const cnt=pendencias.length;document.getElementById('pend-cnt').textContent=cnt;const b=document.getElementById('pend-badge');b.textContent=cnt;b.style.display=cnt>0?'':'none';}
+
+function renderPendencias(){
   if(pendencias.length===0){document.getElementById('pend-list').innerHTML='<div style="padding:24px 0;text-align:center;font-size:13px;color:var(--text3)">Nenhuma pendência no momento.</div>';return;}
   document.getElementById('pend-list').innerHTML=pendencias.map(p=>`
     <div class="pend-card" id="pc-${p.ID}">
       <div class="pend-hdr"><div class="pend-ic"><i class="ti ti-file-pencil"></i></div><div class="pend-bd"><div class="pend-title">${p.CLI||'Receita'}</div><div class="pend-sub">Solicitado por <b>${p.SOLICITANTE}</b> · OP <b>${p.OP_PRODUCAO||'—'}</b></div></div><span class="pend-badge">pendente</span></div>
       <div class="pend-body"><div class="pend-row"><div class="pend-lbl">${p.PARAMETRO}</div><div class="pend-vals"><span class="pend-de">De: ${p.VALOR_ATUAL}</span><span class="pend-para">Para: ${p.VALOR_PROPOSTO}</span><div class="pend-just">${p.JUSTIFICATIVA}</div></div></div></div>
-      <div class="pend-footer"><div class="pend-meta">Solicitante: <b>${p.SOLICITANTE}</b></div><div class="pend-actions"><button class="pend-rej" onclick="rejPend('${p.ID}')">Rejeitar</button><button class="pend-apr" onclick="abrirPendPin('${p.ID}')">Aprovar</button></div></div>
+      <div class="pend-footer"><div class="pend-meta">Solicitante: <b>${p.SOLICITANTE}</b></div><div class="pend-actions"><button class="pend-rej" onclick="rejeitarPendencia('${p.ID}')">Rejeitar</button><button class="pend-apr" onclick="abrirPinPendencia('${p.ID}')">Aprovar</button></div></div>
       <div class="pend-pin-wrap" id="ppw-${p.ID}">
         <div style="font-size:12px;color:var(--text2);margin-bottom:8px;line-height:1.5">Digite seu PIN. Aprovador não pode ser <b>${p.SOLICITANTE}</b>.</div>
         <div style="display:flex;gap:8px;margin-bottom:10px"><div class="pin-d" id="ppd-${p.ID}-0"></div><div class="pin-d" id="ppd-${p.ID}-1"></div><div class="pin-d" id="ppd-${p.ID}-2"></div><div class="pin-d" id="ppd-${p.ID}-3"></div></div>
         <div class="pin-g" style="gap:6px">
-          <button class="pib" style="padding:10px 0;font-size:16px" onclick="ppPend('${p.ID}','1')">1</button><button class="pib" style="padding:10px 0;font-size:16px" onclick="ppPend('${p.ID}','2')">2</button><button class="pib" style="padding:10px 0;font-size:16px" onclick="ppPend('${p.ID}','3')">3</button>
-          <button class="pib" style="padding:10px 0;font-size:16px" onclick="ppPend('${p.ID}','4')">4</button><button class="pib" style="padding:10px 0;font-size:16px" onclick="ppPend('${p.ID}','5')">5</button><button class="pib" style="padding:10px 0;font-size:16px" onclick="ppPend('${p.ID}','6')">6</button>
-          <button class="pib" style="padding:10px 0;font-size:16px" onclick="ppPend('${p.ID}','7')">7</button><button class="pib" style="padding:10px 0;font-size:16px" onclick="ppPend('${p.ID}','8')">8</button><button class="pib" style="padding:10px 0;font-size:16px" onclick="ppPend('${p.ID}','9')">9</button>
-          <button class="pib" style="padding:10px 0;font-size:14px" onclick="ppPend('${p.ID}','back')">⌫</button>
-          <button class="pib" style="padding:10px 0;font-size:16px" onclick="ppPend('${p.ID}','0')">0</button>
-          <button class="pib" style="padding:10px 0;font-size:12px;font-weight:700;background:var(--blue-light);color:var(--blue)" onclick="ppPend('${p.ID}','ok')">OK</button>
+          <button class="pib" style="padding:10px 0;font-size:16px" onclick="pinPendencia('${p.ID}','1')">1</button><button class="pib" style="padding:10px 0;font-size:16px" onclick="pinPendencia('${p.ID}','2')">2</button><button class="pib" style="padding:10px 0;font-size:16px" onclick="pinPendencia('${p.ID}','3')">3</button>
+          <button class="pib" style="padding:10px 0;font-size:16px" onclick="pinPendencia('${p.ID}','4')">4</button><button class="pib" style="padding:10px 0;font-size:16px" onclick="pinPendencia('${p.ID}','5')">5</button><button class="pib" style="padding:10px 0;font-size:16px" onclick="pinPendencia('${p.ID}','6')">6</button>
+          <button class="pib" style="padding:10px 0;font-size:16px" onclick="pinPendencia('${p.ID}','7')">7</button><button class="pib" style="padding:10px 0;font-size:16px" onclick="pinPendencia('${p.ID}','8')">8</button><button class="pib" style="padding:10px 0;font-size:16px" onclick="pinPendencia('${p.ID}','9')">9</button>
+          <button class="pib" style="padding:10px 0;font-size:14px" onclick="pinPendencia('${p.ID}','back')">⌫</button>
+          <button class="pib" style="padding:10px 0;font-size:16px" onclick="pinPendencia('${p.ID}','0')">0</button>
+          <button class="pib" style="padding:10px 0;font-size:12px;font-weight:700;background:var(--blue-light);color:var(--blue)" onclick="pinPendencia('${p.ID}','ok')">OK</button>
         </div>
         <div class="pie" id="ppe-${p.ID}" style="margin-top:6px"></div>
       </div>
     </div>`).join('');
 }
 
-function abrirPendPin(id){if(!pendPinBufs[id])pendPinBufs[id]='';document.querySelectorAll('.pend-pin-wrap').forEach(p=>p.classList.remove('open'));document.getElementById('ppw-'+id)?.classList.add('open');}
+function abrirPinPendencia(id){if(!pendPinBufs[id])pendPinBufs[id]='';document.querySelectorAll('.pend-pin-wrap').forEach(p=>p.classList.remove('open'));document.getElementById('ppw-'+id)?.classList.add('open');}
 
-async function ppPend(id,v){
+async function pinPendencia(id,v){
   if(!pendPinBufs[id])pendPinBufs[id]='';
   const err=document.getElementById('ppe-'+id);
   const pend=pendencias.find(p=>String(p.ID)===String(id));
-  if(v==='back'){pendPinBufs[id]=pendPinBufs[id].slice(0,-1);updPendDots(id);return;}
+  if(v==='back'){pendPinBufs[id]=pendPinBufs[id].slice(0,-1);atualizarDotsPendencia(id);return;}
   if(v==='ok'){
     if(pendPinBufs[id].length<4){err.textContent='Digite os 4 dígitos';return;}
     const pin=pendPinBufs[id];
-    showLoading('Validando PIN...');
+    mostrarLoading('Validando PIN...');
     try{
       const res=await apiPost({action:'validarPin',pin});
-      hideLoading();
-      if(!res.valido){err.textContent='PIN incorreto.';pendPinBufs[id]='';updPendDots(id);return;}
-      if(res.nome===pend?.SOLICITANTE){err.textContent='Você não pode aprovar sua própria solicitação.';pendPinBufs[id]='';updPendDots(id);return;}
-      err.textContent='';pendPinBufs[id]='';updPendDots(id);
+      ocultarLoading();
+      if(!res.valido){err.textContent='PIN incorreto.';pendPinBufs[id]='';atualizarDotsPendencia(id);return;}
+      if(res.nome===pend?.SOLICITANTE){err.textContent='Você não pode aprovar sua própria solicitação.';pendPinBufs[id]='';atualizarDotsPendencia(id);return;}
+      err.textContent='';pendPinBufs[id]='';atualizarDotsPendencia(id);
       aprovarPendenciaAPI(id,res.nome,pend);
-    }catch(e){hideLoading();err.textContent='Erro: '+e.message;pendPinBufs[id]='';updPendDots(id);}
+    }catch(e){ocultarLoading();err.textContent='Erro: '+e.message;pendPinBufs[id]='';atualizarDotsPendencia(id);}
     return;
   }
   if(pendPinBufs[id].length<4)pendPinBufs[id]+=v;
-  updPendDots(id);
+  atualizarDotsPendencia(id);
 }
 
 async function aprovarPendenciaAPI(idPendencia,aprovador2,pend){
-  showLoading('Aprovando pendência...');
+  mostrarLoading('Aprovando pendência...');
   try{
     await apiPost({action:'aprovarPendencia',idPendencia,aprovador2,idReceita:pend.ID_RECEITA||recIdx});
     await carregarReceitas();
     await carregarPendencias();
-    renderPend();
-    hideLoading();
-    showSuc('Nova versão criada!',`A receita foi atualizada. Versão anterior preservada no histórico.`,[{l:'Aprovador 2',v:aprovador2},{l:'Data',v:new Date().toLocaleDateString('pt-BR')},{l:'Status',v:'Aprovada'}],false,'s-hist');
+    renderPendencias();
+    ocultarLoading();
+    mostrarSucesso('Nova versão criada!',`A receita foi atualizada. Versão anterior preservada no histórico.`,[{l:'Aprovador 2',v:aprovador2},{l:'Data',v:new Date().toLocaleDateString('pt-BR')},{l:'Status',v:'Aprovada'}],false,'s-hist');
   }catch(e){console.error('Erro ao aprovar pendência:',e);}
 }
 
-async function rejPend(id){
-  showLoading('Rejeitando...');
+async function rejeitarPendencia(id){
+  mostrarLoading('Rejeitando...');
   try{
     await apiPost({action:'rejeitarPendencia',idPendencia:id});
     pendencias=pendencias.filter(p=>String(p.ID)!==String(id));
-    uPendBadge();renderPend();
+    atualizarBadgePendencias();renderPendencias();
   }catch(e){console.error('Erro ao rejeitar:',e);}
-  hideLoading();
+  ocultarLoading();
 }
-function updPendDots(id){for(let i=0;i<4;i++){const d=document.getElementById(`ppd-${id}-${i}`);if(d)d.classList.toggle('f',i<(pendPinBufs[id]||'').length);}}
+function atualizarDotsPendencia(id){for(let i=0;i<4;i++){const d=document.getElementById(`ppd-${id}-${i}`);if(d)d.classList.toggle('f',i<(pendPinBufs[id]||'').length);}}
 
 // ── HISTÓRICO ────────────────────────────────────────────
 
@@ -1486,7 +1520,7 @@ let histReceita=null;
 
 function renderHistSel(lista){
   document.getElementById('hist-sel-list').innerHTML=lista.length
-    ?lista.map(r=>`<div class="li" onclick="abrirHistorico(${r.ID})"><div class="lic"><i class="ti ti-history"></i></div><div class="lb"><div class="lt">${r.CLIENTE} — ${fmtCodPAExib(r.COD_PA)}</div><div class="ls">${r.SERVICO} · ${r.MAQUINA}${r.ITENS_CONJUGACAO?' · <i class="ti ti-layers-linked" style="font-size:10px;color:var(--amber);vertical-align:-1px"></i>':''}</div></div></div>`).join('')
+    ?lista.map(r=>`<div class="li" onclick="abrirHistorico(${r.ID})"><div class="lic"><i class="ti ti-history"></i></div><div class="lb"><div class="lt">${r.CLIENTE} — ${formatarCodPAExibicao(r.COD_PA)}</div><div class="ls">${r.SERVICO} · ${r.MAQUINA}${r.ITENS_CONJUGACAO?' · <i class="ti ti-layers-linked" style="font-size:10px;color:var(--amber);vertical-align:-1px"></i>':''}</div></div></div>`).join('')
     :'<div style="padding:20px 0;text-align:center;font-size:13px;color:var(--text3)">Nenhuma receita encontrada</div>';
 }
 
@@ -1494,7 +1528,7 @@ function filtrarHistSel(){
   const q=document.getElementById('hs').value.toLowerCase().trim();
   const base=filtrarPorMaquina(receitas);
   if(!q){renderHistSel(base);return;}
-  renderHistSel(base.filter(r=>(r.CLIENTE||'').toLowerCase().includes(q)||fmtCodPAExib(r.COD_PA).toLowerCase().includes(q)||String(r.COD_PA||'').toLowerCase().includes(q)));
+  renderHistSel(base.filter(r=>(r.CLIENTE||'').toLowerCase().includes(q)||formatarCodPAExibicao(r.COD_PA).toLowerCase().includes(q)||String(r.COD_PA||'').toLowerCase().includes(q)));
 }
 
 async function abrirHistorico(id){
@@ -1502,11 +1536,11 @@ async function abrirHistorico(id){
   document.getElementById('tps').textContent='Carregando...';
   document.getElementById('tpp').style.display='none';
   document.getElementById('sbw').innerHTML='';
-  irRaw('s-hist-det');
+  mostrarTela('s-hist-det');
   document.getElementById('hres').innerHTML='<div style="padding:40px 0;text-align:center"><div class="spinner"></div></div>';
   try{
     histReceita=await apiGet('getHistoricoReceita',`&id=${id}`);
-    document.getElementById('tps').textContent=`${histReceita.CLIENTE} · ${fmtCodPAExib(histReceita.COD_PA)}`;
+    document.getElementById('tps').textContent=`${histReceita.CLIENTE} · ${formatarCodPAExibicao(histReceita.COD_PA)}`;
     filtroH='todos';
     document.querySelectorAll('#s-hist-det .fc').forEach((c,i)=>c.classList.toggle('fa',i===0));
     renderH();
@@ -1575,23 +1609,27 @@ async function atualizarPainel(dias){
   }
 }
 
-function chPer(sel){atualizarPainel(sel.value);}
+function alterarPeriodo(sel){atualizarPainel(sel.value);}
 
 // ── NOVA RECEITA ─────────────────────────────────────────
 
-function addT(n){
+// ══════════════════════════════════════════════════════════
+// NOVA RECEITA (STEP WIZARD)
+// ══════════════════════════════════════════════════════════
+
+function adicionarEstacao(n){
   const div=document.createElement('div');div.className='tbloco';div.id='tb-'+n;
   div.innerHTML=`<div class="tbh"><div class="tbhl"><div class="nc">${n}</div><span style="font-size:13px;font-weight:600;color:var(--text)">Estação ${n}</span></div><button class="dbn" onclick="removerEstacao(${n})" aria-label="Remover estação ${n}"><i class="ti ti-trash"></i></button></div>
   <div class="tg">
-    <div><label>Código da tinta</label><input type="text" placeholder="508.12.0441" oninput="fmtCodTinta(this)" maxlength="11"></div>
+    <div><label>Código da tinta</label><input type="text" placeholder="508.12.0441" oninput="formatarInputCodTinta(this)" maxlength="11"></div>
     <div><label>Nome / cor</label><input type="text" placeholder=""></div>
     <div><label>Viscosidade (s)</label><input type="text" inputmode="decimal"></div>
-    <div><label>Secagem (min:seg)</label><input type="text" inputmode="numeric" placeholder="0:40" oninput="fmtSecagem(this)" onfocus="if(!this.value)this.value='0:'" onblur="if(this.value==='0:')this.value=''" style="width:90px"></div>
+    <div><label>Secagem (min:seg)</label><input type="text" inputmode="numeric" placeholder="0:40" oninput="formatarInputSecagem(this)" onfocus="if(!this.value)this.value='0:'" onblur="if(this.value==='0:')this.value=''" style="width:90px"></div>
   </div>`;
   document.getElementById('tw').appendChild(div);
 }
 
-function sHF(id,on){
+function toggleOpcao(id,on){
   document.getElementById('hon-'+id).className='to '+(on?'ton':'');
   document.getElementById('hof-'+id).className='to '+(on?'':'tof');
   const r=document.getElementById('htr-'+id);
@@ -1600,10 +1638,10 @@ function sHF(id,on){
 
 function removerEstacao(n){
   document.getElementById('tb-'+n)?.remove();
-  atualizarComplementos();
+  atualizarUIComplementos();
 }
 
-function atualizarComplementos(){
+function atualizarUIComplementos(){
   const blocos=Array.from(document.querySelectorAll('.tbloco'));
   if(!blocos.length) return;
   const tg=blocos.map(tb=>{
@@ -1631,7 +1669,7 @@ function atualizarComplementos(){
 }
 
 
-function salvarCompVals(){
+function salvarValoresComplementos(){
   // Salvar todos os valores dos complementos antes de sair do passo 2
   window._compVals = window._compVals || {};
   ['camisa','rolo','faca'].forEach(prefix=>{
@@ -1650,26 +1688,50 @@ function salvarCompVals(){
   window._posHot={on:posOn,temp:document.getElementById('hti-posHot')?.value||''};
 }
 
-function restaurarCompVals(){
+function restaurarValoresComplementos(){
   if(!window._compVals) return;
   Object.entries(window._compVals).forEach(([id,val])=>{
     const el=document.getElementById(id);if(el&&val!==undefined)el.value=val;
   });
-  if(window._preHot){sHF('preHot',window._preHot.on);const el=document.getElementById('hti-preHot');if(el&&window._preHot.temp)el.value=window._preHot.temp;}
-  if(window._posHot){sHF('posHot',window._posHot.on);const el=document.getElementById('hti-posHot');if(el&&window._posHot.temp)el.value=window._posHot.temp;}
+  if(window._preHot){toggleOpcao('preHot',window._preHot.on);const el=document.getElementById('hti-preHot');if(el&&window._preHot.temp)el.value=window._preHot.temp;}
+  if(window._posHot){toggleOpcao('posHot',window._posHot.on);const el=document.getElementById('hti-posHot');if(el&&window._posHot.temp)el.value=window._posHot.temp;}
 }
 
-function nStep(n){
+function validarStep1(){
+  const campos=[
+    {id:'n-cli',lbl:'Cliente'},
+    {id:'n-cod',lbl:'Cód. PA'},
+    {id:'n-serv',lbl:'Serviço'},
+    {id:'n-maq',lbl:'Máquina'}
+  ];
+  const faltando=campos.filter(c=>!document.getElementById(c.id)?.value?.trim());
+  if(faltando.length){
+    const nomes=faltando.map(c=>c.lbl).join(', ');
+    alert('Preencha os campos obrigatórios: '+nomes);
+    document.getElementById(faltando[0].id)?.focus();
+    return;
+  }
+  // Validação de conjugação
+  const conjOn=document.getElementById('n-conj')?.value==='SIM';
+  if(conjOn && !document.getElementById('n-conj-itens')?.value?.trim()){
+    alert('Informe os itens conjugados.');
+    document.getElementById('n-conj-itens')?.focus();
+    return;
+  }
+  navegarStep(2);
+}
+
+function navegarStep(n){
   // Salvar valores ANTES de sair do passo 2
-  if(nsn===2) salvarCompVals();
+  if(nsn===2) salvarValoresComplementos();
   nsn=n;
   [1,2,3,4].forEach(i=>{const e=document.getElementById('ns'+i);if(e)e.style.display=i===n?'block':'none';});
-  uSB(n);
-  if(n===2&&document.querySelectorAll('.tbloco').length===0){for(let i=1;i<=9;i++)addT(i);}
+  renderStepBar(n);
+  if(n===2&&document.querySelectorAll('.tbloco').length===0){for(let i=1;i<=9;i++)adicionarEstacao(i);}
   if(n===2){
     setTimeout(()=>{
-      atualizarComplementos();
-      restaurarCompVals();
+      atualizarUIComplementos();
+      restaurarValoresComplementos();
     },100);
   }
   if(n===3){
@@ -1683,13 +1745,13 @@ function nStep(n){
       }).join('');
     }
   }
-  if(n===4)bRv();
+  if(n===4)renderRevisaoNovaReceita();
   const cx=document.getElementById('pnc');if(cx){const c=document.getElementById('n-cli').value||'—',d=document.getElementById('n-cod').value||'—';cx.textContent=c!=='—'?`${c} · ${d}`:'—';}
 }
 
-function uSB(cur){const lbls=['Cabeçalho','Tintas','Parâmetros','Revisão'];document.getElementById('sbw').innerHTML=`<div class="stb">${lbls.map((l,i)=>{const n=i+1,cls=n<cur?'scd':n===cur?'sca':'sci',ic=n<cur?'<i class="ti ti-check" style="font-size:11px"></i>':n;return `<div class="si"><div class="scc ${cls}">${ic}</div><span class="slb ${n===cur?'slba':''}">${l}</span></div>${n<4?'<div class="sse"></div>':''}`}).join('')}</div>`;}
+function renderStepBar(cur){const lbls=['Cabeçalho','Tintas','Parâmetros','Revisão'];document.getElementById('sbw').innerHTML=`<div class="stb">${lbls.map((l,i)=>{const n=i+1,cls=n<cur?'scd':n===cur?'sca':'sci',ic=n<cur?'<i class="ti ti-check" style="font-size:11px"></i>':n;return `<div class="si"><div class="scc ${cls}">${ic}</div><span class="slb ${n===cur?'slba':''}">${l}</span></div>${n<4?'<div class="sse"></div>':''}`}).join('')}</div>`;}
 
-function bRv(){
+function renderRevisaoNovaReceita(){
   const cli=document.getElementById('n-cli').value||'—';
   const cod=document.getElementById('n-cod').value||'—';
   const serv=document.getElementById('n-serv').value||'—';
@@ -1737,7 +1799,7 @@ function bRv(){
     ${conjOnB?`<div style="margin-bottom:12px;background:var(--amber-light);border:0.5px solid #E8D5A8;border-radius:var(--rad);padding:8px 12px"><div style="font-size:11px;color:var(--amber);font-weight:600;margin-bottom:4px"><i class="ti ti-layers-linked" style="font-size:12px;vertical-align:-1px"></i> Conjugação</div><div style="font-size:13px;font-weight:600;color:var(--amber)">${conjItensB}</div></div>`:''}
     ${preHotOnB?`<div style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--amber-light);border-radius:var(--rad);margin-bottom:8px"><i class="ti ti-flame" style="color:var(--amber)"></i><span style="font-size:12px;font-weight:600;color:var(--amber)">PRÉ HOT ligado — ${document.getElementById('hti-preHot')?.value||'—'}°C</span></div>`:''}
     <div class="sl" style="margin-top:4px">Estações — ${ts.length} tinta${ts.length!==1?'s':''}</div>
-    ${ts.map(t=>`<div class="tr2"><div class="nc">${t.n}</div><div><div style="font-size:13px;font-weight:600;color:var(--text)">${t.nome}</div><div style="font-size:11px;color:var(--text3);margin-top:1px">${t.cod}${t.camisa?' · Camisa: '+t.camisa:''}</div><div class="chips">${t.visc!=='—'?`<div class="chip">Visc. <b>${t.visc} s</b></div>`:''}<div class="chip">Sec. <b>${secStr(parseInt(t.secm),parseInt(t.secs))}</b></div>${t.rolo?`<div class="chip">Rolo <b>${t.rolo}</b></div>`:''}${t.faca?`<div class="chip">Faca <b>${t.faca} Bar</b></div>`:''}${t.estufa?`<div class="chip cth">Estufa <b>${t.estufa}°C</b></div>`:''}${t.preHot?`<div class="chip cth"><i class="ti ti-flame" style="font-size:10px;vertical-align:-1px"></i> PRÉ HOT <b>${t.preTemp}°C</b></div>`:''}${t.posHot?`<div class="chip cth"><i class="ti ti-flame" style="font-size:10px;vertical-align:-1px"></i> PÓS HOT <b>${t.posTemp}°C</b></div>`:''}</div></div></div>`).join('')}
+    ${ts.map(t=>`<div class="tr2"><div class="nc">${t.n}</div><div><div style="font-size:13px;font-weight:600;color:var(--text)">${t.nome}</div><div style="font-size:11px;color:var(--text3);margin-top:1px">${t.cod}${t.camisa?' · Camisa: '+t.camisa:''}</div><div class="chips">${t.visc!=='—'?`<div class="chip">Visc. <b>${t.visc} s</b></div>`:''}<div class="chip">Sec. <b>${formatarSecagem(parseInt(t.secm),parseInt(t.secs))}</b></div>${t.rolo?`<div class="chip">Rolo <b>${t.rolo}</b></div>`:''}${t.faca?`<div class="chip">Faca <b>${t.faca} Bar</b></div>`:''}${t.estufa?`<div class="chip cth">Estufa <b>${t.estufa}°C</b></div>`:''}${t.preHot?`<div class="chip cth"><i class="ti ti-flame" style="font-size:10px;vertical-align:-1px"></i> PRÉ HOT <b>${t.preTemp}°C</b></div>`:''}${t.posHot?`<div class="chip cth"><i class="ti ti-flame" style="font-size:10px;vertical-align:-1px"></i> PÓS HOT <b>${t.posTemp}°C</b></div>`:''}</div></div></div>`).join('')}
     <div class="sl" style="margin-top:12px">Parâmetros da máquina</div>
     <div class="pb" style="margin-bottom:12px">${pm.map(p=>`<div class="pbox"><div class="pl">${p.l}</div><div class="pv" style="font-size:13px">${p.v}${p.u?' <span class="pu">'+p.u+'</span>':''}</div></div>`).join('')}</div>
     ${estufaHtml?`<div class="sl">Estufas por estação</div>${estufaHtml}`:''}
@@ -1749,40 +1811,44 @@ function bRv(){
 
 // ── SUCESSO ──────────────────────────────────────────────
 
-function showSuc(t,s,rows,w,dest){
+// ══════════════════════════════════════════════════════════
+// UTILITÁRIOS E NAVEGAÇÃO
+// ══════════════════════════════════════════════════════════
+
+function mostrarSucesso(t,s,rows,w,dest){
   document.getElementById('suc-ic').style.background=w?'var(--amber-light)':'var(--green-light)';
   document.getElementById('suc-ic').innerHTML=w?`<i class="ti ti-alert-triangle" style="font-size:28px;color:var(--amber)"></i>`:`<i class="ti ti-check" style="font-size:30px;color:var(--green)"></i>`;
   document.getElementById('suc-t').textContent=t;document.getElementById('suc-s').textContent=s;
   document.getElementById('suc-tr').innerHTML=rows.map(r=>`<div class="trr"><span class="trl">${r.l}</span><span class="trv" style="color:${r.b?'var(--blue)':'var(--text)'}">${r.v}</span></div>`).join('');
-  document.getElementById('suc-btn').onclick=()=>{ir(dest||'s-lista');rst();};
-  ir('s-suc');
+  document.getElementById('suc-btn').onclick=()=>{ir(dest||'s-lista');resetState();};
+  navegarTela('s-suc');
 }
 
 // ── NAVEGAÇÃO ────────────────────────────────────────────
 
-function showLoading(msg){
+function mostrarLoading(msg){
   const el=document.getElementById('overlay-loading');
   const ml=document.getElementById('overlay-msg');
   if(el){el.classList.add('active');if(ml)ml.textContent=msg||'Salvando...';}
 }
-function hideLoading(){
+function ocultarLoading(){
   const el=document.getElementById('overlay-loading');
   if(el)el.classList.remove('active');
 }
 
-function secStr(m,s){return m>0?`${m} min ${s} s`:`${s} s`;}
-function fmtCodPAExib(v){
+function formatarSecagem(m,s){return m>0?`${m} min ${s} s`:`${s} s`;}
+function formatarCodPAExibicao(v){
   if(!v)return'—';
   const s=String(v).replace(/\D/g,'');
   if(s.length===10)return s.slice(0,3)+'.'+s.slice(3,6)+'.'+s.slice(6);
   if(s.length===9)return s.slice(0,3)+'.'+s.slice(3,6)+'.'+s.slice(6);
   return String(v);
 }
-function secTotal(m,s){return m*60+s;}
+function calcularSegundos(m,s){return m*60+s;}
 
-function irRaw(id){document.querySelectorAll('.sc').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');}
+function mostrarTela(id){document.querySelectorAll('.sc').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');}
 
-function ir(id){
+function navegarTela(id){
   document.querySelectorAll('.sc').forEach(s=>s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
   const pill=document.getElementById('tpp'),sb=document.getElementById('sbw');
@@ -1807,30 +1873,30 @@ function ir(id){
   }
   if(repSteps[id]){const cur=repSteps[id];const lbls=['Registro','Revisão','Aprovação'];sb.innerHTML=`<div class="stb">${lbls.map((l,i)=>{const n=i+1,cls=n<cur?'scd':n===cur?'sca':'sci',ic=n<cur?'<i class="ti ti-check" style="font-size:11px"></i>':n;return `<div class="si"><div class="scc ${cls}">${ic}</div><span class="slb ${n===cur?'slba':''}">${l}</span></div>${n<3?'<div class="sse"></div>':''}`}).join('')}</div>`;}
   if(id==='s-hist'){filtroH='todos';renderHistSel(filtrarPorMaquina(receitas));}
-  if(id==='s-rep'){rRep();document.getElementById('oper-inp').value='';document.getElementById('op-inp').value='';}
-  if(id==='s-nova')nStep(nsn);
-  if(id==='s-pin-n'){pinBufN='';updDotsN();document.getElementById('pne').textContent='';}
-  if(id==='s-pin-r'){pinBufR='';updDotsR();document.getElementById('pre2').textContent='';}
+  if(id==='s-rep'){iniciarRepeticao();document.getElementById('oper-inp').value='';document.getElementById('op-inp').value='';}
+  if(id==='s-nova')navegarStep(nsn);
+  if(id==='s-pin-n'){pinBufN='';atualizarDotsNovaReceita();document.getElementById('pne').textContent='';}
+  if(id==='s-pin-r'){pinBufR='';atualizarDotsRepeticao();document.getElementById('pre2').textContent='';}
 }
 
-function tIr(sc,tid,t,s){
+function navegarTab(sc,tid,t,s){
   document.querySelectorAll('.tab-item').forEach(x=>x.classList.remove('ta'));
   document.getElementById(tid).classList.add('ta');
-  nsn=1;ir(sc);
+  nsn=1;navegarTela(sc);
   document.getElementById('tpt').textContent=t;
   document.getElementById('tps').textContent=s;
 }
 
-function rst(){pinBufN='';pinBufR='';nsn=1;salvando=false;window._compVals=null;window._preHot=null;window._posHot=null;}
+function resetState(){pinBufN='';pinBufR='';nsn=1;salvando=false;window._compVals=null;window._preHot=null;window._posHot=null;}
 
 document.addEventListener('input',e=>{
-  if(e.target.id==='oper-inp'||e.target.id==='op-inp'||['jvisc-','jsec-','jparam-'].some(p=>e.target.id.startsWith(p)))uBtn();
+  if(e.target.id==='oper-inp'||e.target.id==='op-inp'||['jvisc-','jsec-','jparam-'].some(p=>e.target.id.startsWith(p)))atualizarBotaoRevisar();
 });
 
 
 // ── FORMATAÇÃO AUTOMÁTICA ─────────────────────────────────
 
-function fmtSecagem(el) {
+function formatarInputSecagem(el) {
   let v = el.value.replace(/[^0-9]/g,'');
   if(v.length > 2) v = v.slice(0,v.length-2)+':'+v.slice(-2);
   else if(v.length===2) v='0:'+v;
@@ -1838,21 +1904,21 @@ function fmtSecagem(el) {
   el.value=v;
 }
 
-function fmtCodPA(el) {
+function formatarInputCodPA(el) {
   let v = el.value.replace(/\D/g,'').slice(0,10);
   if(v.length>6) v = v.slice(0,3)+'.'+v.slice(3,6)+'.'+v.slice(6);
   else if(v.length>3) v = v.slice(0,3)+'.'+v.slice(3);
   el.value = v;
 }
 
-function fmtCodTinta(el) {
+function formatarInputCodTinta(el) {
   let v = el.value.replace(/\D/g,'').slice(0,9);
   if(v.length>5) v = v.slice(0,3)+'.'+v.slice(3,5)+'.'+v.slice(5);
   else if(v.length>3) v = v.slice(0,3)+'.'+v.slice(3);
   el.value = v;
 }
 
-function normDec(v){
+function normalizarDecimal(v){
   return String(v==null?'':v).trim().replace(',', '.');
 }
 
