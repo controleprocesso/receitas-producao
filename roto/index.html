@@ -344,52 +344,8 @@ textarea{resize:none;line-height:1.5;width:100%}
       <div class="card" style="overflow:hidden;padding:0" id="rec-faca"></div>
       <div class="card" id="rec-obs" style="display:none"></div>
       <button class="bp" onclick="ir('s-rep')"><i class="ti ti-clipboard-check"></i> Registrar repetição</button>
+      <button class="bs" onclick="abrirHistorico(recIdx)" style="margin-bottom:8px"><i class="ti ti-history"></i> Ver histórico desta receita</button>
       <div style="height:16px"></div>
-    </div>
-
-    <!-- NOVA CONJUGAÇÃO -->
-    <div id="s-nova-conj" class="sc">
-      <button class="bb" onclick="ir('s-rec')"><i class="ti ti-arrow-left"></i> Voltar à receita</button>
-      <div class="card" id="nc-promover-card" style="display:none">
-        <div class="sl">Nomeie a configuração atual</div>
-        <div style="font-size:12px;color:var(--text2);margin-bottom:10px;line-height:1.5">Essa receita vai passar a ter conjugações diferentes de tinta. Dê um nome para a configuração de tintas que já existe hoje.</div>
-        <div class="fd"><div class="fdl">Nome da configuração atual</div><input type="text" id="nc-nome-atual"></div>
-      </div>
-      <div class="card">
-        <div class="sl">Nova conjugação</div>
-        <div class="fd"><div class="fdl">Nome</div><input type="text" id="nc-nome"></div>
-        <div class="fd"><div class="fdl">Observações desta conjugação (opcional)</div><textarea id="nc-obs" rows="2" placeholder="Anotações específicas..."></textarea></div>
-      </div>
-      <div class="card">
-        <div class="sl">Tintas desta conjugação</div>
-        <div id="nc-tintas-rows"></div>
-        <button class="bnp" style="margin-top:8px;width:100%" onclick="addNcTinta()"><i class="ti ti-plus"></i> Adicionar estação</button>
-      </div>
-      <div class="pie" id="nc-err" style="text-align:left;margin-bottom:8px"></div>
-      <div class="nr">
-        <button class="bnp" onclick="ir('s-rec')"><i class="ti ti-x"></i> Cancelar</button>
-        <button class="bnn" onclick="salvarConjugacao()"><i class="ti ti-check"></i> Revisar e aprovar</button>
-      </div>
-    </div>
-
-    <!-- PIN CONJUGAÇÃO -->
-    <div id="s-conj-pin" class="sc">
-      <button class="bb" onclick="ir('s-nova-conj')"><i class="ti ti-arrow-left"></i> Voltar</button>
-      <div class="card"><div class="pin-w">
-        <div class="pin-t">Aprovação da conjugação</div>
-        <div class="pin-s">Digite o PIN do supervisor para aprovar e salvar.</div>
-        <div class="pin-cx"><div class="pcl">Nova conjugação</div><div class="pcv" id="cjpc">—</div></div>
-        <div class="pin-ds"><div class="pin-d" id="cjd0"></div><div class="pin-d" id="cjd1"></div><div class="pin-d" id="cjd2"></div><div class="pin-d" id="cjd3"></div></div>
-        <div class="pin-g">
-          <button class="pib" onclick="pinConj('1')">1</button><button class="pib" onclick="pinConj('2')">2</button><button class="pib" onclick="pinConj('3')">3</button>
-          <button class="pib" onclick="pinConj('4')">4</button><button class="pib" onclick="pinConj('5')">5</button><button class="pib" onclick="pinConj('6')">6</button>
-          <button class="pib" onclick="pinConj('7')">7</button><button class="pib" onclick="pinConj('8')">8</button><button class="pib" onclick="pinConj('9')">9</button>
-          <button class="pib" style="font-size:15px" onclick="pinConj('back')">⌫</button>
-          <button class="pib" onclick="pinConj('0')">0</button>
-          <button class="pib" style="background:var(--blue);color:#fff;border-color:var(--blue)" onclick="pinConj('ok')"><i class="ti ti-check"></i></button>
-        </div>
-        <div class="pie" id="cjpe"></div>
-      </div></div>
     </div>
 
     <!-- NOVA RECEITA -->
@@ -409,22 +365,19 @@ textarea{resize:none;line-height:1.5;width:100%}
           </div>
           <div class="fd"><div class="fdl">Operador</div><input type="text" id="n-oper" placeholder="" style="width:100%"></div>
         </div>
+        <div class="card">
+          <div class="fd"><div class="fdl">Conjugação?</div>
+            <div class="htog" style="display:inline-flex"><button class="to tof" id="conj-nao" onclick="setConj('NAO')" type="button">Não</button><button class="to" id="conj-sim" onclick="setConj('SIM')" type="button">Sim</button></div>
+            <input type="hidden" id="n-conj" value="NAO">
+          </div>
+          <div id="conj-itens-wrap" style="display:none;margin-top:8px">
+            <div class="fdl">Itens conjugados</div>
+            <input type="text" id="n-conj-itens" placeholder="Ex: Wafer Chocolate + Wafer Morango" style="width:100%">
+          </div>
+        </div>
         <div class="nr"><button class="bnn" onclick="nStep(2)">Próximo: tintas <i class="ti ti-arrow-right"></i></button></div>
       </div>
       <div id="ns2" style="display:none">
-        <!-- CONJUGAÇÃO -->
-        <div class="card" style="overflow:hidden;padding:0">
-          <div style="padding:10px 14px;display:flex;align-items:center;gap:10px;background:var(--blue-light);border-bottom:0.5px solid var(--border)">
-            <div style="width:32px;height:32px;border-radius:var(--rad);background:rgba(255,255,255,0.5);display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="ti ti-layers-subtract" style="font-size:17px;color:var(--blue)"></i></div>
-            <div style="flex:1"><div style="font-size:13px;font-weight:600;color:var(--blue)">Conjugação</div><div style="font-size:11px;color:var(--blue);opacity:.8;margin-top:1px">Esse Cód. PA roda com mais de uma combinação de tintas?</div></div>
-            <div class="htog"><button class="to tof" id="hof-conj" onclick="sHF('conj',false)">Não</button><button class="to" id="hon-conj" onclick="sHF('conj',true)">Sim</button></div>
-          </div>
-          <div class="htr" id="htr-conj" style="display:none;padding:10px 14px">
-            <span style="font-size:12px;color:var(--text2);flex:1">Nome desta conjugação</span>
-            <input type="text" id="n-conj-nome" placeholder="Ex: Wafer Chocolate" style="flex:1;max-width:160px">
-          </div>
-        </div>
-        <!-- PRÉ HOT FIXO -->
         <div class="card" style="overflow:hidden;padding:0">
           <div style="padding:10px 14px;display:flex;align-items:center;gap:10px;background:var(--amber-light);border-bottom:0.5px solid var(--border)">
             <div style="width:32px;height:32px;border-radius:var(--rad);background:rgba(255,255,255,0.5);display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="ti ti-flame" style="font-size:17px;color:var(--amber)"></i></div>
@@ -671,16 +624,19 @@ textarea{resize:none;line-height:1.5;width:100%}
 
     <!-- HISTÓRICO -->
     <div id="s-hist" class="sc">
-      <div class="met">
-        <div class="mt"><div class="ml">Repetições</div><div class="mv" id="h-tot">—</div></div>
-        <div class="mt"><div class="ml">Com desvio</div><div class="mv" style="color:var(--amber)" id="h-dv">—</div></div>
-        <div class="mt"><div class="ml">Versões</div><div class="mv" id="h-ver">—</div></div>
-        <div class="mt"><div class="ml">Taxa de adesão</div><div class="mv" id="h-taxa">—</div></div>
-      </div>
       <div class="sw" style="margin-bottom:8px">
         <i class="ti ti-search"></i>
-        <input type="text" placeholder="Buscar por Cód. PA ou cliente..." id="hs" oninput="filtrarH()">
+        <input type="text" placeholder="Buscar por Cód. PA ou cliente..." id="hs" oninput="filtrarHistSel()">
       </div>
+      <div class="sl">Selecione a receita</div>
+      <div class="card" style="padding:0 14px" id="hist-sel-list">
+        <div style="padding:20px 0;text-align:center;font-size:13px;color:var(--text3)">Carregando...</div>
+      </div>
+    </div>
+
+    <!-- HISTÓRICO DETALHE -->
+    <div id="s-hist-det" class="sc">
+      <button class="bb" onclick="ir('s-hist')"><i class="ti ti-arrow-left"></i> Histórico</button>
       <div class="fcs">
         <div class="fc fa" onclick="setFH(this,'todos')">Todos</div>
         <div class="fc" onclick="setFH(this,'ok')">Sem desvio</div>
@@ -801,9 +757,9 @@ const lockBufs={pend:'',painel:''};
 const altOpts={};
 let pendencias=[], pendPinBufs={};
 let sbwHTML='';
-let repTintasAtivas=[], repConjSelecionada=null;
-let ncTintaRows=[], ncPromovendo=false;
-let pinBufCj='', pendingConjPayload=null;
+let repTintasAtivas=[];
+let salvando=false;
+const paramRefs={}, compRefs={};
 const MAQUINAS_ROTO = ['Heliostar 1', 'Heliostar 2'];
 let maquinaAtual = localStorage.getItem('roto_maquina') || '';
 
@@ -889,41 +845,15 @@ function apiGet(action, extraParams='') {
 }
 
 function apiPost(body) {
-  return new Promise((resolve, reject) => {
-    const cb = 'cb_' + Date.now() + '_' + Math.random().toString(36).slice(2);
-    const timer = setTimeout(() => {
-      delete window[cb];
-      document.getElementById(cb)?.remove();
-      reject(new Error('Tempo limite excedido.'));
-    }, 30000);
-    window[cb] = (data) => {
-      clearTimeout(timer);
-      delete window[cb];
-      document.getElementById(cb)?.remove();
-      if (data.status === 'erro') reject(new Error(data.mensagem));
-      else resolve(data.data);
-    };
-    // Sanitizar body removendo campos undefined/null desnecessários
-    const clean = JSON.parse(JSON.stringify(body));
-    let encoded;
-    try {
-      encoded = encodeURIComponent(JSON.stringify(clean));
-    } catch(e) {
-      clearTimeout(timer);
-      delete window[cb];
-      reject(new Error('Erro ao processar dados: ' + e.message));
-      return;
-    }
-    const script = document.createElement('script');
-    script.id = cb;
-    script.src = API + '?action=' + body.action + '&body=' + encoded + '&callback=' + cb;
-    script.onerror = () => {
-      clearTimeout(timer);
-      delete window[cb];
-      script.remove();
-      reject(new Error('Erro de conexão com a API.'));
-    };
-    document.head.appendChild(script);
+  return fetch(API, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    body: JSON.stringify(body)
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.status === 'erro') throw new Error(data.mensagem);
+    return data.data;
   });
 }
 
@@ -936,8 +866,6 @@ async function carregarReceitas() {
     receitasCarregadas = true;
     renderMaqBar();
     rL(filtrarPorMaquina(receitas));
-    try { atualizarHistorico(); } catch(e2) { console.warn('atualizarHistorico:', e2.message); }
-    try { atualizarPainel(); } catch(e3) { console.warn('atualizarPainel:', e3.message); }
   } catch(e) {
     document.getElementById('lw').innerHTML = `<div style="padding:20px 0;text-align:center;font-size:13px;color:var(--red)">Erro ao carregar receitas: ${e.message}</div>`;
   }
@@ -966,7 +894,7 @@ function rL(lista) {
     return;
   }
   document.getElementById('lw').innerHTML = lista.length
-    ? lista.map(r=>`<div class="li" onclick="abrirRec(${r.ID})"><div class="lic"><i class="ti ti-file-description"></i></div><div class="lb"><div class="lt">${r.CLIENTE} — ${fmtCodPAExib(r.COD_PA)}</div><div class="ls">${r.SERVICO} · ${r.MAQUINA}</div></div><span class="bok">Aprovada</span></div>`).join('')
+    ? lista.map(r=>`<div class="li" onclick="abrirRec(${r.ID})"><div class="lic"><i class="ti ti-file-description"></i></div><div class="lb"><div class="lt">${r.CLIENTE} — ${fmtCodPAExib(r.COD_PA)}</div><div class="ls">${r.SERVICO} · ${r.MAQUINA}${r.ITENS_CONJUGACAO?' · <i class="ti ti-layers-linked" style="font-size:10px;color:var(--amber);vertical-align:-1px"></i>':''}</div></div><span class="bok">Aprovada</span></div>`).join('')
     : '<div style="padding:20px 0;text-align:center;font-size:13px;color:var(--text3)">Nenhuma receita encontrada</div>';
 }
 
@@ -1014,20 +942,18 @@ async function abrirRec(id) {
   document.getElementById('rec-id').innerHTML=`<div class="sl">Identificação</div><div class="hg"><div><div class="fl">Cliente</div><div class="fv fvac">${r.CLIENTE}</div></div><div><div class="fl">Máquina</div><div class="fv">${r.MAQUINA}</div></div><div><div class="fl">Cód. PA</div><div class="fv">${fmtCodPAExib(r.COD_PA)}</div></div><div><div class="fl">OP Criação</div><div class="fv">${r.OP_CRIACAO||'—'}</div></div></div><div><div class="fl">Serviço</div><div class="fv" style="font-size:12px;margin-top:2px">${r.SERVICO}</div></div><div style="margin-top:10px;display:flex;gap:8px"><div style="flex:1"><div class="fl">Operador</div><div class="fv" style="font-size:12px">${r.OPERADOR||'—'}</div></div><div style="flex:1"><div class="fl">Aprovador</div><div class="fv" style="font-size:12px">${r.APROVADOR||'—'}</div></div></div>`;
 
   const tintas = Array.isArray(r.tintas) ? r.tintas : (r.tintas ? [r.tintas] : []);
-  const conjugacoes = Array.isArray(r.conjugacoes) ? r.conjugacoes : [];
   const p = Array.isArray(r.parametros) ? (r.parametros[0]||{}) : (r.parametros||{});
-  const recTintasEl = document.getElementById('rec-tintas');
+  // Conjugação: banner amber simples (modelo Flexo)
   const recConjEl = document.getElementById('rec-conjugacoes');
-  if (conjugacoes.length > 0) {
-    recTintasEl.style.display = 'none';
+  if (r.ITENS_CONJUGACAO) {
     recConjEl.style.display = 'block';
-    renderConjugacoes(conjugacoes);
+    recConjEl.innerHTML = `<div style="background:var(--amber-light);border:0.5px solid #E8D5A8;border-radius:var(--rad);padding:8px 12px"><div style="font-size:11px;color:var(--amber);font-weight:600;margin-bottom:4px"><i class="ti ti-layers-linked" style="font-size:12px;vertical-align:-1px"></i> Conjugação</div><div style="font-size:13px;font-weight:600;color:var(--amber)">${r.ITENS_CONJUGACAO}</div></div>`;
   } else {
-    recTintasEl.style.display = 'block';
     recConjEl.style.display = 'none';
-    recTintasEl.innerHTML=`<div class="sl">Tintas por estação</div>${tintas.map(t=>`<div class="tr2"><div class="nc">${t.ESTACAO}</div><div><div style="font-size:13px;font-weight:600;color:var(--text)">${t.NOME_COR}</div><div style="font-size:11px;color:var(--text3);margin-top:1px">${t.COD_TINTA}${t.ID_CAMISA?' · Camisa: '+t.ID_CAMISA:''}</div><div class="chips"><div class="chip">Visc. <b>${t.VISCOSIDADE} s</b></div><div class="chip">Sec. <b>${secStr(t.SECAGEM_MIN,t.SECAGEM_SEG)}</b></div></div></div></div>`).join('')}
-    <button class="bnp" style="margin-top:10px;color:var(--blue);border-color:var(--blue-mid)" onclick="irNovaConjugacao()"><i class="ti ti-plus"></i> Adicionar conjugação</button>`;
   }
+  const recTintasEl = document.getElementById('rec-tintas');
+  recTintasEl.style.display = 'block';
+  recTintasEl.innerHTML=`<div class="sl">Tintas por estação</div>${tintas.filter(t=>t.NOME_COR).map(t=>`<div class="tr2"><div class="nc">${t.ESTACAO}</div><div><div style="font-size:13px;font-weight:600;color:var(--text)">${t.NOME_COR}</div><div style="font-size:11px;color:var(--text3);margin-top:1px">${t.COD_TINTA}${t.ID_CAMISA?' · Camisa: '+t.ID_CAMISA:''}</div><div class="chips"><div class="chip">Visc. <b>${t.VISCOSIDADE} s</b></div><div class="chip">Sec. <b>${secStr(t.SECAGEM_MIN,t.SECAGEM_SEG)}</b></div></div></div></div>`).join('')}`;
 
   document.getElementById('rec-params-box').innerHTML=`<div class="pbox"><div class="pl">Tensão Freio Desbob.</div><div class="pv">${p.TENSAO_FREIO||'—'} <span class="pu">N</span></div></div><div class="pbox"><div class="pl">Pressão Compactador</div><div class="pv">${p.PRESSAO_COMPACTADOR||'—'} <span class="pu">Bar</span></div></div><div class="pbox"><div class="pl">Avanço CR</div><div class="pv">${p.AVANCO_CR||'—'} <span class="pu">N</span></div></div><div class="pbox"><div class="pl">Velocidade</div><div class="pv">${p.VELOCIDADE||'—'} <span class="pu">m/min</span></div></div><div class="pbox"><div class="pl">Taxa de Redução</div><div class="pv">${p.TAXA_REDUCAO||'—'} <span class="pu">%</span></div></div><div class="pbox"><div class="pl">Tensão Rebobinador</div><div class="pv">${p.TENSAO_REBOBINADOR||'—'} <span class="pu">N</span></div></div><div class="pbox"><div class="pl">Avanço</div><div class="pv">${p.AVANCO||'—'} <span class="pu">N</span></div></div><div class="pbox"><div class="pl">Posição Compactador</div><div class="pv" style="font-size:13px">${p.POSICAO_COMPACTADOR||'—'}</div></div><div class="pbox"><div class="pl">Temp. Ambiente</div><div class="pv">${p.TEMP_AMBIENTE||'—'} <span class="pu">°C</span></div></div><div class="pbox"><div class="pl">Largura do Filme</div><div class="pv">${p.LARGURA_FILME||'—'} <span class="pu">mm</span></div></div><div class="pbox"><div class="pl">Pressão Cil. Borracha</div><div class="pv">${p.PRESSAO_CIL_BORRACHA||'—'}</div></div>${p.MATERIAL?`<div class="pbox" style="grid-column:span 2"><div class="pl">Material</div><div class="pv" style="font-size:13px">${p.MATERIAL}</div></div>`:''}`;
 
@@ -1073,160 +999,13 @@ async function abrirRec(id) {
   ir('s-rec');
 }
 
-// ── CONJUGAÇÕES ──────────────────────────────────────────
+// ── CONJUGAÇÃO (modelo Flexo) ────────────────────────────
 
-function renderConjugacoes(conjugacoes) {
-  const html = conjugacoes.map(c => {
-    const tintas = Array.isArray(c.tintas) ? c.tintas : [];
-    return `<div class="cj-card">
-      <div class="cj-hdr" onclick="togCj(${c.ID})">
-        <div><div class="cj-nome">${c.NOME}</div><div class="cj-sub">${tintas.length} estações${c.OBSERVACOES?' · com observação':''}</div></div>
-        <i class="ti ti-chevron-down cj-chv" id="cjchv-${c.ID}"></i>
-      </div>
-      <div class="cj-body" id="cjbody-${c.ID}" style="display:none">
-        ${tintas.map(t=>`<div class="tr2"><div class="nc">${t.ESTACAO}</div><div><div style="font-size:13px;font-weight:600;color:var(--text)">${t.NOME_COR}</div><div style="font-size:11px;color:var(--text3);margin-top:1px">${t.COD_TINTA}${t.ID_CAMISA?' · Camisa: '+t.ID_CAMISA:''}</div><div class="chips"><div class="chip">Visc. <b>${t.VISCOSIDADE||'—'} s</b></div><div class="chip">Sec. <b>${secStr(t.SECAGEM_MIN||0,t.SECAGEM_SEG||0)}</b></div></div></div></div>`).join('')}
-        ${c.OBSERVACOES?`<div style="margin-top:8px;padding-top:8px;border-top:0.5px solid var(--border);font-size:12px;color:var(--text2);line-height:1.5"><b>Obs.:</b> ${c.OBSERVACOES}</div>`:''}
-      </div>
-    </div>`;
-  }).join('');
-  document.getElementById('rec-conjugacoes').innerHTML = `<div class="sl">Conjugações (${conjugacoes.length})</div>${html}<button class="bnp" style="margin-top:10px;color:var(--blue);border-color:var(--blue-mid)" onclick="irNovaConjugacao()"><i class="ti ti-plus"></i> Adicionar conjugação</button>`;
-}
-
-function togCj(id) {
-  const b = document.getElementById('cjbody-'+id);
-  const c = document.getElementById('cjchv-'+id);
-  const open = b.style.display !== 'none';
-  b.style.display = open ? 'none' : 'block';
-  c.style.transform = open ? '' : 'rotate(180deg)';
-}
-
-function irNovaConjugacao() {
-  const r = receitas.find(x => String(x.ID) === String(recIdx));
-  if (!r) return;
-  ncPromovendo = !(Array.isArray(r.conjugacoes) && r.conjugacoes.length > 0);
-  document.getElementById('nc-promover-card').style.display = ncPromovendo ? 'block' : 'none';
-  document.getElementById('nc-nome-atual').value = '';
-  document.getElementById('nc-nome').value = '';
-  document.getElementById('nc-obs').value = '';
-  ncTintaRows = [{}];
-  renderNcTintas();
-  document.getElementById('nc-err').textContent = '';
-  ir('s-nova-conj');
-}
-
-function syncNcTintaRows(){
-  ncTintaRows.forEach((t,i)=>{
-    t.cod = document.getElementById('nct-cod-'+i)?.value || '';
-    t.nome = document.getElementById('nct-nome-'+i)?.value || '';
-    t.visc = document.getElementById('nct-visc-'+i)?.value || '';
-    t.sec = document.getElementById('nct-sec-'+i)?.value || '';
-  });
-}
-
-function renderNcTintas() {
-  document.getElementById('nc-tintas-rows').innerHTML = ncTintaRows.map((t,i)=>`
-    <div class="tbloco">
-      <div class="tbh">
-        <div class="tbhl"><div class="nc">${i+1}</div><span style="font-size:13px;font-weight:600;color:var(--text)">Estação ${i+1}</span></div>
-        <button class="dbn" onclick="removerNcTinta(${i})" aria-label="Remover estação ${i+1}"><i class="ti ti-trash"></i></button>
-      </div>
-      <div class="tg">
-        <div><label>Código da tinta</label><input type="text" id="nct-cod-${i}" value="${t.cod||''}" placeholder="508.12.0441" oninput="fmtCodTinta(this)" maxlength="11"></div>
-        <div><label>Nome / cor</label><input type="text" id="nct-nome-${i}" value="${t.nome||''}"></div>
-        <div><label>Viscosidade (s)</label><input type="text" id="nct-visc-${i}" value="${t.visc||''}" inputmode="decimal"></div>
-        <div><label>Secagem (min:seg)</label><input type="text" id="nct-sec-${i}" value="${t.sec||''}" inputmode="numeric" placeholder="0:40" oninput="fmtSecagem(this)" onfocus="if(!this.value)this.value='0:'" onblur="if(this.value==='0:')this.value=''" style="width:90px"></div>
-      </div>
-    </div>`).join('');
-}
-
-function addNcTinta() {
-  syncNcTintaRows();
-  ncTintaRows.push({});
-  renderNcTintas();
-}
-
-function removerNcTinta(i) {
-  syncNcTintaRows();
-  if(ncTintaRows.length<=1){ ncTintaRows=[{}]; renderNcTintas(); return; }
-  ncTintaRows.splice(i,1);
-  renderNcTintas();
-}
-
-async function salvarConjugacao() {
-  const err = document.getElementById('nc-err');
-  err.textContent = '';
-  const nomeNova = document.getElementById('nc-nome').value.trim();
-  if (!nomeNova) { err.textContent = 'Digite o nome da nova conjugação.'; return; }
-  let nomeAtual = '';
-  if (ncPromovendo) {
-    nomeAtual = document.getElementById('nc-nome-atual').value.trim();
-    if (!nomeAtual) { err.textContent = 'Dê um nome para a configuração de tintas atual.'; return; }
-  }
-  const tintasPreenchidas = ncTintaRows.filter((t,i)=>document.getElementById('nct-nome-'+i)?.value.trim());
-  if (!tintasPreenchidas.length) { err.textContent = 'Adicione ao menos uma estação com tinta.'; return; }
-
-  const tintas = ncTintaRows.map((t,i) => {
-    const secRaw = (document.getElementById('nct-sec-'+i)?.value || '0:0').split(':');
-    const secM = parseInt(secRaw[0])||0, secS = parseInt(secRaw[1])||0;
-    return {
-      estacao: i+1,
-      codTinta: document.getElementById('nct-cod-'+i)?.value.trim() || '',
-      nomeCor: document.getElementById('nct-nome-'+i)?.value.trim() || '',
-      viscosidade: parseFloat(document.getElementById('nct-visc-'+i)?.value) || 0,
-      secagemMin: secM, secagemSeg: secS,
-      pressaoRolo: '', pressaoFaca: '', tempEstufa: ''
-    };
-  }).filter(t => t.nomeCor);
-
-  pendingConjPayload = {
-    action: 'criarConjugacao',
-    idReceita: recIdx,
-    promovendo: ncPromovendo,
-    nomeAtual,
-    observacoesAtual: '',
-    novaConjugacao: { nome: nomeNova, observacoes: document.getElementById('nc-obs').value.trim(), tintas }
-  };
-
-  document.getElementById('cjpc').textContent = nomeNova;
-  pinBufCj=''; updDotsCj();
-  document.getElementById('cjpe').textContent='';
-  document.getElementById('tpt').textContent='Aprovação da conjugação';
-  document.getElementById('tps').textContent=nomeNova;
-  document.getElementById('tpp').style.display='none';
-  ir('s-conj-pin');
-}
-
-function updDotsCj(){
-  for(let i=0;i<4;i++){ const d=document.getElementById('cjd'+i); if(d)d.className='pin-d'+(i<pinBufCj.length?' f':''); }
-}
-
-async function pinConj(v){
-  const err=document.getElementById('cjpe');
-  if(v==='back'){ pinBufCj=pinBufCj.slice(0,-1); updDotsCj(); return; }
-  if(v==='ok'){
-    if(pinBufCj.length<4){ err.textContent='Digite os 4 dígitos'; return; }
-    const pin=pinBufCj;
-    showLoading('Validando PIN...');
-    try{
-      const res = await apiPost({action:'validarPin', pin});
-      if(!res.valido){ hideLoading(); err.textContent='PIN incorreto. Tente novamente.'; pinBufCj=''; updDotsCj(); return; }
-      showLoading('Salvando conjugação...');
-      pendingConjPayload.aprovador = res.nome;
-      await apiPost(pendingConjPayload);
-      const idx = receitas.findIndex(x => String(x.ID) === String(recIdx));
-      if (idx >= 0) receitas[idx]._detalhesCarregados = false;
-      hideLoading();
-      pinBufCj=''; updDotsCj();
-      await abrirRec(recIdx);
-    } catch(e) {
-      hideLoading();
-      err.textContent = 'Erro ao salvar: ' + e.message;
-      pinBufCj=''; updDotsCj();
-    }
-    return;
-  }
-  if(pinBufCj.length<4) pinBufCj+=v;
-  updDotsCj();
+function setConj(v){
+  document.getElementById('n-conj').value=v;
+  document.getElementById('conj-nao').className='to'+(v==='NAO'?' tof':'');
+  document.getElementById('conj-sim').className='to'+(v==='SIM'?' ton':'');
+  document.getElementById('conj-itens-wrap').style.display=v==='SIM'?'block':'none';
 }
 
 // ── REGISTRO DE REPETIÇÃO ────────────────────────────────
@@ -1239,51 +1018,20 @@ function rRep() {
   document.getElementById('rep-id-grid').innerHTML=`<div><div class="fl">Cliente</div><div class="fv fvac">${r.CLIENTE}</div></div><div><div class="fl">Cód. PA</div><div class="fv">${fmtCodPAExib(r.COD_PA)}</div></div><div><div class="fl">Máquina</div><div class="fv">${r.MAQUINA}</div></div>`;
   document.getElementById('rpctx').textContent=`${r.CLIENTE} · ${fmtCodPAExib(r.COD_PA)}`;
 
-  const conjugacoes = Array.isArray(r.conjugacoes) ? r.conjugacoes : [];
-  const selWrap = document.getElementById('rep-conj-sel-wrap');
-  if (conjugacoes.length > 0) {
-    selWrap.style.display = 'block';
-    repConjSelecionada = conjugacoes[0].ID;
-    renderRepConjSel(conjugacoes);
-    renderRepTintas(Array.isArray(conjugacoes[0].tintas) ? conjugacoes[0].tintas : []);
-  } else {
-    selWrap.style.display = 'none';
-    repConjSelecionada = null;
-    renderRepTintas(Array.isArray(r.tintas) ? r.tintas : (r.tintas ? [r.tintas] : []));
-  }
+  document.getElementById('rep-conj-sel-wrap').style.display = 'none';
+  renderRepTintas(Array.isArray(r.tintas) ? r.tintas.filter(t=>t.NOME_COR) : []);
 
   const pRef = Array.isArray(r.parametros) ? (r.parametros[0]||{}) : (r.parametros||{});
   document.getElementById('params-rep').innerHTML = paramsDef.map(p=>{
     const refVal = getParamRef(p.id, pRef) || p.ref;
+    paramRefs[p.id] = refVal;
     const isSel=p.tipo==='sel', isInf=p.tipo==='info';
     const inp = isSel
-      ? `<select class="param-sel" id="pinp-${p.id}" onchange="chkP('${p.id}','${refVal}')"><option value="">—</option>${p.opts.map(o=>`<option>${o}</option>`).join('')}</select>`
-      : `<input class="param-inp${isInf?' inf':''}" id="pinp-${p.id}" type="text" inputmode="decimal" oninput="chkP('${p.id}','${refVal}')" placeholder="">`;
+      ? `<select class="param-sel" id="pinp-${p.id}" onchange="chkP('${p.id}')"><option value="">—</option>${p.opts.map(o=>`<option>${o}</option>`).join('')}</select>`
+      : `<input class="param-inp${isInf?' inf':''}" id="pinp-${p.id}" type="text" inputmode="decimal" oninput="chkP('${p.id}')" placeholder="">`;
     return `<div class="param-row"><div class="param-top"><div class="param-lbl">${p.lbl}${p.un?`<span class="un">(${p.un})</span>`:''}</div>${inp}</div><div id="jprow-${p.id}" style="display:none" class="just-inp"><label><i class="ti ti-alert-triangle" style="font-size:11px;vertical-align:-1px"></i> Fora do especificado — justifique</label><textarea id="jparam-${p.id}" rows="2" placeholder="Justifique..."></textarea></div></div>`;
   }).join('');
 
-  uPrg();
-}
-
-function renderRepConjSel(conjugacoes) {
-  document.getElementById('rep-conj-sel').innerHTML = conjugacoes.map(c => {
-    const tintas = Array.isArray(c.tintas) ? c.tintas : [];
-    const sel = String(c.ID) === String(repConjSelecionada);
-    return `<div class="ci${sel?' sel':''}" onclick="selRepConj(${c.ID})">
-      <div><div class="cinm">${c.NOME}</div><div class="cin">${tintas.length} estações</div></div>
-      ${sel?'<i class="ti ti-check" style="font-size:14px;color:var(--blue)"></i>':''}
-    </div>`;
-  }).join('');
-}
-
-function selRepConj(id) {
-  const r = receitas.find(x => String(x.ID) === String(recIdx));
-  if (!r) return;
-  const conj = (r.conjugacoes||[]).find(c => String(c.ID) === String(id));
-  if (!conj) return;
-  repConjSelecionada = id;
-  renderRepConjSel(r.conjugacoes);
-  renderRepTintas(Array.isArray(conj.tintas) ? conj.tintas : []);
   uPrg();
 }
 
@@ -1312,12 +1060,13 @@ function renderRepTintas(tintas) {
   // Rolo, Estufa, Faca: com detecção de desvio e justificativa
   const repDesvioRow = (prefix, refFn, placeholder, unit) => tintas.map(t=>{
     const ref = refFn(t);
+    compRefs[prefix+'-'+t.ESTACAO] = ref;
     return `<div id="reprow-${prefix}-${t.ESTACAO}" style="padding:7px 0;border-bottom:0.5px solid var(--border)">
       <div style="display:flex;align-items:center;gap:8px">
         <div class="nc">${t.ESTACAO}</div>
         <div style="flex:1;font-size:12px;color:var(--text2)">${t.NOME_COR}</div>
         <div style="display:flex;align-items:center;gap:4px">
-          <input id="${prefix}-${t.ESTACAO}" type="text" inputmode="decimal" placeholder="" style="width:72px;font-size:12px;padding:6px 9px;text-align:center;border:0.5px solid var(--border2);border-radius:var(--rad);background:var(--card);color:var(--text);outline:none;font-family:var(--font-sans)" oninput="chkComplem('${prefix}',${t.ESTACAO},'${ref}')">
+          <input id="${prefix}-${t.ESTACAO}" type="text" inputmode="decimal" placeholder="" style="width:72px;font-size:12px;padding:6px 9px;text-align:center;border:0.5px solid var(--border2);border-radius:var(--rad);background:var(--card);color:var(--text);outline:none;font-family:var(--font-sans)" oninput="chkComplem('${prefix}',${t.ESTACAO})">
           ${unit?`<span style="font-size:11px;color:var(--text3)">${unit}</span>`:''}
         </div>
       </div>
@@ -1339,7 +1088,8 @@ function getParamRef(pid, p) {
   return map[pid]!==undefined&&map[pid]!==''?String(map[pid]):null;
 }
 
-function chkComplem(prefix, estacao, ref){
+function chkComplem(prefix, estacao){
+  const ref = compRefs[prefix+'-'+estacao] || '';
   const i=document.getElementById(prefix+'-'+estacao);
   const j=document.getElementById('jreprow-'+prefix+'-'+estacao);
   if(!i||!j)return;
@@ -1353,9 +1103,13 @@ function chkComplem(prefix, estacao, ref){
     uBtn();return;
   }
   const numerico = prefix==='reprolo'||prefix==='repfaca'||prefix==='repesufa';
-  const vCmp = numerico ? normDec(v) : v;
-  const refCmp = numerico ? normDec(String(ref)) : String(ref);
-  const dv=vCmp!==refCmp;
+  let dv;
+  if(numerico){
+    const vNum=parseFloat(normDec(v)), refNum=parseFloat(normDec(String(ref)));
+    dv=isNaN(vNum)||isNaN(refNum)?v!==String(ref):Math.abs(vNum-refNum)>0.001;
+  } else {
+    dv=v!==String(ref);
+  }
   i.style.border=dv?'0.5px solid var(--red-mid)':'0.5px solid var(--border2)';
   i.style.background=dv?'var(--red-light)':'var(--card)';
   i.style.color=dv?'var(--red)':'var(--text)';
@@ -1366,7 +1120,7 @@ function chkComplem(prefix, estacao, ref){
 
 function chkV(n,ref){const i=document.getElementById('visc-'+n),j=document.getElementById('vtv-'+n),v=parseFloat(i.value.replace(',','.'));if(isNaN(v)||i.value.trim()===''){i.className='vi';j.style.display='none';uBtn();return;}const dv=Math.abs(v-ref)>TOL_VISC;i.className='vi'+(dv?' vdv':'');j.style.display=dv?'block':'none';uBtn();}
 function chkSec(n,rM,rS){const i=document.getElementById('sec-'+n),j=document.getElementById('vts-'+n);if(!i||i.value.trim()===''){if(i)i.className='vi';j.style.display='none';uBtn();return;}const parts=i.value.split(':');const vm=parseInt(parts[0])||0,vs=parseInt(parts[1])||0;const dv=Math.abs(secTotal(vm,vs)-secTotal(rM,rS))>TOL_SEC;i.className='vi'+(dv?' vdv':'');j.style.display=dv?'block':'none';uBtn();}
-function chkP(id,ref){const p=paramsDef.find(x=>x.id===id);if(p.tipo==='info')return;const i=document.getElementById('pinp-'+id),j=document.getElementById('jprow-'+id),v=i.value.trim();if(!v){i.className=p.tipo==='sel'?'param-sel':'param-inp';j.style.display='none';uPrg();return;}const vCmp=p.tipo==='sel'?v:normDec(v);const refCmp=p.tipo==='sel'?String(ref):normDec(String(ref));const dv=vCmp!==refCmp;if(p.tipo==='sel')i.className='param-sel'+(dv?' dv':'');else i.className='param-inp'+(dv?' dv':'');j.style.display=dv?'block':'none';uPrg();}
+function chkP(id){const p=paramsDef.find(x=>x.id===id);if(p.tipo==='info')return;const ref=paramRefs[id]||p.ref;const i=document.getElementById('pinp-'+id),j=document.getElementById('jprow-'+id),v=i.value.trim();if(!v){i.className=p.tipo==='sel'?'param-sel':'param-inp';j.style.display='none';uPrg();return;}const vCmp=p.tipo==='sel'?v:normDec(v);const refCmp=p.tipo==='sel'?String(ref):normDec(String(ref));const dv=vCmp!==refCmp;if(p.tipo==='sel')i.className='param-sel'+(dv?' dv':'');else i.className='param-inp'+(dv?' dv':'');j.style.display=dv?'block':'none';uPrg();}
 
 function uPrg(){const norm=paramsDef.filter(p=>p.tipo!=='info');const f=norm.filter(p=>document.getElementById('pinp-'+p.id)?.value.trim()!=='').length;document.getElementById('rpg').style.width=Math.round((f/norm.length)*100)+'%';uBtn();}
 
@@ -1427,7 +1181,7 @@ function getDvF(){
 function irRevisar(){
   const r=receitas.find(x=>String(x.ID)===String(recIdx));
   if(!r)return;
-  const tintas=r.tintas||[];
+  const tintas=repTintasAtivas||[];
   const dvs=getDvF();const cnt=dvs.length;
   for(const k in altOpts)delete altOpts[k];
   document.getElementById('rev-dv-banner').style.display=cnt>0?'flex':'none';
@@ -1456,8 +1210,7 @@ function irRevisar(){
     return `<div class="rev-row"><div class="rev-row-top"><div class="rev-lbl">${p.lbl}${p.un?` (${p.un})`:''}</div><div class="rev-right"><span class="rev-ref">Receita: ${refVal}${p.un?' '+p.un:''}</span><span class="rev-real${isDv?' dv':''}">${v}${p.un&&v!=='—'?' '+p.un:''}${isDv?' <span class="rev-dv-pill">Desvio</span>':''}</span></div></div>${isDv?`<div class="rev-just"><div class="rev-just-lbl">Justificativa</div>${j}</div><div class="alt-opts"><button class="alt-btn" id="ao-${p.id}-pont" onclick="selAlt('${p.id}','pont')"><i class="ti ti-refresh"></i>Alteração pontual</button><button class="alt-btn" id="ao-${p.id}-rec" onclick="selAlt('${p.id}','rec')"><i class="ti ti-file-pencil"></i>Alterar na Receita</button></div>`:''}</div>`;
   }).join('');
   // Renderizar desvios de complementos (rolo, estufa, faca)
-  const r3=receitas.find(x=>String(x.ID)===String(recIdx));
-  const tintas3=Array.isArray(r3?.tintas)?r3.tintas:(r3?.tintas?[r3.tintas]:[]);
+  const tintas3=repTintasAtivas||[];
   const compMap2=[
     {prefix:'reprolo',lbl:'Pressão do Rolo',refFn:t=>t.PRESSAO_ROLO,un:''},
     {prefix:'repesufa',lbl:'Estufa',refFn:t=>t.TEMP_ESTUFA,un:'°C'},
@@ -1502,19 +1255,20 @@ function irPinR(){
 // ── PIN NOVA RECEITA ─────────────────────────────────────
 
 async function ppN(v){
+  if(salvando)return;
   const err=document.getElementById('pne');
   if(v==='back'){pinBufN=pinBufN.slice(0,-1);updDotsN();return;}
   if(v==='ok'){
     if(pinBufN.length<4){err.textContent='Digite os 4 dígitos';return;}
     const pin=pinBufN;
-    showLoading('Validando PIN...');
+    salvando=true;showLoading('Validando PIN...');
     try{
       const res=await apiPost({action:'validarPin',pin});
-      hideLoading();
-      if(!res.valido){err.textContent='PIN incorreto. Tente novamente.';pinBufN='';updDotsN();return;}
+      if(!res.valido){hideLoading();salvando=false;err.textContent='PIN incorreto. Tente novamente.';pinBufN='';updDotsN();return;}
       err.textContent='';pinBufN='';updDotsN();
-      salvarNovaReceita(res.nome);
+      await salvarNovaReceita(res.nome);
     }catch(e){hideLoading();err.textContent='Erro: '+e.message;pinBufN='';updDotsN();}
+    salvando=false;
     return;
   }
   if(pinBufN.length<4)pinBufN+=v;
@@ -1522,14 +1276,10 @@ async function ppN(v){
 }
 
 async function salvarNovaReceita(aprovador) {
-  const ehConj=document.getElementById('hon-conj')?.className.includes('ton')||false;
-  const nomeConj=document.getElementById('n-conj-nome')?.value.trim()||'';
-  if(ehConj && !nomeConj){
-    document.getElementById('pne').textContent='Digite o nome da conjugação.';
-    return;
-  }
   showLoading('Salvando receita...');
   const cli=document.getElementById('n-cli').value,cod=document.getElementById('n-cod').value;
+  const conjVal=document.getElementById('n-conj')?.value||'NAO';
+  const conjItens=document.getElementById('n-conj-itens')?.value?.trim()||'';
   const preHotOn=document.getElementById('hon-preHot')?.className.includes('ton')||false;
   const posHotOn=document.getElementById('hon-posHot')?.className.includes('ton')||false;
   const tintas=Array.from(document.querySelectorAll('.tbloco')).map(tb=>{
@@ -1553,7 +1303,7 @@ async function salvarNovaReceita(aprovador) {
   const parametros={tensaoFreio:normDec(pbInputs[0]?.value||''),pressaoCompactador:normDec(pbInputs[1]?.value||''),avancoCR:normDec(pbInputs[2]?.value||''),velocidade:normDec(pbInputs[3]?.value||''),taxaReducao:normDec(pbInputs[4]?.value||''),tensaoRebobinador:normDec(pbInputs[5]?.value||''),avanco:normDec(pbInputs[6]?.value||''),posicaoCompactador:pbInputs[7]?.value||'',tempAmbiente:normDec(pbInputs[8]?.value||''),larguraFilme:normDec(pbInputs[9]?.value||''),pressaoCilBorracha:normDec(pbInputs[10]?.value||''),material:document.getElementById('n-material')?.value||''};
   try {
     const obsVal=document.getElementById('n-obs')?.value||'';
-    await apiPost({action:'salvarReceita',receita:{cliente:cli,codPA:cod,opCriacao:document.getElementById('n-op').value,servico:document.getElementById('n-serv').value,processo:'Rotogravura',maquina:document.getElementById('n-maq').value,operador:document.getElementById('n-oper').value,observacoes:obsVal},tintas,parametros,aprovador,ehConjugacao:ehConj,nomeConjugacao:nomeConj});
+    await apiPost({action:'salvarReceita',receita:{cliente:cli,codPA:cod,opCriacao:document.getElementById('n-op').value,servico:document.getElementById('n-serv').value,processo:'Rotogravura',maquina:document.getElementById('n-maq').value,operador:document.getElementById('n-oper').value,observacoes:obsVal,conjugacao:conjVal,itensConjugacao:conjItens},tintas,parametros,aprovador});
     await carregarReceitas();
     hideLoading();
     showSuc('Receita aprovada e salva!',`${cli} · ${cod} está disponível para os operadores.`,[{l:'Produto',v:`${cli} · ${cod}`},{l:'Aprovador',v:aprovador},{l:'Status',v:'Aprovada'}],false,'s-lista');
@@ -1566,19 +1316,20 @@ async function salvarNovaReceita(aprovador) {
 // ── PIN REPETIÇÃO ────────────────────────────────────────
 
 async function ppR(v){
+  if(salvando)return;
   const err=document.getElementById('pre2');
   if(v==='back'){pinBufR=pinBufR.slice(0,-1);updDotsR();return;}
   if(v==='ok'){
     if(pinBufR.length<4){err.textContent='Digite os 4 dígitos';return;}
     const pin=pinBufR;
-    showLoading('Validando PIN...');
+    salvando=true;showLoading('Validando PIN...');
     try{
       const res=await apiPost({action:'validarPin',pin});
-      hideLoading();
-      if(!res.valido){err.textContent='PIN incorreto. Tente novamente.';pinBufR='';updDotsR();return;}
+      if(!res.valido){hideLoading();salvando=false;err.textContent='PIN incorreto. Tente novamente.';pinBufR='';updDotsR();return;}
       err.textContent='';pinBufR='';updDotsR();
-      salvarRepeticao(res.nome);
+      await salvarRepeticao(res.nome);
     }catch(e){hideLoading();err.textContent='Erro: '+e.message;pinBufR='';updDotsR();}
+    salvando=false;
     return;
   }
   if(pinBufR.length<4)pinBufR+=v;
@@ -1609,7 +1360,7 @@ async function salvarRepeticao(aprovador) {
     const tintas2=repTintasAtivas||[];
     const complementos=tintas2.map(t=>({estacao:t.ESTACAO,idCamisa:document.getElementById('repcamisa-'+t.ESTACAO)?.value||'',pressaoRolo:normDec(document.getElementById('reprolo-'+t.ESTACAO)?.value||''),pressaoFaca:normDec(document.getElementById('repfaca-'+t.ESTACAO)?.value||''),tempEstufa:normDec(document.getElementById('repesufa-'+t.ESTACAO)?.value||'')}));
     const matRep=document.getElementById('rep-material')?.value||'';
-    await apiPost({action:'salvarRepeticao',idReceita:recIdx,opProducao:op,operador:oper,aprovador,temDesvio:dvs.length>0,desvios,pendencias:pends,complementos,material:matRep,idConjugacao:repConjSelecionada||''});
+    await apiPost({action:'salvarRepeticao',idReceita:recIdx,opProducao:op,operador:oper,aprovador,temDesvio:dvs.length>0,desvios,pendencias:pends,complementos,material:matRep});
     if(altCnt>0)await carregarPendencias();
     await carregarReceitas();
     const rows=[{l:'Cód. PA',v:r.COD_PA},{l:'OP',v:op},{l:'Operador',v:oper},{l:'Aprovador',v:aprovador}];
@@ -1642,7 +1393,7 @@ async function ppLock(ctx,v){
       if(!res.valido){err.textContent='PIN incorreto.';lockBufs[ctx]='';updLockDots(ctx,dotPfx);return;}
       err.textContent='';lockBufs[ctx]='';updLockDots(ctx,dotPfx);
       if(ctx==='pend'){renderPend();document.querySelectorAll('.tab-item').forEach(x=>x.classList.remove('ta'));document.getElementById('tab-pend').classList.add('ta');irRaw('s-pend');document.getElementById('tpt').textContent='Pendências de Alteração';document.getElementById('tps').textContent='Aguardando aprovação';document.getElementById('tpp').style.display='none';document.getElementById('sbw').innerHTML='';}
-      else{atualizarPainel();document.querySelectorAll('.tab-item').forEach(x=>x.classList.remove('ta'));document.getElementById('tab-p').classList.add('ta');irRaw('s-painel');document.getElementById('tpt').textContent='Painel de Supervisão';document.getElementById('tps').textContent='Rotogravura';document.getElementById('tpp').style.display='none';document.getElementById('sbw').innerHTML='';}
+      else{document.querySelectorAll('.tab-item').forEach(x=>x.classList.remove('ta'));document.getElementById('tab-p').classList.add('ta');irRaw('s-painel');document.getElementById('tpt').textContent='Painel de Supervisão';document.getElementById('tps').textContent='Rotogravura';document.getElementById('tpp').style.display='none';document.getElementById('sbw').innerHTML='';atualizarPainel();}
     }catch(e){hideLoading();err.textContent='Erro: '+e.message;lockBufs[ctx]='';updLockDots(ctx,dotPfx);}
     return;
   }
@@ -1714,84 +1465,117 @@ async function aprovarPendenciaAPI(idPendencia,aprovador2,pend){
     await carregarPendencias();
     renderPend();
     hideLoading();
-    hideLoading();
     showSuc('Nova versão criada!',`A receita foi atualizada. Versão anterior preservada no histórico.`,[{l:'Aprovador 2',v:aprovador2},{l:'Data',v:new Date().toLocaleDateString('pt-BR')},{l:'Status',v:'Aprovada'}],false,'s-hist');
   }catch(e){console.error('Erro ao aprovar pendência:',e);}
 }
 
-function rejPend(id){pendencias=pendencias.filter(p=>String(p.ID)!==String(id));uPendBadge();renderPend();}
+async function rejPend(id){
+  showLoading('Rejeitando...');
+  try{
+    await apiPost({action:'rejeitarPendencia',idPendencia:id});
+    pendencias=pendencias.filter(p=>String(p.ID)!==String(id));
+    uPendBadge();renderPend();
+  }catch(e){console.error('Erro ao rejeitar:',e);}
+  hideLoading();
+}
 function updPendDots(id){for(let i=0;i<4;i++){const d=document.getElementById(`ppd-${id}-${i}`);if(d)d.classList.toggle('f',i<(pendPinBufs[id]||'').length);}}
 
 // ── HISTÓRICO ────────────────────────────────────────────
 
-function atualizarHistorico(){
-  const totRep=receitas.reduce((s,r)=>s+(r.versoes||[]).reduce((s2,v)=>s2+(v.reps||[]).length,0),0);
-  const totDv=receitas.reduce((s,r)=>s+(r.versoes||[]).reduce((s2,v)=>s2+(v.reps||[]).filter(rep=>rep.TEM_DESVIO===true||rep.TEM_DESVIO==='TRUE').length,0),0);
-  const totVer=receitas.reduce((s,r)=>s+(r.versoes||[]).length,0);
-  document.getElementById('h-tot').textContent=totRep;
-  document.getElementById('h-dv').textContent=totDv;
-  document.getElementById('h-ver').textContent=totVer;
-  document.getElementById('h-taxa').textContent=totRep>0?Math.round(((totRep-totDv)/totRep)*100)+'%':'—';
-  renderH('',filtroH);
+let histReceita=null;
+
+function renderHistSel(lista){
+  document.getElementById('hist-sel-list').innerHTML=lista.length
+    ?lista.map(r=>`<div class="li" onclick="abrirHistorico(${r.ID})"><div class="lic"><i class="ti ti-history"></i></div><div class="lb"><div class="lt">${r.CLIENTE} — ${fmtCodPAExib(r.COD_PA)}</div><div class="ls">${r.SERVICO} · ${r.MAQUINA}${r.ITENS_CONJUGACAO?' · <i class="ti ti-layers-linked" style="font-size:10px;color:var(--amber);vertical-align:-1px"></i>':''}</div></div></div>`).join('')
+    :'<div style="padding:20px 0;text-align:center;font-size:13px;color:var(--text3)">Nenhuma receita encontrada</div>';
 }
 
-function renderH(q,filtro){
-  let dados=receitas.filter(r=>(r.versoes||[]).some(v=>(v.reps||[]).length>0));
-  if(q)dados=dados.filter(r=>r.COD_PA.toLowerCase().includes(q)||r.CLIENTE.toLowerCase().includes(q));
-  if(filtro==='ok')dados=dados.map(r=>({...r,versoes:(r.versoes||[]).map(v=>({...v,reps:(v.reps||[]).filter(rep=>!(rep.TEM_DESVIO===true||rep.TEM_DESVIO==='TRUE'))})).filter(v=>v.reps.length>0)})).filter(r=>(r.versoes||[]).length>0);
-  if(filtro==='desvio')dados=dados.map(r=>({...r,versoes:(r.versoes||[]).map(v=>({...v,reps:(v.reps||[]).filter(rep=>rep.TEM_DESVIO===true||rep.TEM_DESVIO==='TRUE')})).filter(v=>v.reps.length>0)})).filter(r=>(r.versoes||[]).length>0);
+function filtrarHistSel(){
+  const q=document.getElementById('hs').value.toLowerCase().trim();
+  const base=filtrarPorMaquina(receitas);
+  if(!q){renderHistSel(base);return;}
+  renderHistSel(base.filter(r=>(r.CLIENTE||'').toLowerCase().includes(q)||fmtCodPAExib(r.COD_PA).toLowerCase().includes(q)||String(r.COD_PA||'').toLowerCase().includes(q)));
+}
+
+async function abrirHistorico(id){
+  document.getElementById('tpt').textContent='Histórico';
+  document.getElementById('tps').textContent='Carregando...';
+  document.getElementById('tpp').style.display='none';
+  document.getElementById('sbw').innerHTML='';
+  irRaw('s-hist-det');
+  document.getElementById('hres').innerHTML='<div style="padding:40px 0;text-align:center"><div class="spinner"></div></div>';
+  try{
+    histReceita=await apiGet('getHistoricoReceita',`&id=${id}`);
+    document.getElementById('tps').textContent=`${histReceita.CLIENTE} · ${fmtCodPAExib(histReceita.COD_PA)}`;
+    filtroH='todos';
+    document.querySelectorAll('#s-hist-det .fc').forEach((c,i)=>c.classList.toggle('fa',i===0));
+    renderH();
+  }catch(e){
+    document.getElementById('hres').innerHTML=`<div style="padding:20px 0;text-align:center;font-size:13px;color:var(--red)">Erro: ${e.message}</div>`;
+  }
+}
+
+function renderH(){
+  if(!histReceita)return;
+  let versoes=histReceita.versoes||[];
+  if(filtroH==='ok')versoes=versoes.map(v=>({...v,reps:(v.reps||[]).filter(rep=>!(rep.TEM_DESVIO===true||rep.TEM_DESVIO==='TRUE'))})).filter(v=>v.reps.length>0);
+  if(filtroH==='desvio')versoes=versoes.map(v=>({...v,reps:(v.reps||[]).filter(rep=>rep.TEM_DESVIO===true||rep.TEM_DESVIO==='TRUE')})).filter(v=>v.reps.length>0);
   const wrap=document.getElementById('hres');
-  if(!dados.length){wrap.innerHTML=`<div class="card" style="text-align:center;font-size:13px;color:var(--text3);padding:20px">Nenhum resultado encontrado</div>`;return;}
-  wrap.innerHTML=dados.map(r=>`
-    <div style="margin-bottom:14px">
-      <div style="background:var(--blue-light);border:0.5px solid var(--border);border-radius:var(--rad-lg) var(--rad-lg) 0 0;padding:10px 14px;display:flex;justify-content:space-between;align-items:center">
-        <div><div style="font-size:13px;font-weight:700;color:var(--blue)">${r.CLIENTE} — ${fmtCodPAExib(r.COD_PA)}</div><div style="font-size:11px;color:var(--blue);opacity:.7;margin-top:2px">${r.MAQUINA}</div></div>
-        <span style="font-size:11px;color:var(--blue);font-weight:600">${(r.versoes||[]).reduce((s,v)=>s+(v.reps||[]).length,0)} rep.</span>
+  if(!versoes.length){wrap.innerHTML='<div class="card" style="text-align:center;font-size:13px;color:var(--text3);padding:20px">Nenhuma repetição encontrada</div>';return;}
+  wrap.innerHTML=versoes.map((v,vi)=>`
+    <div>
+      <div class="ver-hdr-block ${v.ATIVA===true||v.ATIVA==='TRUE'?'vigente':'obsoleta'}" style="${vi===0?'':'border-radius:0'}">
+        <div class="ver-hdr-lbl"><i class="ti ti-${v.ATIVA===true||v.ATIVA==='TRUE'?'check-circle':'history'}"></i>v${v.NUMERO_VERSAO} · ${v.ATIVA===true||v.ATIVA==='TRUE'?'Receita vigente':'Receita anterior'}</div>
+        <div class="ver-hdr-right">
+          <span class="ver-hdr-date">${v.DATA_CRIACAO||'—'}</span>
+          <span class="ver-aprov">Aprov. 1: ${v.APROVADOR_1||'—'}${v.APROVADOR_2?' · Aprov. 2: '+v.APROVADOR_2:''}</span>
+        </div>
       </div>
-      ${(r.versoes||[]).map((v,vi)=>`
-        <div>
-          <div class="ver-hdr-block ${v.ATIVA===true||v.ATIVA==='TRUE'?'vigente':'obsoleta'}" style="${vi===0?'':'border-radius:0'}">
-            <div class="ver-hdr-lbl"><i class="ti ti-${v.ATIVA===true||v.ATIVA==='TRUE'?'check-circle':'history'}"></i>v${v.NUMERO_VERSAO} · ${v.ATIVA===true||v.ATIVA==='TRUE'?'Receita vigente':'Receita anterior'}</div>
-            <div class="ver-hdr-right">
-              <span class="ver-hdr-date">${v.DATA_CRIACAO||'—'}</span>
-              <span class="ver-aprov">Aprov. 1: ${v.APROVADOR_1||'—'}${v.APROVADOR_2?' · Aprov. 2: '+v.APROVADOR_2:''}</span>
+      <div class="ver-body-block" style="${vi<versoes.length-1?'border-radius:0':''}">
+        ${(v.reps||[]).length===0?`<div style="padding:10px 14px;font-size:12px;color:var(--text3);background:var(--${v.ATIVA===true||v.ATIVA==='TRUE'?'card':'bg'})">Nenhuma repetição.</div>`:(v.reps||[]).map(rep=>`
+          <div class="rep-item-hist ${v.ATIVA===true||v.ATIVA==='TRUE'?'vigente':'obsoleta'}">
+            <div style="flex:1">
+              <div class="rep-num-h">OP ${rep.OP_PRODUCAO||'—'}</div>
+              <div class="rep-meta-h">${rep.OPERADOR||'—'} · ${rep.DATA_HORA||'—'} · Aprov: ${rep.APROVADOR||'—'}</div>
             </div>
-          </div>
-          <div class="ver-body-block" style="${vi<(r.versoes||[]).length-1?'border-radius:0':''}">
-            ${(v.reps||[]).length===0?`<div style="padding:10px 14px;font-size:12px;color:var(--text3);background:var(--${v.ATIVA===true||v.ATIVA==='TRUE'?'card':'bg'})">Nenhuma repetição.</div>`:(v.reps||[]).map(rep=>`
-              <div class="rep-item-hist ${v.ATIVA===true||v.ATIVA==='TRUE'?'vigente':'obsoleta'}">
-                <div style="flex:1">
-                  <div class="rep-num-h">OP ${rep.OP_PRODUCAO||'—'}</div>
-                  <div class="rep-meta-h">${rep.OPERADOR||'—'} · ${rep.DATA_HORA||'—'} · Aprov: ${rep.APROVADOR||'—'}</div>
-                </div>
-                <span class="rep-pill-h ${rep.TEM_DESVIO===true||rep.TEM_DESVIO==='TRUE'?'pill-dv':'pill-ok'}">${rep.TEM_DESVIO===true||rep.TEM_DESVIO==='TRUE'?'Com desvio':'Sem desvio'}</span>
-              </div>`).join('')}
-          </div>
-        </div>`).join('')}
+            <span class="rep-pill-h ${rep.TEM_DESVIO===true||rep.TEM_DESVIO==='TRUE'?'pill-dv':'pill-ok'}">${rep.TEM_DESVIO===true||rep.TEM_DESVIO==='TRUE'?'Com desvio':'Sem desvio'}</span>
+          </div>`).join('')}
+      </div>
     </div>`).join('');
 }
 
-function filtrarH(){const q=document.getElementById('hs').value.toLowerCase().trim();renderH(q,filtroH);}
-function setFH(el,t){document.querySelectorAll('#s-hist .fc').forEach(c=>c.classList.remove('fa'));el.classList.add('fa');filtroH=t;renderH(document.getElementById('hs').value.toLowerCase().trim(),t);}
+function setFH(el,t){document.querySelectorAll('#s-hist-det .fc').forEach(c=>c.classList.remove('fa'));el.classList.add('fa');filtroH=t;renderH();}
 
 // ── PAINEL ───────────────────────────────────────────────
 
-function atualizarPainel(){
-  const totRec=receitas.length;
-  const totRep=receitas.reduce((s,r)=>s+(r.versoes||[]).reduce((s2,v)=>s2+(v.reps||[]).length,0),0);
-  const totDv=receitas.reduce((s,r)=>s+(r.versoes||[]).reduce((s2,v)=>s2+(v.reps||[]).filter(rep=>rep.TEM_DESVIO===true||rep.TEM_DESVIO==='TRUE').length,0),0);
-  document.getElementById('pm-rec').textContent=totRec;
-  document.getElementById('pm-rep').textContent=totRep;
-  document.getElementById('pm-dv').textContent=totDv;
-  document.getElementById('pm-pend').textContent=pendencias.length;
-  document.getElementById('painel-lista').innerHTML=receitas.map(r=>{
-    const reps=(r.versoes||[]).reduce((s,v)=>s+(v.reps||[]).length,0);
-    const dvs=(r.versoes||[]).reduce((s,v)=>s+(v.reps||[]).filter(rep=>rep.TEM_DESVIO===true||rep.TEM_DESVIO==='TRUE').length,0);
-    return `<div style="display:flex;align-items:center;padding:9px 0;border-bottom:0.5px solid var(--border)"><div style="flex:1"><div style="font-size:13px;font-weight:600;color:var(--text)">${r.CLIENTE} · ${r.COD_PA}</div><div style="font-size:11px;color:var(--text3);margin-top:2px">${r.MAQUINA}</div></div><div style="text-align:right;flex-shrink:0"><div style="font-size:12px;font-weight:600;color:var(--text)">${reps} rep.</div>${dvs>0?`<div style="font-size:11px;color:var(--amber);font-weight:600">${dvs} desvio${dvs!==1?'s':''}</div>`:''}</div></div>`;
-  }).join('');
+async function atualizarPainel(dias){
+  const periodo=dias||document.querySelector('#s-painel select')?.value||'30';
+  document.getElementById('pm-rec').textContent='…';
+  document.getElementById('pm-rep').textContent='…';
+  document.getElementById('pm-dv').textContent='…';
+  document.getElementById('pm-pend').textContent='…';
+  document.getElementById('painel-lista').innerHTML='<div style="padding:20px 0;text-align:center"><div class="spinner"></div></div>';
+  try{
+    const d=await apiGet('getPainelResumo',`&periodo=${periodo}`);
+    document.getElementById('pm-rec').textContent=d.totalReceitas;
+    document.getElementById('pm-rep').textContent=d.totalReps;
+    document.getElementById('pm-dv').textContent=d.totalDesvios;
+    document.getElementById('pm-pend').textContent=d.totalPendencias;
+    document.getElementById('per-sub').textContent=`Rotogravura · últimos ${d.periodo} dias`;
+    // Bar chart por cliente
+    const max=Math.max(...(d.porCliente||[]).map(c=>c.reps),1);
+    document.getElementById('painel-lista').innerHTML=(d.porCliente||[]).length
+      ?(d.porCliente||[]).map(c=>{
+        const pct=Math.round((c.reps/max)*100);
+        return `<div style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px"><div style="font-size:13px;font-weight:600;color:var(--text)">${c.cliente}</div><div style="font-size:12px;color:var(--text2)">${c.reps} rep.${c.desvios>0?' · <span style="color:var(--amber)">'+c.desvios+' desv.</span>':''}</div></div><div style="height:8px;background:var(--bg);border-radius:4px;overflow:hidden;border:0.5px solid var(--border)"><div style="height:100%;width:${pct}%;background:var(--blue);border-radius:4px"></div></div></div>`;
+      }).join('')
+      :'<div style="padding:20px 0;text-align:center;font-size:13px;color:var(--text3)">Sem dados no período</div>';
+  }catch(e){
+    document.getElementById('painel-lista').innerHTML=`<div style="padding:20px 0;text-align:center;font-size:13px;color:var(--red)">Erro: ${e.message}</div>`;
+  }
 }
 
-function chPer(sel){document.getElementById('per-sub').textContent=`Rotogravura · últimos ${sel.value} dias`;}
+function chPer(sel){atualizarPainel(sel.value);}
 
 // ── NOVA RECEITA ─────────────────────────────────────────
 
@@ -1846,7 +1630,6 @@ function atualizarComplementos(){
   const e=document.getElementById('estufa-rows');if(e)e.innerHTML=estufaHtml;
 }
 
-function sH(n,on){document.getElementById('hon-'+n).className='to '+(on?'ton':'');document.getElementById('hof-'+n).className='to '+(on?'':'tof');const r=document.getElementById('htr-'+n);if(r){r.style.display=on?'flex':'none';if(on)document.getElementById('hti-'+n)?.focus();}}
 
 function salvarCompVals(){
   // Salvar todos os valores dos complementos antes de sair do passo 2
@@ -1935,6 +1718,8 @@ function bRv(){
     {l:'Pressão Cil. Borracha',v:pbInputs[10]?.value||'—',u:''},
   ];
   const materialVal=document.getElementById('n-material')?.value||'';
+  const conjOnB=document.getElementById('n-conj')?.value==='SIM';
+  const conjItensB=document.getElementById('n-conj-itens')?.value||'';
   const obs=document.getElementById('n-obs')?.value||'';
   // Estufas no resumo: todas as 9 posições, incluindo sem tinta
   const estufaMapB={};ts.forEach(t=>{if(t.estufa)estufaMapB[t.n]=t.estufa;});
@@ -1949,6 +1734,7 @@ function bRv(){
       <div><div class="fl">Operador</div><div class="fv">${oper}</div></div>
     </div>
     <div style="margin-bottom:12px"><div class="fl">Serviço</div><div class="fv" style="font-size:12px;margin-top:2px">${serv}</div></div>
+    ${conjOnB?`<div style="margin-bottom:12px;background:var(--amber-light);border:0.5px solid #E8D5A8;border-radius:var(--rad);padding:8px 12px"><div style="font-size:11px;color:var(--amber);font-weight:600;margin-bottom:4px"><i class="ti ti-layers-linked" style="font-size:12px;vertical-align:-1px"></i> Conjugação</div><div style="font-size:13px;font-weight:600;color:var(--amber)">${conjItensB}</div></div>`:''}
     ${preHotOnB?`<div style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--amber-light);border-radius:var(--rad);margin-bottom:8px"><i class="ti ti-flame" style="color:var(--amber)"></i><span style="font-size:12px;font-weight:600;color:var(--amber)">PRÉ HOT ligado — ${document.getElementById('hti-preHot')?.value||'—'}°C</span></div>`:''}
     <div class="sl" style="margin-top:4px">Estações — ${ts.length} tinta${ts.length!==1?'s':''}</div>
     ${ts.map(t=>`<div class="tr2"><div class="nc">${t.n}</div><div><div style="font-size:13px;font-weight:600;color:var(--text)">${t.nome}</div><div style="font-size:11px;color:var(--text3);margin-top:1px">${t.cod}${t.camisa?' · Camisa: '+t.camisa:''}</div><div class="chips">${t.visc!=='—'?`<div class="chip">Visc. <b>${t.visc} s</b></div>`:''}<div class="chip">Sec. <b>${secStr(parseInt(t.secm),parseInt(t.secs))}</b></div>${t.rolo?`<div class="chip">Rolo <b>${t.rolo}</b></div>`:''}${t.faca?`<div class="chip">Faca <b>${t.faca} Bar</b></div>`:''}${t.estufa?`<div class="chip cth">Estufa <b>${t.estufa}°C</b></div>`:''}${t.preHot?`<div class="chip cth"><i class="ti ti-flame" style="font-size:10px;vertical-align:-1px"></i> PRÉ HOT <b>${t.preTemp}°C</b></div>`:''}${t.posHot?`<div class="chip cth"><i class="ti ti-flame" style="font-size:10px;vertical-align:-1px"></i> PÓS HOT <b>${t.posTemp}°C</b></div>`:''}</div></div></div>`).join('')}
@@ -2006,7 +1792,8 @@ function ir(id){
     's-rec':[null,null,true,false],
     's-nova':['Nova Receita','Cadastro com aprovação por PIN',false,true],
     's-pin-n':['Aprovação por PIN','Nova receita',false,false],
-    's-hist':['Histórico de Repetição','Por receita · Rotogravura',false,false],
+    's-hist':['Histórico de Repetição','Selecione a receita',false,false],
+    's-hist-det':['Histórico',null,false,false],
     's-suc':['Concluído','',false,false],
     's-rep':['Registro de Repetição',null,false,false],
     's-rev':['Revisão',null,false,false],
@@ -2019,7 +1806,7 @@ function ir(id){
     if(!map[id][3]&&!repSteps[id])sb.innerHTML='';
   }
   if(repSteps[id]){const cur=repSteps[id];const lbls=['Registro','Revisão','Aprovação'];sb.innerHTML=`<div class="stb">${lbls.map((l,i)=>{const n=i+1,cls=n<cur?'scd':n===cur?'sca':'sci',ic=n<cur?'<i class="ti ti-check" style="font-size:11px"></i>':n;return `<div class="si"><div class="scc ${cls}">${ic}</div><span class="slb ${n===cur?'slba':''}">${l}</span></div>${n<3?'<div class="sse"></div>':''}`}).join('')}</div>`;}
-  if(id==='s-hist'){filtroH='todos';document.querySelectorAll('#s-hist .fc').forEach((c,i)=>c.classList.toggle('fa',i===0));renderH('',filtroH);}
+  if(id==='s-hist'){filtroH='todos';renderHistSel(filtrarPorMaquina(receitas));}
   if(id==='s-rep'){rRep();document.getElementById('oper-inp').value='';document.getElementById('op-inp').value='';}
   if(id==='s-nova')nStep(nsn);
   if(id==='s-pin-n'){pinBufN='';updDotsN();document.getElementById('pne').textContent='';}
@@ -2034,7 +1821,7 @@ function tIr(sc,tid,t,s){
   document.getElementById('tps').textContent=s;
 }
 
-function rst(){pinBufN='';pinBufR='';nsn=1;window._compVals=null;window._preHot=null;window._posHot=null;}
+function rst(){pinBufN='';pinBufR='';nsn=1;salvando=false;window._compVals=null;window._preHot=null;window._posHot=null;}
 
 document.addEventListener('input',e=>{
   if(e.target.id==='oper-inp'||e.target.id==='op-inp'||['jvisc-','jsec-','jparam-'].some(p=>e.target.id.startsWith(p)))uBtn();
