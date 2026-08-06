@@ -866,16 +866,16 @@ function apiGet(action, extraParams='') {
 }
 
 function apiPost(body) {
-  return fetch(API, {
-    method: 'POST',
-    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-    body: JSON.stringify(body)
-  })
-  .then(res => res.json())
-  .then(data => {
-    if (data.status === 'erro') throw new Error(data.mensagem);
-    return data.data;
-  });
+  const encoded = encodeURIComponent(JSON.stringify(body));
+  return fetch(API + '?action=' + body.action + '&body=' + encoded)
+    .then(res => {
+      if (!res.ok) throw new Error('Erro de conexão (HTTP ' + res.status + ')');
+      return res.json();
+    })
+    .then(data => {
+      if (data.status === 'erro') throw new Error(data.mensagem);
+      return data.data;
+    });
 }
 
 // ── CARREGAR RECEITAS ────────────────────────────────────
@@ -1860,7 +1860,7 @@ function formatarCodPAExibicao(v){
   if(s.length===9)return s.slice(0,3)+'.'+s.slice(3,6)+'.'+s.slice(6);
   return String(v);
 }
-function calcularSegundos(m,s){return m*60+s;}
+function calcularSegundos(m,s){return (parseInt(m)||0)*60+(parseInt(s)||0);}
 
 function mostrarTela(id){document.querySelectorAll('.sc').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');}
 
