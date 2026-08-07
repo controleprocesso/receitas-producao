@@ -1200,7 +1200,7 @@ function getDesvios(){
     const vi=document.getElementById('visc-'+t.ESTACAO),ji=document.getElementById('jvisc-'+t.ESTACAO);
     if(vi?.classList.contains('vdv'))dvs.push({key:`visc-${t.ESTACAO}`,lbl:`Est. ${t.ESTACAO} — Viscosidade`,val:`${vi.value} s`,ref:`${t.VISCOSIDADE} s`,just:ji?.value||'',tipo:'VISCOSIDADE',tipoAlt:''});
     const isec=document.getElementById('sec-'+t.ESTACAO),jsi=document.getElementById('jsec-'+t.ESTACAO);
-    if(isec?.classList.contains('vdv')){const sp=(isec.value||'0:0').split(':');const vm=parseInt(sp[0])||0,vs=parseInt(sp[1])||0;dvs.push({key:`sec-${t.ESTACAO}`,lbl:`Est. ${t.ESTACAO} — Secagem`,val:`${vm} min ${vs} s`,ref:formatarSecagem(t.SECAGEM_MIN||0,t.SECAGEM_SEG||0),just:jsi?.value||'',tipo:'SECAGEM',tipoAlt:''});}
+    if(isec?.classList.contains('vdv')){const sp=(isec.value||'0:0').split(':');const vm=parseInt(sp[0])||0,vs=parseInt(sp[1])||0;dvs.push({key:`sec-${t.ESTACAO}`,lbl:`Est. ${t.ESTACAO} — Secagem`,val:`${vm} min ${vs} s`,ref:formatarSecagem(parseInt(t.SECAGEM_MIN)||0,parseInt(t.SECAGEM_SEG)||0),just:jsi?.value||'',tipo:'SECAGEM',tipoAlt:''});}
   });
   paramsDef.filter(p=>p.tipo!=='info').forEach(p=>{
     const i=document.getElementById('pinp-'+p.id),j=document.getElementById('jparam-'+p.id);
@@ -1233,14 +1233,15 @@ function irRevisar(){
   document.getElementById('rev-tintas').innerHTML=tintas.map(t=>{
     const vV=document.getElementById('visc-'+t.ESTACAO)?.value||'';
     const secVal=document.getElementById('sec-'+t.ESTACAO)?.value||'0:0';
-    const secParts=secVal.split(':');const mV=secParts[0]||'0',sV=secParts[1]||'0';
-    const vDv=vV!==''&&Math.abs(parseFloat(vV.replace(',','.'))-t.VISCOSIDADE)>TOL_VISC;
-    const sDv=Math.abs(calcularSegundos(parseInt(mV),parseInt(sV))-calcularSegundos(t.SECAGEM_MIN||0,t.SECAGEM_SEG||0))>TOL_SEC&&secVal!=='0:0';
+    const secParts=secVal.split(':');const mV=parseInt(secParts[0])||0,sV=parseInt(secParts[1])||0;
+    const refM=parseInt(t.SECAGEM_MIN)||0,refS=parseInt(t.SECAGEM_SEG)||0;
+    const vDv=vV!==''&&Math.abs(parseFloat(vV.replace(',','.'))-parseFloat(t.VISCOSIDADE))>TOL_VISC;
+    const sDv=secVal!=='0:0'&&Math.abs(calcularSegundos(mV,sV)-calcularSegundos(refM,refS))>TOL_SEC;
     const vJ=document.getElementById('jvisc-'+t.ESTACAO)?.value||'';
     const sJ=document.getElementById('jsec-'+t.ESTACAO)?.value||'';
     return `<div class="rev-tinta"><div class="rev-tinta-hdr"><div class="nc">${t.ESTACAO}</div><div><div style="font-size:13px;font-weight:600;color:var(--text)">${t.NOME_COR}</div><div style="font-size:11px;color:var(--text3)">${t.COD_TINTA}</div></div></div>
     <div class="rev-row"><div class="rev-row-top"><div class="rev-lbl">Viscosidade</div><div class="rev-right"><span class="rev-ref">Receita: ${t.VISCOSIDADE} s</span><span class="rev-real${vDv?' dv':''}">${vV||'—'} s${vDv?' <span class="rev-dv-pill">Desvio</span>':''}</span></div></div>${vDv?`<div class="rev-just"><div class="rev-just-lbl">Justificativa</div>${vJ}</div><div class="alt-opts"><button class="alt-btn" id="ao-visc${t.ESTACAO}-pont" onclick="selecionarAlteracao('visc${t.ESTACAO}','pont')"><i class="ti ti-refresh"></i>Alteração pontual</button><button class="alt-btn" id="ao-visc${t.ESTACAO}-rec" onclick="selecionarAlteracao('visc${t.ESTACAO}','rec')"><i class="ti ti-file-pencil"></i>Alterar na Receita</button></div>`:''}</div>
-    <div class="rev-row"><div class="rev-row-top"><div class="rev-lbl">Secagem</div><div class="rev-right"><span class="rev-ref">Receita: ${formatarSecagem(t.SECAGEM_MIN||0,t.SECAGEM_SEG||0)}</span><span class="rev-real${sDv?' dv':''}">${formatarSecagem(parseInt(mV),parseInt(sV))}${sDv?' <span class="rev-dv-pill">Desvio</span>':''}</span></div></div>${sDv?`<div class="rev-just"><div class="rev-just-lbl">Justificativa</div>${sJ}</div><div class="alt-opts"><button class="alt-btn" id="ao-sec${t.ESTACAO}-pont" onclick="selecionarAlteracao('sec${t.ESTACAO}','pont')"><i class="ti ti-refresh"></i>Alteração pontual</button><button class="alt-btn" id="ao-sec${t.ESTACAO}-rec" onclick="selecionarAlteracao('sec${t.ESTACAO}','rec')"><i class="ti ti-file-pencil"></i>Alterar na Receita</button></div>`:''}</div></div>`;
+    <div class="rev-row"><div class="rev-row-top"><div class="rev-lbl">Secagem</div><div class="rev-right"><span class="rev-ref">Receita: ${formatarSecagem(refM,refS)}</span><span class="rev-real${sDv?' dv':''}">${formatarSecagem(mV,sV)}${sDv?' <span class="rev-dv-pill">Desvio</span>':''}</span></div></div>${sDv?`<div class="rev-just"><div class="rev-just-lbl">Justificativa</div>${sJ}</div><div class="alt-opts"><button class="alt-btn" id="ao-sec${t.ESTACAO}-pont" onclick="selecionarAlteracao('sec${t.ESTACAO}','pont')"><i class="ti ti-refresh"></i>Alteração pontual</button><button class="alt-btn" id="ao-sec${t.ESTACAO}-rec" onclick="selecionarAlteracao('sec${t.ESTACAO}','rec')"><i class="ti ti-file-pencil"></i>Alterar na Receita</button></div>`:''}</div></div>`;
   }).join('');
 
   const pRef=r.parametros||{};
