@@ -306,6 +306,7 @@ const paramsDef=[
   {id:'p2',lbl:'Avanço',un:'N',ref:'80',tipo:'normal'},
   {id:'p3',lbl:'C. Pressão Tambor',un:'Bar',ref:'',tipo:'normal'},
   {id:'p4',lbl:'Tensão Rebobinador',un:'N',ref:'30',tipo:'normal'},
+  {id:'p12',lbl:'Taxa de Redução',un:'%',ref:'',tipo:'normal'},
   {id:'p5',lbl:'Pressão Cil. Borracha',un:'',ref:'200',tipo:'normal'},
   {id:'p8',lbl:'Posição Compactador',un:'',ref:'ABERTO',tipo:'sel',opts:['ABERTO','FECHADO']},
   {id:'p6',lbl:'Pressão Compactador',un:'Bar',ref:'2',tipo:'normal'},
@@ -408,7 +409,7 @@ async function abrirRec(id){
   document.getElementById('rec-sec-ec').innerHTML=`${p.TEMP_SEC_ENTRECORES||'—'} <span class="pu">°C</span>`;
   document.getElementById('rec-sec-sup').innerHTML=`${p.TEMP_SEC_SUPERIOR||'—'} <span class="pu">°C</span>`;
 
-  document.getElementById('rec-params-box').innerHTML=[['Tensão Freio Desbob.',p.TENSAO_FREIO,'N'],['Contra Pressão Pivê',p.CONTRA_PRESSAO_PIVE,'Bar'],['Avanço',p.AVANCO,'N'],['C. Pressão Tambor',p.C_PRESSAO_TAMBOR,'Bar'],['Tensão Rebobinador',p.TENSAO_REBOBINADOR,'N'],['Pressão Cil. Borracha',p.PRESSAO_CIL_BORRACHA,''],['Pressão Compactador',p.PRESSAO_COMPACTADOR,'Bar'],['Avanço CR',p.AVANCO_CR,'N'],['Posição Compactador',p.POSICAO_COMPACTADOR,''],['Velocidade',p.VELOCIDADE,'m/min'],['Temp. Ambiente',p.TEMP_AMBIENTE,'°C'],['Largura do Filme',p.LARGURA_FILME,'mm']].map(([l,v,u])=>`<div class="pbox"><div class="pl">${l}</div><div class="pv"${l==='Posição Compactador'?' style="font-size:13px"':''}>${v||'—'}${u?' <span class="pu">'+u+'</span>':''}</div></div>`).join('')+(p.MATERIAL?`<div class="pbox" style="grid-column:span 2"><div class="pl">Material</div><div class="pv" style="font-size:13px">${p.MATERIAL}</div></div>`:'');
+  document.getElementById('rec-params-box').innerHTML=[['Tensão Freio Desbob.',p.TENSAO_FREIO,'N'],['Contra Pressão Pivê',p.CONTRA_PRESSAO_PIVE,'Bar'],['Avanço',p.AVANCO,'N'],['C. Pressão Tambor',p.C_PRESSAO_TAMBOR,'Bar'],['Tensão Rebobinador',p.TENSAO_REBOBINADOR,'N'],['Taxa de Redução',p.TAXA_REDUCAO,'%'],['Pressão Cil. Borracha',p.PRESSAO_CIL_BORRACHA,''],['Pressão Compactador',p.PRESSAO_COMPACTADOR,'Bar'],['Avanço CR',p.AVANCO_CR,'N'],['Posição Compactador',p.POSICAO_COMPACTADOR,''],['Velocidade',p.VELOCIDADE,'m/min'],['Temp. Ambiente',p.TEMP_AMBIENTE,'°C'],['Largura do Filme',p.LARGURA_FILME,'mm']].map(([l,v,u])=>`<div class="pbox"><div class="pl">${l}</div><div class="pv"${l==='Posição Compactador'?' style="font-size:13px"':''}>${v||'—'}${u?' <span class="pu">'+u+'</span>':''}</div></div>`).join('')+(p.MATERIAL?`<div class="pbox" style="grid-column:span 2"><div class="pl">Material</div><div class="pv" style="font-size:13px">${p.MATERIAL}</div></div>`:'');
 
   // Estufas
   const estM={},tiM={};tintas.forEach(t=>{if(t.TEMP_ESTUFA)estM[String(t.ESTACAO)]=t.TEMP_ESTUFA});
@@ -426,7 +427,7 @@ async function abrirRec(id){
 }
 
 // ── REGISTRO ──
-function getParamRef(pid,p){const map={p0:p.TENSAO_FREIO,p1:p.CONTRA_PRESSAO_PIVE,p2:p.AVANCO,p3:p.C_PRESSAO_TAMBOR,p4:p.TENSAO_REBOBINADOR,p5:p.PRESSAO_CIL_BORRACHA,p6:p.PRESSAO_COMPACTADOR,p7:p.AVANCO_CR,p8:p.POSICAO_COMPACTADOR,p9:p.VELOCIDADE,p10:p.TEMP_AMBIENTE,p11:p.LARGURA_FILME};return map[pid]!==undefined&&map[pid]!==''?String(map[pid]):''}
+function getParamRef(pid,p){const map={p0:p.TENSAO_FREIO,p1:p.CONTRA_PRESSAO_PIVE,p2:p.AVANCO,p3:p.C_PRESSAO_TAMBOR,p4:p.TENSAO_REBOBINADOR,p12:p.TAXA_REDUCAO,p5:p.PRESSAO_CIL_BORRACHA,p6:p.PRESSAO_COMPACTADOR,p7:p.AVANCO_CR,p8:p.POSICAO_COMPACTADOR,p9:p.VELOCIDADE,p10:p.TEMP_AMBIENTE,p11:p.LARGURA_FILME};return map[pid]!==undefined&&map[pid]!==''?String(map[pid]):''}
 
 function rRep(){
   const r=receitas.find(x=>String(x.ID)===String(recIdx));if(!r)return;
