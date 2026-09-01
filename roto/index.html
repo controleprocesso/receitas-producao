@@ -294,6 +294,37 @@ textarea{resize:none;line-height:1.5;width:100%}
 .cj-sub{font-size:11px;color:var(--text3);margin-top:2px}
 .cj-body{padding:4px 12px 10px;border-top:0.5px solid var(--border)}
 .cj-chv{font-size:15px;color:var(--text3);transition:transform .2s}
+
+/* ═══ IMPRESSÃO ═══ */
+#print-area{display:none}
+@media print{
+  body *{visibility:hidden}
+  #print-area,#print-area *{visibility:visible}
+  #print-area{display:block;position:absolute;left:0;top:0;width:100%;padding:0;background:#fff;color:#000;font-family:Arial,Helvetica,sans-serif}
+  @page{size:A4;margin:14mm 12mm}
+  .pr-h1{font-size:18px;font-weight:700;margin:0 0 2px}
+  .pr-sub{font-size:12px;color:#444;margin:0 0 14px}
+  .pr-sec{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;border-bottom:1.5px solid #000;padding-bottom:3px;margin:16px 0 8px}
+  .pr-grid{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:6px 14px;margin-bottom:6px}
+  .pr-f{font-size:8.5px;color:#666;text-transform:uppercase;letter-spacing:.4px}
+  .pr-v{font-size:12px;font-weight:600;margin-top:1px}
+  .pr-conj{background:#FBF3E0;border:1px solid #D4B876;border-radius:4px;padding:6px 10px;margin-bottom:8px}
+  .pr-conj-l{font-size:9px;font-weight:700;color:#8A6D1F;text-transform:uppercase}
+  .pr-conj-v{font-size:13px;font-weight:700;color:#8A6D1F}
+  table.pr-tbl{width:100%;border-collapse:collapse;margin-bottom:8px;font-size:10.5px}
+  table.pr-tbl th{background:#EEE;border:0.75px solid #999;padding:4px 6px;text-align:left;font-size:9px;text-transform:uppercase;letter-spacing:.3px}
+  table.pr-tbl td{border:0.75px solid #999;padding:4px 6px}
+  .pr-rep{border:0.75px solid #999;border-radius:4px;padding:6px 8px;margin-bottom:6px;page-break-inside:avoid}
+  .pr-rep-top{display:flex;justify-content:space-between;font-size:11px}
+  .pr-rep-op{font-weight:700}
+  .pr-rep-meta{font-size:9px;color:#555;margin-top:2px}
+  .pr-rep-dv{font-size:9px;color:#A32D2D;margin-top:3px}
+  .pr-ver{font-size:11px;font-weight:700;background:#EEE;padding:3px 8px;border-radius:3px;margin:10px 0 6px}
+  .pr-foot{margin-top:20px;padding-top:8px;border-top:0.75px solid #999;font-size:9px;color:#666;display:flex;justify-content:space-between}
+  .pr-pill{display:inline-block;font-size:8.5px;padding:1px 6px;border-radius:8px;border:0.75px solid #999}
+  .pr-pill-dv{background:#FBEAEA;border-color:#C89A9A;color:#A32D2D}
+  .pr-pill-ok{background:#EAF3EA;border-color:#9AC09A;color:#2D6A2D}
+}
 </style>
 </head>
 <body>
@@ -345,6 +376,7 @@ textarea{resize:none;line-height:1.5;width:100%}
       <div class="card" id="rec-obs" style="display:none"></div>
       <button class="bp" onclick="navegarTela('s-rep')"><i class="ti ti-clipboard-check"></i> Registrar repetição</button>
       <button class="bs" onclick="abrirHistorico(recIdx)" style="margin-bottom:8px"><i class="ti ti-history"></i> Ver histórico desta receita</button>
+      <button class="bs" onclick="imprimirReceita(recIdx)" style="margin-bottom:8px"><i class="ti ti-printer"></i> Imprimir receita</button>
       <div style="height:16px"></div>
     </div>
 
@@ -746,6 +778,8 @@ textarea{resize:none;line-height:1.5;width:100%}
     <button class="tab-item" id="tab-p" onclick="abrirTelaRestrita('painel')"><i class="ti ti-chart-bar"></i><span class="tbl">Painel</span></button>
   </div>
 </div>
+
+<div id="print-area"></div>
 
 <script>
 const API = 'https://script.google.com/macros/s/AKfycbygAYWLqal-_szb_alVDvOL3vtWzIfqhD4fsi0m6jHkZMZxgp4z2syX4bEIwd1e32_eFA/exec';
@@ -1591,6 +1625,121 @@ async function abrirHistorico(id){
   }catch(e){
     document.getElementById('hres').innerHTML=`<div style="padding:20px 0;text-align:center;font-size:13px;color:var(--red)">Erro: ${e.message}</div>`;
   }
+}
+
+async function imprimirReceita(id){
+  mostrarLoading('Preparando impressão...');
+  try{
+    // Garante detalhe carregado
+    let r=receitas.find(x=>String(x.ID)===String(id));
+    if(!r||!r._detalhesCarregados){
+      const detalhe=await apiGet('getReceitaDetalhe',`&id=${id}`);
+      detalhe.tintas=Array.isArray(detalhe.tintas)?detalhe.tintas:(detalhe.tintas?[detalhe.tintas]:[]);
+      detalhe.parametros=Array.isArray(detalhe.parametros)?(detalhe.parametros[0]||{}):(detalhe.parametros||{});
+      detalhe.versoes=Array.isArray(detalhe.versoes)?detalhe.versoes:[];
+      detalhe._detalhesCarregados=true;
+      const idx=receitas.findIndex(x=>String(x.ID)===String(id));
+      if(idx>=0)receitas[idx]=detalhe;
+      r=detalhe;
+    }
+    // Carrega histórico
+    let hist=null;
+    try{hist=await apiGet('getHistoricoReceita',`&id=${id}`);}catch(e){hist=null;}
+    montarImpressao(r,hist);
+    ocultarLoading();
+    // Pequeno atraso para o DOM renderizar antes do print
+    setTimeout(()=>window.print(),150);
+  }catch(e){
+    ocultarLoading();
+    alert('Erro ao preparar impressão: '+e.message);
+  }
+}
+
+function montarImpressao(r,hist){
+  const tintas=(Array.isArray(r.tintas)?r.tintas:[]).slice().sort((a,b)=>parseInt(a.ESTACAO)-parseInt(b.ESTACAO));
+  const comTinta=tintas.filter(t=>t.NOME_COR);
+  const p=r.parametros||{};
+  const agora=new Date().toLocaleString('pt-BR');
+
+  // Identificação
+  let html=`<div class="pr-h1">${r.CLIENTE||''} — ${formatarCodPAExibicao(r.COD_PA)}</div>`;
+  html+=`<div class="pr-sub">${r.SERVICO||''} · ${r.MAQUINA||''} · Rotogravura</div>`;
+
+  if(r.ITENS_CONJUGACAO){
+    html+=`<div class="pr-conj"><div class="pr-conj-l">Conjugação</div><div class="pr-conj-v">${r.ITENS_CONJUGACAO}</div></div>`;
+  }
+
+  html+=`<div class="pr-sec">Identificação</div><div class="pr-grid">`;
+  html+=`<div><div class="pr-f">Cliente</div><div class="pr-v">${r.CLIENTE||'—'}</div></div>`;
+  html+=`<div><div class="pr-f">Cód. PA</div><div class="pr-v">${formatarCodPAExibicao(r.COD_PA)}</div></div>`;
+  html+=`<div><div class="pr-f">Máquina</div><div class="pr-v">${r.MAQUINA||'—'}</div></div>`;
+  html+=`<div><div class="pr-f">OP Criação</div><div class="pr-v">${r.OP_CRIACAO||'—'}</div></div>`;
+  html+=`<div><div class="pr-f">Operador</div><div class="pr-v">${r.OPERADOR||'—'}</div></div>`;
+  html+=`<div><div class="pr-f">Aprovador</div><div class="pr-v">${r.APROVADOR||'—'}</div></div>`;
+  html+=`<div><div class="pr-f">Data Criação</div><div class="pr-v">${r.DATA_CRIACAO||'—'}</div></div>`;
+  html+=`<div><div class="pr-f">Status</div><div class="pr-v">${r.STATUS||'—'}</div></div>`;
+  html+=`</div>`;
+  if(r.SERVICO){html+=`<div><div class="pr-f">Serviço</div><div class="pr-v">${r.SERVICO}</div></div>`;}
+  if(r.OBSERVACOES){html+=`<div style="margin-top:6px"><div class="pr-f">Observações</div><div class="pr-v" style="font-weight:400">${r.OBSERVACOES}</div></div>`;}
+
+  // Tintas
+  html+=`<div class="pr-sec">Tintas por estação</div>`;
+  html+=`<table class="pr-tbl"><thead><tr><th>Est.</th><th>Cor</th><th>Código</th><th>Camisa</th><th>Visc. (s)</th><th>Secagem</th></tr></thead><tbody>`;
+  comTinta.forEach(t=>{
+    html+=`<tr><td>${t.ESTACAO}</td><td>${t.NOME_COR||''}</td><td>${t.COD_TINTA||''}</td><td>${t.ID_CAMISA||'—'}</td><td>${t.VISCOSIDADE||'—'}</td><td>${formatarSecagem(t.SECAGEM_MIN,t.SECAGEM_SEG)}</td></tr>`;
+  });
+  html+=`</tbody></table>`;
+
+  // Parâmetros
+  html+=`<div class="pr-sec">Parâmetros da máquina</div><div class="pr-grid">`;
+  const params=[
+    ['Tensão Freio Desbob.',p.TENSAO_FREIO,'N'],['Tensão Rebobinador',p.TENSAO_REBOBINADOR,'N'],
+    ['Avanço',p.AVANCO,'N'],['Avanço CR',p.AVANCO_CR,'N'],
+    ['Taxa de Redução',p.TAXA_REDUCAO,'%'],['Velocidade',p.VELOCIDADE,'m/min'],
+    ['Pressão Compactador',p.PRESSAO_COMPACTADOR,'Bar'],['Pressão Cil. Borracha',p.PRESSAO_CIL_BORRACHA,''],
+    ['Posição Compactador',p.POSICAO_COMPACTADOR,''],['Temp. Ambiente',p.TEMP_AMBIENTE,'°C'],
+    ['Largura do Filme',p.LARGURA_FILME,'mm'],['Material',p.MATERIAL,'']
+  ];
+  params.forEach(([lbl,val,un])=>{
+    html+=`<div><div class="pr-f">${lbl}</div><div class="pr-v">${(val!==undefined&&val!=='')?val:'—'}${un&&val?' '+un:''}</div></div>`;
+  });
+  html+=`</div>`;
+
+  // Estufas (todas as estações com temperatura)
+  const comEstufa=tintas.filter(t=>t.TEMP_ESTUFA!==''&&t.TEMP_ESTUFA!==null&&t.TEMP_ESTUFA!==undefined);
+  if(comEstufa.length>0){
+    html+=`<div class="pr-sec">Estufas por estação</div>`;
+    html+=`<table class="pr-tbl"><thead><tr><th>Est.</th><th>Cor / Situação</th><th>Rolo</th><th>Faca</th><th>Estufa (°C)</th></tr></thead><tbody>`;
+    tintas.forEach(t=>{
+      const temAlgo=t.NOME_COR||t.PRESSAO_ROLO||t.PRESSAO_FACA||t.TEMP_ESTUFA;
+      if(!temAlgo)return;
+      html+=`<tr><td>${t.ESTACAO}</td><td>${t.NOME_COR||'(sem tinta)'}</td><td>${t.PRESSAO_ROLO||'—'}</td><td>${t.PRESSAO_FACA||'—'}</td><td>${t.TEMP_ESTUFA||'—'}</td></tr>`;
+    });
+    html+=`</tbody></table>`;
+  }
+
+  // Histórico de repetições
+  if(hist&&Array.isArray(hist.versoes)&&hist.versoes.length){
+    html+=`<div class="pr-sec">Histórico de repetições</div>`;
+    hist.versoes.forEach(v=>{
+      const vigente=v.ATIVA===true||v.ATIVA==='TRUE';
+      html+=`<div class="pr-ver">v${v.NUMERO_VERSAO} · ${vigente?'Vigente':'Anterior'} · ${v.DATA_CRIACAO||'—'} · Aprov. 1: ${v.APROVADOR_1||'—'}${v.APROVADOR_2?' · Aprov. 2: '+v.APROVADOR_2:''}</div>`;
+      const reps=v.reps||[];
+      if(reps.length===0){html+=`<div style="font-size:10px;color:#777;margin-bottom:6px">Nenhuma repetição.</div>`;return;}
+      reps.forEach(rep=>{
+        const temDv=rep.TEM_DESVIO===true||rep.TEM_DESVIO==='TRUE';
+        html+=`<div class="pr-rep"><div class="pr-rep-top"><span class="pr-rep-op">OP ${rep.OP_PRODUCAO||'—'}</span><span class="pr-pill ${temDv?'pr-pill-dv':'pr-pill-ok'}">${temDv?'Com desvio':'Sem desvio'}</span></div><div class="pr-rep-meta">${rep.OPERADOR||'—'} · ${rep.DATA_HORA||'—'} · Aprov: ${rep.APROVADOR||'—'}${rep.MATERIAL?' · Material: '+rep.MATERIAL:''}</div>`;
+        if(temDv&&Array.isArray(rep.desvios)&&rep.desvios.length){
+          html+=`<div class="pr-rep-dv">`+rep.desvios.map(d=>`• ${d.PARAMETRO}: ${d.VALOR_RECEITA} → ${d.VALOR_REAL}${d.JUSTIFICATIVA?' ('+d.JUSTIFICATIVA+')':''}`).join('<br>')+`</div>`;
+        }
+        html+=`</div>`;
+      });
+    });
+  }
+
+  html+=`<div class="pr-foot"><span>Finepack · Sistema de Receitas — Rotogravura</span><span>Impresso em ${agora}</span></div>`;
+
+  document.getElementById('print-area').innerHTML=html;
 }
 
 function renderH(){
