@@ -300,30 +300,51 @@ textarea{resize:none;line-height:1.5;width:100%}
 @media print{
   body *{visibility:hidden}
   #print-area,#print-area *{visibility:visible}
-  #print-area{display:block;position:absolute;left:0;top:0;width:100%;padding:0;background:#fff;color:#000;font-family:Arial,Helvetica,sans-serif}
-  @page{size:A4;margin:14mm 12mm}
-  .pr-h1{font-size:18px;font-weight:700;margin:0 0 2px}
-  .pr-sub{font-size:12px;color:#444;margin:0 0 14px}
-  .pr-sec{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;border-bottom:1.5px solid #000;padding-bottom:3px;margin:16px 0 8px}
-  .pr-grid{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:6px 14px;margin-bottom:6px}
-  .pr-f{font-size:8.5px;color:#666;text-transform:uppercase;letter-spacing:.4px}
-  .pr-v{font-size:12px;font-weight:600;margin-top:1px}
-  .pr-conj{background:#FBF3E0;border:1px solid #D4B876;border-radius:4px;padding:6px 10px;margin-bottom:8px}
-  .pr-conj-l{font-size:9px;font-weight:700;color:#8A6D1F;text-transform:uppercase}
-  .pr-conj-v{font-size:13px;font-weight:700;color:#8A6D1F}
-  table.pr-tbl{width:100%;border-collapse:collapse;margin-bottom:8px;font-size:10.5px}
-  table.pr-tbl th{background:#EEE;border:0.75px solid #999;padding:4px 6px;text-align:left;font-size:9px;text-transform:uppercase;letter-spacing:.3px}
-  table.pr-tbl td{border:0.75px solid #999;padding:4px 6px}
-  .pr-rep{border:0.75px solid #999;border-radius:4px;padding:6px 8px;margin-bottom:6px;page-break-inside:avoid}
-  .pr-rep-top{display:flex;justify-content:space-between;font-size:11px}
-  .pr-rep-op{font-weight:700}
-  .pr-rep-meta{font-size:9px;color:#555;margin-top:2px}
-  .pr-rep-dv{font-size:9px;color:#A32D2D;margin-top:3px}
-  .pr-ver{font-size:11px;font-weight:700;background:#EEE;padding:3px 8px;border-radius:3px;margin:10px 0 6px}
-  .pr-foot{margin-top:20px;padding-top:8px;border-top:0.75px solid #999;font-size:9px;color:#666;display:flex;justify-content:space-between}
-  .pr-pill{display:inline-block;font-size:8.5px;padding:1px 6px;border-radius:8px;border:0.75px solid #999}
-  .pr-pill-dv{background:#FBEAEA;border-color:#C89A9A;color:#A32D2D}
+  #print-area{display:block;position:absolute;left:0;top:0;width:100%;background:#fff;color:#1A1A1A;font-family:'Inter',Arial,sans-serif}
+  @page{size:A4;margin:10mm 10mm}
+  .pr-head{border-bottom:2px solid #2563A6;padding-bottom:7px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:flex-end}
+  .pr-h1{font-size:16px;font-weight:700;margin:0;color:#1A1A1A}
+  .pr-hsub{font-size:10px;color:#555;margin-top:2px}
+  .pr-badge{font-size:9px;font-weight:600;color:#2D6A2D;background:#EAF3EA;border:0.75px solid #9AC09A;border-radius:10px;padding:2px 9px}
+  .pr-conj{background:#FBF3E0;border:0.75px solid #D4B876;border-radius:5px;padding:5px 10px;margin-bottom:9px}
+  .pr-conj-l{font-size:8px;font-weight:700;color:#8A6D1F;text-transform:uppercase;letter-spacing:.4px}
+  .pr-conj-v{font-size:12px;font-weight:700;color:#8A6D1F}
+  .pr-sec{font-size:10px;font-weight:700;color:#2563A6;text-transform:uppercase;letter-spacing:.5px;margin:11px 0 5px}
+  .pr-card{border:0.75px solid #D8DEE6;border-radius:6px;padding:8px 10px;margin-bottom:8px;page-break-inside:avoid}
+  .pr-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:5px 12px}
+  .pr-f{font-size:7.5px;color:#7A828C;text-transform:uppercase;letter-spacing:.3px}
+  .pr-v{font-size:11px;font-weight:600;margin-top:1px;color:#1A1A1A}
+  .pr-v .u{font-size:8px;color:#9AA1AA;font-weight:400}
+  /* Linha de estação (tinta/estufa) igual ao app */
+  .pr-tr{display:flex;align-items:center;gap:8px;padding:4px 0;border-bottom:0.5px solid #EAEDF1}
+  .pr-tr:last-child{border-bottom:none}
+  .pr-nc{width:20px;height:20px;border-radius:50%;background:#EAF1F9;color:#2563A6;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .pr-tn{font-size:11px;font-weight:600;color:#1A1A1A}
+  .pr-tsub{font-size:8.5px;color:#9AA1AA;margin-top:1px}
+  .pr-chips{display:flex;gap:4px;margin-top:2px}
+  .pr-chip{font-size:8px;background:#F2F5F8;border:0.5px solid #E0E5EB;border-radius:8px;padding:1px 7px;color:#4A5159}
+  .pr-chip b{color:#1A1A1A}
+  .pr-hot{display:flex;align-items:center;gap:8px;padding:4px 0;border-bottom:0.5px solid #EAEDF1}
+  .pr-hot-l{font-size:9px;font-weight:700;color:#A32D2D;background:#FCEBEB;border-radius:4px;padding:2px 8px;text-transform:uppercase;letter-spacing:.3px}
+  .pr-tbdg{font-size:9px;font-weight:600;color:#A32D2D;background:#FCEBEB;border:0.5px solid #E0B4B4;border-radius:9px;padding:1px 8px}
+  .pr-tbdg-off{color:#9AA1AA;background:#F2F5F8;border-color:#E0E5EB}
+  .pr-params{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+  .pr-pbox{background:#F7F9FB;border:0.5px solid #E4E9EF;border-radius:5px;padding:5px 8px}
+  .pr-pl{font-size:7.5px;color:#7A828C;text-transform:uppercase;letter-spacing:.3px}
+  .pr-pv{font-size:12px;font-weight:700;color:#1A1A1A;margin-top:1px}
+  .pr-pv .u{font-size:8px;color:#9AA1AA;font-weight:400}
+  .pr-ver{font-size:10px;font-weight:700;color:#2563A6;background:#EAF1F9;border-radius:4px;padding:3px 9px;margin:8px 0 5px}
+  .pr-ver.old{color:#7A828C;background:#F2F5F8}
+  .pr-rep{border:0.5px solid #E0E5EB;border-radius:5px;padding:5px 9px;margin-bottom:5px;page-break-inside:avoid;display:flex;flex-direction:column}
+  .pr-rep-top{display:flex;justify-content:space-between;align-items:center}
+  .pr-rep-op{font-size:11px;font-weight:700}
+  .pr-rep-meta{font-size:8.5px;color:#7A828C;margin-top:2px}
+  .pr-rep-dv{font-size:8.5px;color:#A32D2D;margin-top:3px;line-height:1.4}
+  .pr-pill{font-size:8px;font-weight:600;padding:1px 8px;border-radius:9px;border:0.5px solid}
+  .pr-pill-dv{background:#FCEBEB;border-color:#E0B4B4;color:#A32D2D}
   .pr-pill-ok{background:#EAF3EA;border-color:#9AC09A;color:#2D6A2D}
+  .pr-foot{margin-top:14px;padding-top:6px;border-top:0.5px solid #D8DEE6;font-size:8px;color:#9AA1AA;display:flex;justify-content:space-between}
+  .pr-two{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 }
 </style>
 </head>
@@ -1661,15 +1682,15 @@ function montarImpressao(r,hist){
   const p=r.parametros||{};
   const agora=new Date().toLocaleString('pt-BR');
 
-  // Identificação
-  let html=`<div class="pr-h1">${r.CLIENTE||''} — ${formatarCodPAExibicao(r.COD_PA)}</div>`;
-  html+=`<div class="pr-sub">${r.SERVICO||''} · ${r.MAQUINA||''} · Rotogravura</div>`;
+  // ── Cabeçalho ──
+  let html=`<div class="pr-head"><div><div class="pr-h1">${r.CLIENTE||''} — ${formatarCodPAExibicao(r.COD_PA)}</div><div class="pr-hsub">${r.SERVICO||''} · ${r.MAQUINA||''} · Rotogravura</div></div><div class="pr-badge">${r.STATUS||'ATIVA'}</div></div>`;
 
   if(r.ITENS_CONJUGACAO){
-    html+=`<div class="pr-conj"><div class="pr-conj-l">Conjugação</div><div class="pr-conj-v">${r.ITENS_CONJUGACAO}</div></div>`;
+    html+=`<div class="pr-conj"><div class="pr-conj-l">◇ Conjugação</div><div class="pr-conj-v">${r.ITENS_CONJUGACAO}</div></div>`;
   }
 
-  html+=`<div class="pr-sec">Identificação</div><div class="pr-grid">`;
+  // ── Identificação ──
+  html+=`<div class="pr-sec">Identificação</div><div class="pr-card"><div class="pr-grid">`;
   html+=`<div><div class="pr-f">Cliente</div><div class="pr-v">${r.CLIENTE||'—'}</div></div>`;
   html+=`<div><div class="pr-f">Cód. PA</div><div class="pr-v">${formatarCodPAExibicao(r.COD_PA)}</div></div>`;
   html+=`<div><div class="pr-f">Máquina</div><div class="pr-v">${r.MAQUINA||'—'}</div></div>`;
@@ -1679,19 +1700,18 @@ function montarImpressao(r,hist){
   html+=`<div><div class="pr-f">Data Criação</div><div class="pr-v">${r.DATA_CRIACAO||'—'}</div></div>`;
   html+=`<div><div class="pr-f">Status</div><div class="pr-v">${r.STATUS||'—'}</div></div>`;
   html+=`</div>`;
-  if(r.SERVICO){html+=`<div><div class="pr-f">Serviço</div><div class="pr-v">${r.SERVICO}</div></div>`;}
-  if(r.OBSERVACOES){html+=`<div style="margin-top:6px"><div class="pr-f">Observações</div><div class="pr-v" style="font-weight:400">${r.OBSERVACOES}</div></div>`;}
+  if(r.OBSERVACOES){html+=`<div style="margin-top:6px"><div class="pr-f">Observações</div><div class="pr-v" style="font-weight:400;font-size:10px">${r.OBSERVACOES}</div></div>`;}
+  html+=`</div>`;
 
-  // Tintas
-  html+=`<div class="pr-sec">Tintas por estação</div>`;
-  html+=`<table class="pr-tbl"><thead><tr><th>Est.</th><th>Cor</th><th>Código</th><th>Camisa</th><th>Visc. (s)</th><th>Secagem</th></tr></thead><tbody>`;
+  // ── Tintas (cards como no app) ──
+  html+=`<div class="pr-sec">Tintas por estação</div><div class="pr-card">`;
   comTinta.forEach(t=>{
-    html+=`<tr><td>${t.ESTACAO}</td><td>${t.NOME_COR||''}</td><td>${t.COD_TINTA||''}</td><td>${t.ID_CAMISA||'—'}</td><td>${t.VISCOSIDADE||'—'}</td><td>${formatarSecagem(t.SECAGEM_MIN,t.SECAGEM_SEG)}</td></tr>`;
+    html+=`<div class="pr-tr"><div class="pr-nc">${t.ESTACAO}</div><div style="flex:1"><div class="pr-tn">${t.NOME_COR||''}</div><div class="pr-tsub">${t.COD_TINTA||''}${t.ID_CAMISA?' · Camisa: '+t.ID_CAMISA:''}</div></div><div class="pr-chips"><span class="pr-chip">Visc. <b>${t.VISCOSIDADE||'—'} s</b></span><span class="pr-chip">Sec. <b>${formatarSecagem(t.SECAGEM_MIN,t.SECAGEM_SEG)}</b></span></div></div>`;
   });
-  html+=`</tbody></table>`;
+  html+=`</div>`;
 
-  // Parâmetros
-  html+=`<div class="pr-sec">Parâmetros da máquina</div><div class="pr-grid">`;
+  // ── Parâmetros da máquina ──
+  html+=`<div class="pr-sec">Parâmetros da máquina</div>`;
   const params=[
     ['Tensão Freio Desbob.',p.TENSAO_FREIO,'N'],['Tensão Rebobinador',p.TENSAO_REBOBINADOR,'N'],
     ['Avanço',p.AVANCO,'N'],['Avanço CR',p.AVANCO_CR,'N'],
@@ -1700,32 +1720,51 @@ function montarImpressao(r,hist){
     ['Posição Compactador',p.POSICAO_COMPACTADOR,''],['Temp. Ambiente',p.TEMP_AMBIENTE,'°C'],
     ['Largura do Filme',p.LARGURA_FILME,'mm'],['Material',p.MATERIAL,'']
   ];
+  html+=`<div class="pr-params">`;
   params.forEach(([lbl,val,un])=>{
-    html+=`<div><div class="pr-f">${lbl}</div><div class="pr-v">${(val!==undefined&&val!=='')?val:'—'}${un&&val?' '+un:''}</div></div>`;
+    const v=(val!==undefined&&val!=='')?val:'—';
+    html+=`<div class="pr-pbox"><div class="pr-pl">${lbl}</div><div class="pr-pv">${v}${un&&val?` <span class="u">${un}</span>`:''}</div></div>`;
   });
   html+=`</div>`;
 
-  // Estufas (todas as estações com temperatura)
+  // ── Estufas + Pré/Pós Hot ──
+  const preHotTinta=tintas.find(t=>t.PRE_HOT===true||t.PRE_HOT==='TRUE');
+  const posHotTinta=tintas.find(t=>t.POS_HOT===true||t.POS_HOT==='TRUE');
+  const tintaMap={};tintas.filter(t=>t.NOME_COR).forEach(t=>{tintaMap[String(t.ESTACAO)]=t.NOME_COR;});
   const comEstufa=tintas.filter(t=>t.TEMP_ESTUFA!==''&&t.TEMP_ESTUFA!==null&&t.TEMP_ESTUFA!==undefined);
-  if(comEstufa.length>0){
-    html+=`<div class="pr-sec">Estufas por estação</div>`;
-    html+=`<table class="pr-tbl"><thead><tr><th>Est.</th><th>Cor / Situação</th><th>Rolo</th><th>Faca</th><th>Estufa (°C)</th></tr></thead><tbody>`;
-    tintas.forEach(t=>{
-      const temAlgo=t.NOME_COR||t.PRESSAO_ROLO||t.PRESSAO_FACA||t.TEMP_ESTUFA;
-      if(!temAlgo)return;
-      html+=`<tr><td>${t.ESTACAO}</td><td>${t.NOME_COR||'(sem tinta)'}</td><td>${t.PRESSAO_ROLO||'—'}</td><td>${t.PRESSAO_FACA||'—'}</td><td>${t.TEMP_ESTUFA||'—'}</td></tr>`;
+  html+=`<div class="pr-sec">Estufas por estação</div><div class="pr-card">`;
+  // Pré Hot
+  html+=preHotTinta
+    ?`<div class="pr-hot"><span class="pr-hot-l">🔥 Pré Hot</span><div style="flex:1"></div><span class="pr-tbdg">${preHotTinta.PRE_HOT_TEMP}°C</span></div>`
+    :`<div class="pr-hot"><span class="pr-hot-l" style="background:#F2F5F8;color:#9AA1AA">Pré Hot</span><div style="flex:1"></div><span class="pr-tbdg pr-tbdg-off">Desligado</span></div>`;
+  // Estações com estufa
+  comEstufa.forEach(t=>{
+    html+=`<div class="pr-tr"><div class="pr-nc">${t.ESTACAO}</div><div style="flex:1"><div class="pr-tn">${tintaMap[String(t.ESTACAO)]||'— sem tinta —'}</div></div><span class="pr-tbdg">${t.TEMP_ESTUFA}°C</span></div>`;
+  });
+  // Pós Hot
+  html+=posHotTinta
+    ?`<div class="pr-hot" style="border-bottom:none"><span class="pr-hot-l">🔥 Pós Hot</span><div style="flex:1"></div><span class="pr-tbdg">${posHotTinta.POS_HOT_TEMP}°C</span></div>`
+    :`<div class="pr-hot" style="border-bottom:none"><span class="pr-hot-l" style="background:#F2F5F8;color:#9AA1AA">Pós Hot</span><div style="flex:1"></div><span class="pr-tbdg pr-tbdg-off">Desligado</span></div>`;
+  html+=`</div>`;
+
+  // ── Rolo / Faca (se houver) ──
+  const comRoloFaca=comTinta.filter(t=>t.PRESSAO_ROLO||t.PRESSAO_FACA);
+  if(comRoloFaca.length>0){
+    html+=`<div class="pr-sec">Pressão de rolo e faca</div><div class="pr-card">`;
+    comRoloFaca.forEach(t=>{
+      html+=`<div class="pr-tr"><div class="pr-nc">${t.ESTACAO}</div><div style="flex:1"><div class="pr-tn">${t.NOME_COR||''}</div></div><div class="pr-chips"><span class="pr-chip">Rolo <b>${t.PRESSAO_ROLO||'—'}</b></span><span class="pr-chip">Faca <b>${t.PRESSAO_FACA||'—'} Bar</b></span></div></div>`;
     });
-    html+=`</tbody></table>`;
+    html+=`</div>`;
   }
 
-  // Histórico de repetições
+  // ── Histórico de repetições ──
   if(hist&&Array.isArray(hist.versoes)&&hist.versoes.length){
     html+=`<div class="pr-sec">Histórico de repetições</div>`;
     hist.versoes.forEach(v=>{
       const vigente=v.ATIVA===true||v.ATIVA==='TRUE';
-      html+=`<div class="pr-ver">v${v.NUMERO_VERSAO} · ${vigente?'Vigente':'Anterior'} · ${v.DATA_CRIACAO||'—'} · Aprov. 1: ${v.APROVADOR_1||'—'}${v.APROVADOR_2?' · Aprov. 2: '+v.APROVADOR_2:''}</div>`;
+      html+=`<div class="pr-ver${vigente?'':' old'}">v${v.NUMERO_VERSAO} · ${vigente?'Vigente':'Anterior'} · ${v.DATA_CRIACAO||'—'} · Aprov. 1: ${v.APROVADOR_1||'—'}${v.APROVADOR_2?' · Aprov. 2: '+v.APROVADOR_2:''}</div>`;
       const reps=v.reps||[];
-      if(reps.length===0){html+=`<div style="font-size:10px;color:#777;margin-bottom:6px">Nenhuma repetição.</div>`;return;}
+      if(reps.length===0){html+=`<div style="font-size:9px;color:#9AA1AA;margin-bottom:5px">Nenhuma repetição.</div>`;return;}
       reps.forEach(rep=>{
         const temDv=rep.TEM_DESVIO===true||rep.TEM_DESVIO==='TRUE';
         html+=`<div class="pr-rep"><div class="pr-rep-top"><span class="pr-rep-op">OP ${rep.OP_PRODUCAO||'—'}</span><span class="pr-pill ${temDv?'pr-pill-dv':'pr-pill-ok'}">${temDv?'Com desvio':'Sem desvio'}</span></div><div class="pr-rep-meta">${rep.OPERADOR||'—'} · ${rep.DATA_HORA||'—'} · Aprov: ${rep.APROVADOR||'—'}${rep.MATERIAL?' · Material: '+rep.MATERIAL:''}</div>`;
