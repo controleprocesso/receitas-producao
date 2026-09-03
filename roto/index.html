@@ -931,17 +931,37 @@ function apiGet(action, extraParams='') {
   });
 }
 
-function apiPost(body) {
+async function apiPost(body, tentativas) {
+  // Retry só para ações idempotentes (repetir não duplica dados).
+  // Escritas que criam registros novos (salvarReceita, salvarRepeticao) NÃO repetem,
+  // para evitar duplicação caso a 1ª chamada tenha chegado mas a resposta se perdeu.
+  const idempotentes = ['validarPin','validarPinAdmin','alterarStatusReceita','aprovarPendencia','rejeitarPendencia'];
+  const maxTent = (tentativas!==undefined) ? tentativas : (idempotentes.includes(body.action) ? 3 : 1);
   const encoded = encodeURIComponent(JSON.stringify(body));
-  return fetch(API + '?action=' + body.action + '&body=' + encoded)
-    .then(res => {
-      if (!res.ok) throw new Error('Erro de conexão (HTTP ' + res.status + ')');
-      return res.json();
-    })
-    .then(data => {
-      if (data.status === 'erro') throw new Error(data.mensagem);
+  const url = API + '?action=' + body.action + '&body=' + encoded;
+  let ultimoErro;
+  for (let i = 0; i < maxTent; i++) {
+    try {
+      const res = await fetch(url, { redirect: 'follow' });
+      if (!res.ok) {
+        ultimoErro = new Error('Erro de conexão (HTTP ' + res.status + ')');
+        if ((res.status === 404 || res.status >= 500) && i < maxTent - 1) {
+          await new Promise(r => setTimeout(r, 400 * (i + 1)));
+          continue;
+        }
+        throw ultimoErro;
+      }
+      const data = await res.json();
+      if (data.status === 'erro') throw new Error(data.mensagem); // erro de negócio: não repete
       return data.data;
-    });
+    } catch (e) {
+      ultimoErro = e;
+      const transitorio = e.message && (e.message.includes('Erro de conexão') || e.message.includes('Failed to fetch') || e.message.includes('NetworkError'));
+      if (!transitorio) throw e; // erro de negócio → propaga imediatamente
+      if (i < maxTent - 1) await new Promise(r => setTimeout(r, 400 * (i + 1)));
+    }
+  }
+  throw ultimoErro || new Error('Erro de conexão');
 }
 
 // ── CARREGAR RECEITAS ────────────────────────────────────
@@ -1718,40 +1738,46 @@ async function pinAdmin(v){
   if(v==='ok'){
     if(pinBufAdmin.length<4){err.textContent='Digite os 4 dígitos';return;}
     const pin=pinBufAdmin;
-    salvando=true;mostrarLoading('Validando...');
+    salvando=true;
+
     try{
-      const res=await apiPost({action:'validarPinAdmin',pin});
-      if(!res.valido){
-        ocultarLoading();salvando=false;
-        err.textContent=res.semPermissao?`${res.nome||'Usuário'} não tem permissão de admin`:'PIN incorreto ou sem permissão';
-        pinBufAdmin='';atualizarDotsAdmin();return;
-      }
-      // PIN válido e autorizado
+      // Caso "abrir": só valida o PIN (uma chamada)
       if(adminAcao==='abrir'){
-        // Desbloqueia e abre a receita obsoleta em modo leitura
+        mostrarLoading('Validando...');
+        const res=await apiPost({action:'validarPinAdmin',pin});
+        if(!res.valido){
+          ocultarLoading();salvando=false;
+          err.textContent=res.semPermissao?`${res.nome||'Usuário'} não tem permissão de admin`:'PIN incorreto ou sem permissão';
+          pinBufAdmin='';atualizarDotsAdmin();return;
+        }
         adminDesbloqueado=true;
         ocultarLoading();salvando=false;
         pinBufAdmin='';atualizarDotsAdmin();
         await abrirRec(adminAlvoId);
         return;
       }
-      // Obsoletar ou reativar
+
+      // Obsoletar / reativar: UMA única chamada.
+      // O backend revalida o PIN e a permissão internamente.
       const novoStatus=adminAcao==='obsoletar'?'OBSOLETA':'ATIVA';
-      await apiPost({action:'alterarStatusReceita',idReceita:adminAlvoId,novoStatus,pin});
-      // Atualiza em memória
+      mostrarLoading(novoStatus==='OBSOLETA'?'Obsoletando...':'Reativando...');
+      const res=await apiPost({action:'alterarStatusReceita',idReceita:adminAlvoId,novoStatus,pin});
+
       const idx=receitas.findIndex(x=>String(x.ID)===String(adminAlvoId));
       if(idx>=0)receitas[idx].STATUS=novoStatus;
       ocultarLoading();salvando=false;
       pinBufAdmin='';atualizarDotsAdmin();
       adminDesbloqueado=false;
-      const msg=novoStatus==='OBSOLETA'?'Receita obsoletada com sucesso.':'Receita reativada com sucesso.';
-      mostrarSucesso(novoStatus==='OBSOLETA'?'Receita obsoletada':'Receita reativada',msg,[{l:'Receita',v:`${receitas[idx]?.CLIENTE||''} · ${formatarCodPAExibicao(receitas[idx]?.COD_PA)}`},{l:'Admin',v:res.nome},{l:'Novo status',v:novoStatus}],false,'s-lista');
       renderLista(filtrarPorMaquina(receitas));
+      const msg=novoStatus==='OBSOLETA'?'Receita obsoletada com sucesso.':'Receita reativada com sucesso.';
+      mostrarSucesso(novoStatus==='OBSOLETA'?'Receita obsoletada':'Receita reativada',msg,[{l:'Receita',v:`${receitas[idx]?.CLIENTE||''} · ${formatarCodPAExibicao(receitas[idx]?.COD_PA)}`},{l:'Admin',v:res.aprovador||'—'},{l:'Novo status',v:novoStatus}],false,'s-lista');
     }catch(e){
       ocultarLoading();salvando=false;
-      err.textContent='Erro: '+e.message;
+      // Mensagem de permissão vem do backend como erro
+      err.textContent=e.message.includes('permissão')?'Sem permissão para esta ação':e.message.includes('PIN')?'PIN inválido':'Erro: '+e.message;
       pinBufAdmin='';atualizarDotsAdmin();
     }
+    return;
   }
   if(pinBufAdmin.length<4)pinBufAdmin+=v;
   atualizarDotsAdmin();
@@ -2150,7 +2176,7 @@ function mostrarSucesso(t,s,rows,w,dest){
   document.getElementById('suc-ic').innerHTML=w?`<i class="ti ti-alert-triangle" style="font-size:28px;color:var(--amber)"></i>`:`<i class="ti ti-check" style="font-size:30px;color:var(--green)"></i>`;
   document.getElementById('suc-t').textContent=t;document.getElementById('suc-s').textContent=s;
   document.getElementById('suc-tr').innerHTML=rows.map(r=>`<div class="trr"><span class="trl">${r.l}</span><span class="trv" style="color:${r.b?'var(--blue)':'var(--text)'}">${r.v}</span></div>`).join('');
-  document.getElementById('suc-btn').onclick=()=>{ir(dest||'s-lista');resetState();};
+  document.getElementById('suc-btn').onclick=()=>{navegarTela(dest||'s-lista');resetState();};
   navegarTela('s-suc');
 }
 
