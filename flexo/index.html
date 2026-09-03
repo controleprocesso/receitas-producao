@@ -43,6 +43,8 @@ textarea{resize:none;line-height:1.5;width:100%}
 .lb{flex:1;min-width:0}.lt{font-size:13px;font-weight:600;color:var(--text)}
 .ls{font-size:11px;color:var(--text3);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .bok{font-size:10px;padding:2px 8px;border-radius:20px;white-space:nowrap;flex-shrink:0;background:var(--green-light);color:var(--green);font-weight:600}
+.bobs{font-size:10px;padding:2px 8px;border-radius:20px;white-space:nowrap;flex-shrink:0;background:#EDEDED;color:#8A8A8A;font-weight:600}
+.li.obs{opacity:0.55}
 .chips{display:flex;gap:5px;flex-wrap:wrap;margin-top:6px}
 .chip{font-size:11px;color:var(--text2);background:var(--bg);border-radius:5px;padding:2px 7px;border:0.5px solid var(--border)}
 .chip b{color:var(--text);font-weight:600}
@@ -212,7 +214,26 @@ textarea{resize:none;line-height:1.5;width:100%}
 .maq-bar i:first-child{font-size:14px}.maq-bar i:last-child{font-size:12px;margin-left:auto}
 .maq-setup-btn{width:100%;max-width:280px;padding:14px;border-radius:var(--rad);font-size:15px;font-weight:600;border:1.5px solid var(--border2);background:var(--card);color:var(--text);cursor:pointer;font-family:var(--font);margin-bottom:10px;display:block}
 .maq-setup-btn:active{background:var(--blue-light);border-color:var(--blue)}
-</style>
+@media print{
+  body *{visibility:hidden}
+  #print-area,#print-area *{visibility:visible}
+  #print-area{position:absolute;left:0;top:0;width:100%;padding:0;margin:0}
+  @page{size:A4;margin:10mm}
+  .pa-h{font-size:15px;font-weight:700;margin-bottom:2px}
+  .pa-sub{font-size:10px;color:#555;margin-bottom:8px}
+  .pa-sec{font-size:10px;font-weight:700;text-transform:uppercase;color:#333;border-bottom:1px solid #333;padding-bottom:2px;margin:8px 0 4px}
+  .pa-grid{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:2px 10px;font-size:9px;margin-bottom:4px}
+  .pa-grid .l{color:#666}.pa-grid .v{font-weight:600}
+  .pa-conj{background:#F5E9CC!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;padding:4px 8px;font-size:10px;font-weight:600;margin-bottom:6px;border:1px solid #C9A94D}
+  table.pa-t{width:100%;border-collapse:collapse;font-size:9px;margin-bottom:6px}
+  table.pa-t th,table.pa-t td{border:0.5px solid #999;padding:2px 4px;text-align:left}
+  table.pa-t th{background:#EEE!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;font-weight:700}
+  .pa-ver{font-size:10px;font-weight:700;margin:6px 0 2px;background:#EEE!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;padding:2px 6px}
+  .pa-dv{color:#B00;font-weight:600}
+}
+#print-area{display:none}
+@media print{#print-area{display:block}}
+
 </head>
 <body>
 <div class="app">
@@ -235,8 +256,12 @@ textarea{resize:none;line-height:1.5;width:100%}
   <div class="card" style="overflow:hidden;padding:0" id="rec-faca-vis"></div>
   <div class="card" id="rec-estufas"></div>
   <div class="card" id="rec-obs" style="display:none"></div>
-  <button class="bp" onclick="repIniciada=false;ir('s-rep')"><i class="ti ti-clipboard-check"></i> Registrar repetição</button>
+  <div id="rec-obs-banner" style="display:none;background:#EDEDED;border-radius:var(--rad);padding:12px 14px;margin-bottom:10px"><div style="display:flex;align-items:center;gap:8px;color:#6B6B6B;font-size:13px;font-weight:600"><i class="ti ti-archive" style="font-size:16px"></i> Receita obsoleta</div><div style="font-size:12px;color:#8A8A8A;margin-top:3px">Esta receita foi descontinuada e não deve ser usada para novas produções.</div></div>
+  <button class="bp" id="btn-registrar-rep" onclick="repIniciada=false;ir('s-rep')"><i class="ti ti-clipboard-check"></i> Registrar repetição</button>
   <button class="bs" onclick="abrirHistorico(recIdx)"><i class="ti ti-history"></i> Ver histórico desta receita</button>
+  <button class="bs" onclick="imprimirReceita()"><i class="ti ti-printer"></i> Imprimir receita</button>
+  <div id="rec-reativar" style="display:none;margin-top:10px"><div class="card" style="border:1px solid var(--blue-mid);background:var(--blue-light)"><div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><i class="ti ti-refresh" style="font-size:17px;color:var(--blue)"></i><div style="font-size:13px;font-weight:600;color:var(--blue)">Reativar receita</div></div><div style="font-size:12px;color:var(--text2);margin-bottom:10px">Voltar esta receita ao status ativo. Ela ficará disponível novamente para os operadores.</div><button onclick="reativarReceita()" style="width:100%;background:var(--blue);color:#fff;border:none;border-radius:var(--rad);padding:10px;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font)"><i class="ti ti-refresh" style="font-size:14px;vertical-align:-2px"></i> Reativar</button></div></div>
+  <div id="rec-admin-card" style="margin-top:12px;text-align:center"><button onclick="abrirPinAdmin(recIdx,true)" style="background:transparent;border:none;color:var(--text3);font-size:11px;cursor:pointer;padding:6px;font-family:var(--font);opacity:0.6"><i class="ti ti-settings" style="font-size:12px;vertical-align:-1px"></i> Admin</button></div>
   <div style="height:16px"></div>
 </div>
 
@@ -266,6 +291,8 @@ textarea{resize:none;line-height:1.5;width:100%}
 <div id="s-rev" class="sc"><button class="bb" onclick="ir('s-rep')"><i class="ti ti-arrow-left"></i> Voltar ao registro</button><div id="rev-dv-banner" style="display:none" class="rev-dv-banner"><i class="ti ti-alert-triangle" style="font-size:18px;color:var(--red);flex-shrink:0"></i><div><div style="font-size:13px;font-weight:600;color:var(--red)"><span id="rev-dv-count">0</span> parâmetro(s) com desvio</div><div style="font-size:11px;color:var(--red);margin-top:1px;opacity:.8">Para cada desvio, escolha: alteração pontual ou alterar na receita.</div></div></div><div class="card"><div class="sl">Viscosidade e secagem — revisão</div><div id="rev-tintas"></div></div><div class="card"><div class="sl">Parâmetros da máquina — revisão</div><div id="rev-params"></div></div><div class="card" id="rev-complem" style="display:none"></div><div id="alt-banner" style="display:none" class="alt-banner"><i class="ti ti-info-circle" style="font-size:18px;color:var(--blue);flex-shrink:0"></i><div><div style="font-size:13px;font-weight:600;color:var(--blue)"><span id="alt-count">0</span> alteração(ões) enviadas para pendência</div><div style="font-size:11px;color:var(--blue);margin-top:1px;opacity:.8">Um segundo supervisor aprovará na tela de Pendências.</div></div></div><div id="rev-pin-hint" style="display:none;font-size:12px;color:var(--amber);background:var(--amber-light);border-radius:var(--rad);padding:8px 12px;margin-bottom:8px;text-align:center;font-weight:500"></div><div class="nr"><button class="bnp" onclick="ir('s-rep')"><i class="ti ti-arrow-left"></i> Editar</button><button class="bnn" id="btn-pin-r" onclick="irPinR()" disabled><i class="ti ti-lock"></i> Aprovar com PIN</button></div></div>
 
 <div id="s-pin-r" class="sc"><div class="card"><div class="pin-w"><div class="pin-t">Aprovação do supervisor</div><div class="pin-s" id="rps">Supervisor, revise e aprove com PIN.</div><div class="pin-cx"><div class="pcl">Repetição sendo aprovada</div><div class="pcv" id="rpctx">—</div><div id="rpd" style="margin-top:6px;display:flex;flex-wrap:wrap;gap:4px"></div><div style="margin-top:6px;font-size:11px;color:var(--text3)">Operador: <span id="rep-oper-display" style="font-weight:600;color:var(--text)">—</span></div><div style="font-size:11px;color:var(--text3);margin-top:2px">Aprovador: <span style="font-weight:600;color:var(--blue)">identificado pelo PIN</span></div></div><div class="pin-ds"><div class="pin-d" id="prd0"></div><div class="pin-d" id="prd1"></div><div class="pin-d" id="prd2"></div><div class="pin-d" id="prd3"></div></div><div class="pin-g"><button class="pib" onclick="ppR('1')">1</button><button class="pib" onclick="ppR('2')">2</button><button class="pib" onclick="ppR('3')">3</button><button class="pib" onclick="ppR('4')">4</button><button class="pib" onclick="ppR('5')">5</button><button class="pib" onclick="ppR('6')">6</button><button class="pib" onclick="ppR('7')">7</button><button class="pib" onclick="ppR('8')">8</button><button class="pib" onclick="ppR('9')">9</button><button class="pib" style="font-size:15px" onclick="ppR('back')">⌫</button><button class="pib" onclick="ppR('0')">0</button><button class="pib" style="background:var(--blue-light);color:var(--blue);font-size:13px;font-weight:700" onclick="ppR('ok')">OK</button></div><div class="pie" id="pre2"></div></div></div><button class="bs" onclick="ir('s-rev')"><i class="ti ti-arrow-left"></i> Voltar à revisão</button><div style="height:16px"></div></div>
+
+<div id="s-pin-admin" class="sc"><div class="card"><div class="pin-w"><div class="pin-t">Acesso administrativo</div><div class="pin-s" id="admin-sub">Digite o PIN de supervisor autorizado.</div><div class="pin-cx"><div class="pcl">Receita</div><div class="pcv" id="admin-ctx">—</div></div><div class="pin-ds"><div class="pin-d" id="pad0"></div><div class="pin-d" id="pad1"></div><div class="pin-d" id="pad2"></div><div class="pin-d" id="pad3"></div></div><div class="pin-g"><button class="pib" onclick="ppAdmin('1')">1</button><button class="pib" onclick="ppAdmin('2')">2</button><button class="pib" onclick="ppAdmin('3')">3</button><button class="pib" onclick="ppAdmin('4')">4</button><button class="pib" onclick="ppAdmin('5')">5</button><button class="pib" onclick="ppAdmin('6')">6</button><button class="pib" onclick="ppAdmin('7')">7</button><button class="pib" onclick="ppAdmin('8')">8</button><button class="pib" onclick="ppAdmin('9')">9</button><button class="pib" style="font-size:15px" onclick="ppAdmin('back')">⌫</button><button class="pib" onclick="ppAdmin('0')">0</button><button class="pib" style="background:var(--blue-light);color:var(--blue);font-size:13px;font-weight:700" onclick="ppAdmin('ok')">OK</button></div><div class="pie" id="pade"></div></div></div><button class="bs" onclick="ir('s-lista')"><i class="ti ti-arrow-left"></i> Voltar à lista</button><div style="height:16px"></div></div>
 
 <!-- HISTÓRICO v2: sob demanda -->
 <div id="s-hist" class="sc"><div id="hist-sel"><div class="sw"><i class="ti ti-search"></i><input type="text" placeholder="Buscar por Cód. PA ou cliente..." id="hs" oninput="filtrarHistSel()"></div><div class="sl">Selecione uma receita para ver o histórico</div><div class="card" style="padding:0 14px" id="hist-sel-list"></div></div><div id="hist-det" style="display:none"><button class="bb" onclick="voltarHistSel()"><i class="ti ti-arrow-left"></i> Todas as receitas</button><div class="fcs" id="hist-filtros"><div class="fc fa" onclick="setFH(this,'todos')">Todos</div><div class="fc" onclick="setFH(this,'ok')">Sem desvio</div><div class="fc" onclick="setFH(this,'desvio')">Com desvio</div></div><div id="hres"></div></div><div style="height:16px"></div></div>
@@ -326,6 +353,8 @@ let maquinaAtual=localStorage.getItem('flexo_maquina')||'';
 const paramRefs={};  // {p0:'70', p1:'3', ...} preenchido em rRep()
 const compRefs={};   // {'repanilox-1':'400 Z16', ...} preenchido em rRep()
 let salvando=false;  // guard contra duplo clique
+let adminDesbloqueado=false;  // libera acesso a receita obsoleta após PIN admin
+const ADMIN_IDS=['7','8'];  // João Victor, Abiner Filho — podem obsoletar/reativar
 let repIniciada=false;  // controla reconstrução do form de repetição
 
 // ── API ──
@@ -340,7 +369,11 @@ function apiGet(action,extraParams){
     document.head.appendChild(s);
   });
 }
-function apiPost(body){
+// Ações idempotentes: podem ter retry sem risco de duplicar dados.
+// Ações que criam registros (salvarReceita/salvarRepeticao) NÃO entram aqui.
+const ACOES_IDEMPOTENTES=['validarPin','alterarStatusReceita','aprovarPendencia'];
+function apiPost(body,_tentativa){
+  const t=_tentativa||1;
   return fetch(API,{
     method:'POST',
     headers:{'Content-Type':'text/plain;charset=utf-8'},
@@ -348,6 +381,13 @@ function apiPost(body){
   })
   .then(r=>{if(!r.ok)throw new Error('Erro de conexão');return r.json()})
   .then(data=>{if(data.status==='erro')throw new Error(data.mensagem);return data.data})
+  .catch(err=>{
+    // Retry só para ações idempotentes e erros de conexão (redirect intermitente do Apps Script)
+    if(t<3&&ACOES_IDEMPOTENTES.includes(body.action)&&/conex|network|failed|fetch/i.test(err.message)){
+      return new Promise(res=>setTimeout(res,600*t)).then(()=>apiPost(body,t+1));
+    }
+    throw err;
+  });
 }
 
 // ── HELPERS ──
@@ -383,12 +423,14 @@ async function carregarReceitas(){try{receitas=await apiGet('getReceitasLista');
 async function carregarPendencias(){try{pendencias=await apiGet('getPendencias');uPendBadge()}catch(e){console.error('Erro pendências:',e)}}
 
 // ── LISTA ──
-function rL(lista){if(!receitasCarregadas){document.getElementById('lw').innerHTML='<div class="loading-wrap"><div class="spinner"></div><span style="font-size:13px;color:var(--text3)">Carregando...</span></div>';return}document.getElementById('lw').innerHTML=lista.length?lista.map(r=>`<div class="li" onclick="abrirRec(${r.ID})"><div class="lic"><i class="ti ti-file-description"></i></div><div class="lb"><div class="lt">${r.CLIENTE} — ${fmtCodPAExib(r.COD_PA)}</div><div class="ls">${r.SERVICO} · ${r.MAQUINA}</div>${conjChips(r)}</div><span class="bok">Aprovada</span></div>`).join(''):'<div style="padding:20px 0;text-align:center;font-size:13px;color:var(--text3)">Nenhuma receita encontrada</div>'}
+function rL(lista){if(!receitasCarregadas){document.getElementById('lw').innerHTML='<div class="loading-wrap"><div class="spinner"></div><span style="font-size:13px;color:var(--text3)">Carregando...</span></div>';return}document.getElementById('lw').innerHTML=lista.length?lista.map(r=>{const obs=r.STATUS==='OBSOLETA';return`<div class="li${obs?' obs':''}" onclick="abrirRec(${r.ID})"><div class="lic"><i class="ti ti-file-description"></i></div><div class="lb"><div class="lt">${r.CLIENTE} — ${fmtCodPAExib(r.COD_PA)}</div><div class="ls">${r.SERVICO} · ${r.MAQUINA}</div>${conjChips(r)}</div><span class="${obs?'bobs':'bok'}">${obs?'Obsoleta':'Aprovada'}</span></div>`}).join(''):'<div style="padding:20px 0;text-align:center;font-size:13px;color:var(--text3)">Nenhuma receita encontrada</div>'}
 function filtrar(){const q=document.getElementById('si').value.toLowerCase().trim();const base=filtrarPorMaquina(receitas);if(!q){rL(base);return}rL(base.filter(r=>{const cli=(r.CLIENTE||'').toLowerCase(),cod=fmtCodPAExib(r.COD_PA).toLowerCase(),cod2=String(r.COD_PA||'').toLowerCase(),serv=(r.SERVICO||'').toLowerCase();return cli.includes(q)||cod.includes(q)||cod2.includes(q)||serv.includes(q)}))}
 
 // ── DETALHE RECEITA ──
 async function abrirRec(id){
   recIdx=id;let r=receitas.find(x=>String(x.ID)===String(id));if(!r)return;
+  // Bloqueio de receita obsoleta: exige PIN admin antes de abrir
+  if(r.STATUS==='OBSOLETA'&&!adminDesbloqueado){abrirPinAdmin(id);return}
   if(!r._detalhesCarregados){
     ir('s-rec');document.getElementById('rec-tintas').innerHTML='';
     document.getElementById('rec-params-box').innerHTML='<div style="padding:30px 0;text-align:center"><div class="spinner"></div><div style="font-size:13px;color:var(--text3);margin-top:12px">Carregando...</div></div>';
@@ -424,7 +466,14 @@ async function abrirRec(id){
   if(obsEl){if(obsVal){obsEl.style.display='';obsEl.innerHTML=`<div class="sl">Observações técnicas</div>${String(obsVal).split('\n').filter(l=>l.trim()).map(l=>`<div class="oi"><div class="od"></div><div class="ot">${l.trim()}</div></div>`).join('')}`}else obsEl.style.display='none'}
   document.getElementById('tpt').textContent=`${r.CLIENTE} · ${fmtCodPAExib(r.COD_PA)}`;
   document.getElementById('tps').textContent=`${r.MAQUINA} · Flexografia`;
-  document.getElementById('sbw').innerHTML='';document.getElementById('tpp').style.display='';ir('s-rec');
+  document.getElementById('sbw').innerHTML='';document.getElementById('tpp').style.display='';
+  // Ajusta UI conforme status (obsoleta vs ativa)
+  const isObs=r.STATUS==='OBSOLETA';
+  document.getElementById('rec-obs-banner').style.display=isObs?'block':'none';
+  document.getElementById('btn-registrar-rep').style.display=isObs?'none':'';
+  document.getElementById('rec-reativar').style.display=isObs?'block':'none';
+  document.getElementById('rec-admin-card').style.display=isObs?'none':'block';
+  ir('s-rec');
 }
 
 // ── REGISTRO ──
@@ -560,6 +609,56 @@ async function salvarRepeticao(aprovador){
 }
 function updDotsN(){for(let i=0;i<4;i++)document.getElementById('pnd'+i).classList.toggle('f',i<pinBufN.length)}
 function updDotsR(){for(let i=0;i<4;i++)document.getElementById('prd'+i).classList.toggle('f',i<pinBufR.length)}
+let pinBufAdmin='',adminCtxId=null,adminAcao=null;
+// abrirPinAdmin(id, deReceita): deReceita=true veio do card Admin (obsoletar ativa);
+// caso contrário veio de tocar numa obsoleta (desbloquear para ver/reativar).
+function abrirPinAdmin(id,deReceita){
+  adminCtxId=id;pinBufAdmin='';updDotsAdmin();document.getElementById('pade').textContent='';
+  const r=receitas.find(x=>String(x.ID)===String(id));
+  const isObs=r&&r.STATUS==='OBSOLETA';
+  adminAcao=isObs?'ver':'obsoletar';  // obsoleta→desbloquear/ver; ativa→obsoletar
+  document.getElementById('admin-ctx').textContent=r?`${r.CLIENTE} · ${fmtCodPAExib(r.COD_PA)}`:'—';
+  document.getElementById('admin-sub').textContent=isObs?'Receita obsoleta. Digite o PIN de supervisor autorizado para acessá-la.':'Digite o PIN de supervisor autorizado para obsoletar esta receita.';
+  irRaw('s-pin-admin');
+  document.getElementById('tpt').textContent='Acesso administrativo';document.getElementById('tps').textContent='Supervisor autorizado';document.getElementById('tpp').style.display='none';document.getElementById('sbw').innerHTML='';
+}
+function ppAdmin(v){const err=document.getElementById('pade');if(v==='back'){pinBufAdmin=pinBufAdmin.slice(0,-1);updDotsAdmin();return}if(v==='ok'){if(salvando)return;if(pinBufAdmin.length<4){err.textContent='PIN deve ter 4 dígitos';return}
+  if(adminAcao==='obsoletar'){executarAlterarStatus(adminCtxId,'OBSOLETA',pinBufAdmin)}
+  else if(adminAcao==='reativar'){executarAlterarStatus(adminCtxId,'ATIVA',pinBufAdmin)}
+  else{desbloquearObsoleta(adminCtxId,pinBufAdmin)}
+  return}
+  if(pinBufAdmin.length<4)pinBufAdmin+=v;updDotsAdmin()}
+function updDotsAdmin(){for(let i=0;i<4;i++)document.getElementById('pad'+i).classList.toggle('f',i<pinBufAdmin.length)}
+// Desbloquear obsoleta: valida PIN + permissão via alterarStatus? Não — só libera a visualização.
+// A permissão real é revalidada no backend na hora de reativar. Aqui validamos o PIN e a lista local.
+function desbloquearObsoleta(id,pin){
+  const err=document.getElementById('pade');salvando=true;showLoading('Validando PIN...');
+  apiPost({action:'validarPin',pin}).then(res=>{hideLoading();salvando=false;
+    if(!res.valido){err.textContent='PIN incorreto.';pinBufAdmin='';updDotsAdmin();return}
+    if(ADMIN_IDS.indexOf(String(res.id))===-1){err.textContent='Supervisor não autorizado.';pinBufAdmin='';updDotsAdmin();return}
+    adminDesbloqueado=true;pinBufAdmin='';updDotsAdmin();abrirRec(id);
+  }).catch(e=>{hideLoading();salvando=false;err.textContent='Erro: '+e.message;pinBufAdmin='';updDotsAdmin()});
+}
+function executarAlterarStatus(id,novoStatus,pin){
+  const err=document.getElementById('pade');salvando=true;showLoading(novoStatus==='OBSOLETA'?'Obsoletando...':'Reativando...');
+  apiPost({action:'alterarStatusReceita',pin,idReceita:id,novoStatus}).then(res=>{hideLoading();salvando=false;
+    if(!res.ok){err.textContent=res.motivo||'Não autorizado.';pinBufAdmin='';updDotsAdmin();return}
+    pinBufAdmin='';updDotsAdmin();
+    // Atualiza local e recarrega
+    const i=receitas.findIndex(x=>String(x.ID)===String(id));if(i>=0){receitas[i].STATUS=novoStatus;receitas[i]._detalhesCarregados=false}
+    adminDesbloqueado=false;
+    carregarReceitas();
+    showSuc(novoStatus==='OBSOLETA'?'Receita obsoletada':'Receita reativada',novoStatus==='OBSOLETA'?'A receita foi marcada como obsoleta.':'A receita está ativa novamente.',[{l:'Responsável',v:res.nome||'—'},{l:'Status',v:novoStatus==='OBSOLETA'?'Obsoleta':'Ativa'}],false,'s-lista');
+  }).catch(e=>{hideLoading();salvando=false;err.textContent='Erro: '+e.message;pinBufAdmin='';updDotsAdmin()});
+}
+function reativarReceita(){
+  adminCtxId=recIdx;adminAcao='reativar';pinBufAdmin='';updDotsAdmin();document.getElementById('pade').textContent='';
+  const r=receitas.find(x=>String(x.ID)===String(recIdx));
+  document.getElementById('admin-ctx').textContent=r?`${r.CLIENTE} · ${fmtCodPAExib(r.COD_PA)}`:'—';
+  document.getElementById('admin-sub').textContent='Digite o PIN de supervisor autorizado para reativar esta receita.';
+  irRaw('s-pin-admin');
+  document.getElementById('tpt').textContent='Acesso administrativo';document.getElementById('tps').textContent='Supervisor autorizado';document.getElementById('tpp').style.display='none';document.getElementById('sbw').innerHTML='';
+}
 
 // ── LOCK ──
 function ppLock(ctx,v){const err=document.getElementById(`plk-${ctx}-err`),dotPfx=ctx==='pend'?'plkd':'plkd-p';if(v==='back')lockBufs[ctx]=lockBufs[ctx].slice(0,-1);else if(v==='ok'){if(SUPERVISORES[lockBufs[ctx]]){err.textContent='';lockBufs[ctx]='';updLockDots(ctx,dotPfx);if(ctx==='pend'){renderPend();document.querySelectorAll('.tab-item').forEach(x=>x.classList.remove('ta'));document.getElementById('tab-pend').classList.add('ta');irRaw('s-pend');document.getElementById('tpt').textContent='Pendências de Alteração';document.getElementById('tps').textContent='Aguardando aprovação';document.getElementById('tpp').style.display='none';document.getElementById('sbw').innerHTML=''}else{atualizarPainel();document.querySelectorAll('.tab-item').forEach(x=>x.classList.remove('ta'));document.getElementById('tab-p').classList.add('ta');irRaw('s-painel');document.getElementById('tpt').textContent='Painel de Supervisão';document.getElementById('tps').textContent='Flexografia';document.getElementById('tpp').style.display='none';document.getElementById('sbw').innerHTML=''}}else{err.textContent='PIN incorreto.';lockBufs[ctx]=''}}else{if(lockBufs[ctx].length<4)lockBufs[ctx]+=v}updLockDots(ctx,dotPfx)}
@@ -579,6 +678,59 @@ function updPendDots(id){for(let i=0;i<4;i++){const d=document.getElementById(`p
 // ── HISTÓRICO v2: sob demanda ──
 function filtrarHistSel(){const q=document.getElementById('hs').value.toLowerCase().trim();const base=filtrarPorMaquina(receitas);const lista=q?base.filter(r=>{const c=(r.CLIENTE||'').toLowerCase(),k=fmtCodPAExib(r.COD_PA).toLowerCase(),s=(r.SERVICO||'').toLowerCase();return c.includes(q)||k.includes(q)||s.includes(q)}):base;renderHistSel(lista)}
 function renderHistSel(lista){document.getElementById('hist-sel-list').innerHTML=lista.length?lista.map(r=>`<div class="li" onclick="abrirHistorico(${r.ID})"><div class="lic"><i class="ti ti-history"></i></div><div class="lb"><div class="lt">${r.CLIENTE} — ${fmtCodPAExib(r.COD_PA)}</div><div class="ls">${r.SERVICO} · ${r.MAQUINA}</div>${conjChips(r)}</div></div>`).join(''):'<div style="padding:20px 0;text-align:center;font-size:13px;color:var(--text3)">Nenhuma receita encontrada</div>'}
+async function imprimirReceita(){
+  const r=receitas.find(x=>String(x.ID)===String(recIdx));if(!r)return;
+  showLoading('Preparando impressão...');
+  let hist=null;
+  try{hist=await apiGet('getHistoricoReceita',`&id=${recIdx}`)}catch(e){hist=null}
+  const tintas=(Array.isArray(r.tintas)?r.tintas:[]).filter(t=>t.COD_TINTA||t.NOME_COR);
+  const p=Array.isArray(r.parametros)?(r.parametros[0]||{}):(r.parametros||{});
+  const conj=r.ITENS_CONJUGACAO||r.itensConjugacao||'';
+  // Estufas
+  const preH=tintas.find(t=>t.PRE_HOT===true||t.PRE_HOT==='TRUE'),posH=tintas.find(t=>t.POS_HOT===true||t.POS_HOT==='TRUE');
+  const estufaLinhas=tintas.filter(t=>t.TEMP_ESTUFA).map(t=>`<tr><td>${t.ESTACAO}</td><td>${t.NOME_COR||'—'}</td><td>${t.TEMP_ESTUFA}°C</td></tr>`).join('');
+  // Tintas
+  const tintasLinhas=tintas.map(t=>`<tr><td>${t.ESTACAO}</td><td>${t.NOME_COR||'—'}</td><td>${t.COD_TINTA||'—'}</td><td>${t.VISCOSIDADE||'—'} s</td><td>${secStr(parseInt(t.SECAGEM_MIN)||0,parseInt(t.SECAGEM_SEG)||0)}</td><td>${t.ANILOX||'—'}</td><td>${t.DUPLA_FACE||'—'}</td><td>${t.PRESSAO_FACA||'—'}</td></tr>`).join('');
+  // Parâmetros
+  const params=[['Tensão Freio',p.TENSAO_FREIO,'N'],['Contra Pressão Pivê',p.CONTRA_PRESSAO_PIVE,'Bar'],['Avanço',p.AVANCO,'N'],['C. Pressão Tambor',p.C_PRESSAO_TAMBOR,'Bar'],['Tensão Rebobinador',p.TENSAO_REBOBINADOR,'N'],['Pressão Cil. Borracha',p.PRESSAO_CIL_BORRACHA,''],['Pressão Compactador',p.PRESSAO_COMPACTADOR,'Bar'],['Avanço CR',p.AVANCO_CR,'N'],['Posição Compactador',p.POSICAO_COMPACTADOR,''],['Velocidade',p.VELOCIDADE,'m/min'],['Temp. Ambiente',p.TEMP_AMBIENTE,'°C'],['Largura do Filme',p.LARGURA_FILME,'mm']];
+  const paramsGrid=params.map(([l,v,u])=>`<div><span class="l">${l}:</span> <span class="v">${v||'—'}${u?' '+u:''}</span></div>`).join('');
+  // Histórico por versão
+  let histHtml='';
+  if(hist&&hist.versoes&&hist.versoes.length){
+    histHtml=hist.versoes.map(v=>{
+      const reps=(v.reps||[]);
+      if(!reps.length)return `<div class="pa-ver">Versão ${v.NUMERO_VERSAO} — sem repetições</div>`;
+      const repRows=reps.map(rep=>{
+        const dvs=(rep.desvios||[]);
+        const dvTxt=dvs.length?dvs.map(d=>`${d.PARAMETRO||d.LABEL||'?'}: ${d.VALOR_REAL||d.VALOR||'?'} (ref ${d.VALOR_REFERENCIA||d.REF||'?'})`).join('; '):'—';
+        const dtRaw=rep.DATA_HORA||rep.DATA||'';let dt='—';try{const d=new Date(dtRaw);if(!isNaN(d))dt=d.toLocaleDateString('pt-BR')}catch(e){}
+        return `<tr><td>${dt}</td><td>${rep.OP_PRODUCAO||'—'}</td><td>${rep.OPERADOR||'—'}</td><td>${rep.APROVADOR||'—'}</td><td class="${dvs.length?'pa-dv':''}">${dvs.length?dvs.length+' desvio(s)':'OK'}</td><td>${dvTxt}</td></tr>`;
+      }).join('');
+      return `<div class="pa-ver">Versão ${v.NUMERO_VERSAO}</div><table class="pa-t"><thead><tr><th>Data</th><th>OP</th><th>Operador</th><th>Aprovador</th><th>Status</th><th>Desvios</th></tr></thead><tbody>${repRows}</tbody></table>`;
+    }).join('');
+  }else{histHtml='<div style="font-size:9px;color:#666">Sem histórico de repetições.</div>';}
+
+  document.getElementById('print-area').innerHTML=`
+    <div class="pa-h">${r.CLIENTE} — ${fmtCodPAExib(r.COD_PA)}${r.STATUS==='OBSOLETA'?' (OBSOLETA)':''}</div>
+    <div class="pa-sub">${r.SERVICO||''} · ${r.MAQUINA||''} · Flexografia · Impresso em ${new Date().toLocaleDateString('pt-BR')} ${new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}</div>
+    ${conj?`<div class="pa-conj">CONJUGAÇÃO: ${conj}</div>`:''}
+    <div class="pa-sec">Identificação</div>
+    <div class="pa-grid"><div><span class="l">Cliente:</span> <span class="v">${r.CLIENTE||'—'}</span></div><div><span class="l">Cód. PA:</span> <span class="v">${fmtCodPAExib(r.COD_PA)}</span></div><div><span class="l">Máquina:</span> <span class="v">${r.MAQUINA||'—'}</span></div><div><span class="l">OP Criação:</span> <span class="v">${r.OP_CRIACAO||'—'}</span></div><div><span class="l">Operador:</span> <span class="v">${r.OPERADOR||'—'}</span></div><div><span class="l">Aprovador:</span> <span class="v">${r.APROVADOR||'—'}</span></div></div>
+    <div class="pa-sec">Tintas por estação</div>
+    <table class="pa-t"><thead><tr><th>Est.</th><th>Cor</th><th>Código</th><th>Visc.</th><th>Secagem</th><th>Anilox</th><th>Dupla Face</th><th>Faca</th></tr></thead><tbody>${tintasLinhas||'<tr><td colspan="8">—</td></tr>'}</tbody></table>
+    <div class="pa-sec">Parâmetros da máquina</div>
+    <div class="pa-grid" style="grid-template-columns:1fr 1fr 1fr">${paramsGrid}</div>
+    <div class="pa-grid" style="grid-template-columns:1fr 1fr"><div><span class="l">Temp. Sec. Entre Cores:</span> <span class="v">${p.TEMP_SEC_ENTRECORES||'—'} °C</span></div><div><span class="l">Temp. Sec. Superior:</span> <span class="v">${p.TEMP_SEC_SUPERIOR||'—'} °C</span></div>${p.MATERIAL?`<div style="grid-column:span 2"><span class="l">Material:</span> <span class="v">${p.MATERIAL}</span></div>`:''}</div>
+    <div class="pa-sec">Estufas por estação</div>
+    <div class="pa-grid" style="grid-template-columns:1fr 1fr"><div><span class="l">Pré Hot:</span> <span class="v">${preH?preH.PRE_HOT_TEMP+'°C':'Desligado'}</span></div><div><span class="l">Pós Hot:</span> <span class="v">${posH?posH.POS_HOT_TEMP+'°C':'Desligado'}</span></div></div>
+    ${estufaLinhas?`<table class="pa-t"><thead><tr><th>Est.</th><th>Cor</th><th>Temp.</th></tr></thead><tbody>${estufaLinhas}</tbody></table>`:''}
+    <div class="pa-sec">Histórico de repetições${hist&&hist.metricas?` — ${hist.metricas.totalRepeticoes} rep., ${hist.metricas.taxaAdesao}% adesão`:''}</div>
+    ${histHtml}
+  `;
+  hideLoading();
+  setTimeout(()=>{window.print()},200);
+}
+
 async function abrirHistorico(id){
   irRaw('s-hist');document.getElementById('hist-sel').style.display='none';document.getElementById('hist-det').style.display='block';
   document.getElementById('hres').innerHTML='<div class="loading-wrap"><div class="spinner"></div><span style="font-size:13px;color:var(--text3)">Carregando histórico...</span></div>';
@@ -664,6 +816,7 @@ function ir(id){
   if(id==='s-nova')nStep(nsn);
   if(id==='s-pin-n'){pinBufN='';updDotsN();document.getElementById('pne').textContent=''}
   if(id==='s-pin-r'){pinBufR='';updDotsR();document.getElementById('pre2').textContent=''}
+  if(id==='s-lista'){adminDesbloqueado=false;}
 }
 function tIr(sc,tid,t,s){document.querySelectorAll('.tab-item').forEach(x=>x.classList.remove('ta'));document.getElementById(tid).classList.add('ta');nsn=1;ir(sc);document.getElementById('tpt').textContent=t;document.getElementById('tps').textContent=s}
 function rst(){pinBufN='';pinBufR='';nsn=1;window._cv=null;repIniciada=false}
@@ -674,5 +827,6 @@ window.addEventListener('beforeunload',function(e){const o=document.getElementBy
 
 initApp();
 </script>
+<div id="print-area"></div>
 </body>
 </html>
