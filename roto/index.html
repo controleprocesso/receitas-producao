@@ -57,6 +57,9 @@ textarea{resize:none;line-height:1.5;width:100%}
 .lt{font-size:13px;font-weight:600;color:var(--text)}
 .ls{font-size:11px;color:var(--text3);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .bok{font-size:10px;padding:2px 8px;border-radius:20px;white-space:nowrap;flex-shrink:0;background:var(--green-light);color:var(--green);font-weight:600}
+.bobs{font-size:10px;padding:2px 8px;border-radius:20px;white-space:nowrap;flex-shrink:0;background:#EFEFEF;color:#8A8A8A;font-weight:600}
+.li-obs{opacity:.5}
+.li-obs .lt{color:var(--text2)}
 /* CHIPS */
 .chips{display:flex;gap:5px;flex-wrap:wrap;margin-top:6px}
 .chip{font-size:11px;color:var(--text2);background:var(--bg);border-radius:5px;padding:2px 7px;border:0.5px solid var(--border)}
@@ -378,10 +381,31 @@ textarea{resize:none;line-height:1.5;width:100%}
       <div class="card" style="overflow:hidden;padding:0" id="rec-rolo"></div>
       <div class="card" style="overflow:hidden;padding:0" id="rec-faca"></div>
       <div class="card" id="rec-obs" style="display:none"></div>
-      <button class="bp" onclick="navegarTela('s-rep')"><i class="ti ti-clipboard-check"></i> Registrar repetição</button>
+      <div id="rec-obs-banner" style="display:none"></div>
+      <button class="bp" id="btn-rep-rec" onclick="navegarTela('s-rep')"><i class="ti ti-clipboard-check"></i> Registrar repetição</button>
       <button class="bs" onclick="abrirHistorico(recIdx)" style="margin-bottom:8px"><i class="ti ti-history"></i> Ver histórico desta receita</button>
       <button class="bs" onclick="imprimirReceita(recIdx)" style="margin-bottom:8px"><i class="ti ti-printer"></i> Imprimir receita</button>
+      <div id="rec-admin-card" style="margin-top:4px"></div>
       <div style="height:16px"></div>
+    </div>
+
+    <!-- PIN ADMIN -->
+    <div id="s-admin-pin" class="sc">
+      <button class="bb" onclick="voltarAdminPin()"><i class="ti ti-arrow-left"></i> Voltar</button>
+      <div class="card"><div class="pin-w">
+        <div class="pin-t" id="admin-pin-t">Acesso administrativo</div>
+        <div class="pin-s" id="admin-pin-s">Digite o PIN de um administrador autorizado.</div>
+        <div class="pin-ds"><div class="pin-d" id="apd0"></div><div class="pin-d" id="apd1"></div><div class="pin-d" id="apd2"></div><div class="pin-d" id="apd3"></div></div>
+        <div class="pin-g">
+          <button class="pib" onclick="pinAdmin('1')">1</button><button class="pib" onclick="pinAdmin('2')">2</button><button class="pib" onclick="pinAdmin('3')">3</button>
+          <button class="pib" onclick="pinAdmin('4')">4</button><button class="pib" onclick="pinAdmin('5')">5</button><button class="pib" onclick="pinAdmin('6')">6</button>
+          <button class="pib" onclick="pinAdmin('7')">7</button><button class="pib" onclick="pinAdmin('8')">8</button><button class="pib" onclick="pinAdmin('9')">9</button>
+          <button class="pib" style="font-size:15px" onclick="pinAdmin('back')">⌫</button>
+          <button class="pib" onclick="pinAdmin('0')">0</button>
+          <button class="pib" style="background:var(--blue);color:#fff;border-color:var(--blue)" onclick="pinAdmin('ok')"><i class="ti ti-check"></i></button>
+        </div>
+        <div class="pie" id="admin-pin-err"></div>
+      </div></div>
     </div>
 
     <!-- NOVA RECEITA -->
@@ -803,6 +827,8 @@ let repTintasAtivas=[];
 let repEstufaAtivas=[];
 let salvando=false;
 let repIniciada=false;
+let adminDesbloqueado=false;
+let pinBufAdmin='', adminAcao='', adminAlvoId='';
 const paramRefs={}, compRefs={};
 let MAQUINAS_ROTO = [];
 let maquinaAtual = localStorage.getItem('roto_maquina') || '';
@@ -964,7 +990,7 @@ function renderLista(lista) {
     return;
   }
   document.getElementById('lw').innerHTML = lista.length
-    ? lista.map(r=>`<div class="li" onclick="abrirRec(${r.ID})"><div class="lic"><i class="ti ti-file-description"></i></div><div class="lb"><div class="lt">${r.CLIENTE} — ${formatarCodPAExibicao(r.COD_PA)}</div><div class="ls">${r.SERVICO} · ${r.MAQUINA}</div>${r.ITENS_CONJUGACAO?`<div style="margin-top:4px"><span style="display:inline-flex;align-items:center;gap:4px;background:var(--amber-light);color:var(--amber);font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;border:0.5px solid #E8D5A8"><i class="ti ti-layers-linked" style="font-size:11px"></i> ${r.ITENS_CONJUGACAO}</span></div>`:''}</div><span class="bok">Aprovada</span></div>`).join('')
+    ? lista.map(r=>{const obs=r.STATUS==='OBSOLETA';return `<div class="li${obs?' li-obs':''}" onclick="abrirRec(${r.ID})"><div class="lic"><i class="ti ti-file-description"></i></div><div class="lb"><div class="lt">${r.CLIENTE} — ${formatarCodPAExibicao(r.COD_PA)}</div><div class="ls">${r.SERVICO} · ${r.MAQUINA}</div>${r.ITENS_CONJUGACAO?`<div style="margin-top:4px"><span style="display:inline-flex;align-items:center;gap:4px;background:var(--amber-light);color:var(--amber);font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;border:0.5px solid #E8D5A8"><i class="ti ti-layers-linked" style="font-size:11px"></i> ${r.ITENS_CONJUGACAO}</span></div>`:''}</div><span class="${obs?'bobs':'bok'}">${obs?'<i class="ti ti-archive" style="font-size:10px;vertical-align:-1px"></i> Obsoleta':'Aprovada'}</span></div>`;}).join('')
     : '<div style="padding:20px 0;text-align:center;font-size:13px;color:var(--text3)">Nenhuma receita encontrada</div>';
 }
 
@@ -992,6 +1018,12 @@ async function abrirRec(id) {
   repIniciada = false;
   let r = receitas.find(x => String(x.ID) === String(id));
   if (!r) return;
+
+  // Receita obsoleta: operador não acessa. Pede PIN admin para entrar (e reativar).
+  if (r.STATUS === 'OBSOLETA' && !adminDesbloqueado) {
+    abrirAdminPin('abrir', id);
+    return;
+  }
 
   // Se ainda não tem detalhes carregados, buscar agora
   if (!r._detalhesCarregados) {
@@ -1069,6 +1101,28 @@ async function abrirRec(id) {
     const facaHtml=tintas.map((t,i)=>`<div style="display:flex;align-items:center;gap:10px;padding:9px 0;${i<tintas.length-1?'border-bottom:0.5px solid var(--border)':''}"><div class="en">${t.ESTACAO}</div><div style="flex:1"><div style="font-size:13px;font-weight:600;color:var(--text)">${t.NOME_COR}</div></div><div style="font-size:13px;font-weight:600;color:var(--text)">${t.PRESSAO_FACA||'—'} <span style="font-size:11px;color:var(--text2);font-weight:400">Bar</span></div></div>`).join('');
     document.getElementById('rec-faca').innerHTML=`<div style="padding:10px 14px;display:flex;align-items:center;gap:10px;border-bottom:0.5px solid var(--border)"><div style="width:32px;height:32px;border-radius:var(--rad);background:#F3EEFB;display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="ti ti-adjustments" style="font-size:17px;color:#6B3FA0"></i></div><div><div style="font-size:13px;font-weight:600;color:var(--text)">Pressão da Faca</div><div style="font-size:11px;color:var(--text3);margin-top:1px">Por estação · Bar</div></div></div><div style="padding:0 14px">${facaHtml}</div>`;
   } catch(e){console.warn('rolo/faca:',e.message);}
+
+  // Estado obsoleta/admin
+  const ehObsoleta = r.STATUS === 'OBSOLETA';
+  const banner = document.getElementById('rec-obs-banner');
+  const btnRep = document.getElementById('btn-rep-rec');
+  const adminCard = document.getElementById('rec-admin-card');
+
+  if (ehObsoleta) {
+    // Banner de aviso no topo dos botões
+    banner.style.display = 'block';
+    banner.innerHTML = `<div style="background:#F2F2F2;border:0.5px solid #D8D8D8;border-radius:var(--rad);padding:10px 12px;margin-bottom:8px;display:flex;align-items:center;gap:8px"><i class="ti ti-archive" style="font-size:18px;color:#8A8A8A"></i><div style="flex:1"><div style="font-size:12px;font-weight:600;color:#6A6A6A">Receita obsoleta</div><div style="font-size:11px;color:#8A8A8A;margin-top:1px">Não disponível para produção. Visível apenas para administradores.</div></div></div>`;
+    // Sem registrar repetição
+    btnRep.style.display = 'none';
+    // Card admin: reativar
+    adminCard.innerHTML = `<div class="card" onclick="abrirAdminPin('reativar',${r.ID})" style="cursor:pointer;border:0.5px solid var(--blue-mid);background:var(--blue-light)"><div style="display:flex;align-items:center;gap:10px"><div style="width:32px;height:32px;border-radius:var(--rad);background:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="ti ti-restore" style="font-size:17px;color:var(--blue)"></i></div><div style="flex:1"><div style="font-size:13px;font-weight:600;color:var(--blue)">Reativar receita</div><div style="font-size:11px;color:var(--blue);opacity:.8;margin-top:1px">Torna a receita disponível para produção novamente</div></div><i class="ti ti-chevron-right" style="font-size:16px;color:var(--blue)"></i></div></div>`;
+  } else {
+    banner.style.display = 'none';
+    btnRep.style.display = '';
+    // Card admin: obsoletar
+    adminCard.innerHTML = `<div class="card" onclick="abrirAdminPin('obsoletar',${r.ID})" style="cursor:pointer;border:0.5px solid var(--border2)"><div style="display:flex;align-items:center;gap:10px"><div style="width:32px;height:32px;border-radius:var(--rad);background:var(--bg);display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="ti ti-settings" style="font-size:17px;color:var(--text2)"></i></div><div style="flex:1"><div style="font-size:13px;font-weight:600;color:var(--text2)">Admin</div><div style="font-size:11px;color:var(--text3);margin-top:1px">Opções administrativas da receita</div></div><i class="ti ti-chevron-right" style="font-size:16px;color:var(--text3)"></i></div></div>`;
+  }
+
   document.getElementById('sbw').innerHTML='';
   document.getElementById('tpp').style.display='';
   navegarTela('s-rec');
@@ -1631,6 +1685,78 @@ async function abrirHistorico(id){
   }
 }
 
+// ── ADMIN: OBSOLETAR / REATIVAR ──────────────────────────
+
+function abrirAdminPin(acao, id){
+  adminAcao=acao; adminAlvoId=id; pinBufAdmin=''; atualizarDotsAdmin();
+  document.getElementById('admin-pin-err').textContent='';
+  const t=document.getElementById('admin-pin-t'), s=document.getElementById('admin-pin-s');
+  if(acao==='obsoletar'){t.textContent='Obsoletar receita';s.textContent='PIN de administrador. A receita sairá da produção.';}
+  else if(acao==='reativar'){t.textContent='Reativar receita';s.textContent='PIN de administrador para voltar à produção.';}
+  else{t.textContent='Acesso administrativo';s.textContent='Esta receita está obsoleta. Digite o PIN de admin para visualizá-la.';}
+  document.getElementById('tpt').textContent='Acesso administrativo';
+  document.getElementById('tps').textContent='Somente administradores autorizados';
+  document.getElementById('tpp').style.display='none';
+  document.getElementById('sbw').innerHTML='';
+  mostrarTela('s-admin-pin');
+}
+
+function voltarAdminPin(){
+  // Se veio de tentar abrir obsoleta, volta pra lista; senão volta ao detalhe
+  if(adminAcao==='abrir'){navegarTela('s-lista');}
+  else{navegarTela('s-rec');}
+}
+
+function atualizarDotsAdmin(){
+  for(let i=0;i<4;i++){const d=document.getElementById('apd'+i);if(d)d.className='pin-d'+(i<pinBufAdmin.length?' f':'');}
+}
+
+async function pinAdmin(v){
+  if(salvando)return;
+  const err=document.getElementById('admin-pin-err');
+  if(v==='back'){pinBufAdmin=pinBufAdmin.slice(0,-1);atualizarDotsAdmin();return;}
+  if(v==='ok'){
+    if(pinBufAdmin.length<4){err.textContent='Digite os 4 dígitos';return;}
+    const pin=pinBufAdmin;
+    salvando=true;mostrarLoading('Validando...');
+    try{
+      const res=await apiPost({action:'validarPinAdmin',pin});
+      if(!res.valido){
+        ocultarLoading();salvando=false;
+        err.textContent=res.semPermissao?`${res.nome||'Usuário'} não tem permissão de admin`:'PIN incorreto ou sem permissão';
+        pinBufAdmin='';atualizarDotsAdmin();return;
+      }
+      // PIN válido e autorizado
+      if(adminAcao==='abrir'){
+        // Desbloqueia e abre a receita obsoleta em modo leitura
+        adminDesbloqueado=true;
+        ocultarLoading();salvando=false;
+        pinBufAdmin='';atualizarDotsAdmin();
+        await abrirRec(adminAlvoId);
+        return;
+      }
+      // Obsoletar ou reativar
+      const novoStatus=adminAcao==='obsoletar'?'OBSOLETA':'ATIVA';
+      await apiPost({action:'alterarStatusReceita',idReceita:adminAlvoId,novoStatus,pin});
+      // Atualiza em memória
+      const idx=receitas.findIndex(x=>String(x.ID)===String(adminAlvoId));
+      if(idx>=0)receitas[idx].STATUS=novoStatus;
+      ocultarLoading();salvando=false;
+      pinBufAdmin='';atualizarDotsAdmin();
+      adminDesbloqueado=false;
+      const msg=novoStatus==='OBSOLETA'?'Receita obsoletada com sucesso.':'Receita reativada com sucesso.';
+      mostrarSucesso(novoStatus==='OBSOLETA'?'Receita obsoletada':'Receita reativada',msg,[{l:'Receita',v:`${receitas[idx]?.CLIENTE||''} · ${formatarCodPAExibicao(receitas[idx]?.COD_PA)}`},{l:'Admin',v:res.nome},{l:'Novo status',v:novoStatus}],false,'s-lista');
+      renderLista(filtrarPorMaquina(receitas));
+    }catch(e){
+      ocultarLoading();salvando=false;
+      err.textContent='Erro: '+e.message;
+      pinBufAdmin='';atualizarDotsAdmin();
+    }
+  }
+  if(pinBufAdmin.length<4)pinBufAdmin+=v;
+  atualizarDotsAdmin();
+}
+
 async function imprimirReceita(id){
   mostrarLoading('Preparando impressão...');
   try{
@@ -2053,6 +2179,7 @@ function calcularSegundos(m,s){return (parseInt(m)||0)*60+(parseInt(s)||0);}
 function mostrarTela(id){document.querySelectorAll('.sc').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');}
 
 function navegarTela(id){
+  if(id==='s-lista')adminDesbloqueado=false;
   document.querySelectorAll('.sc').forEach(s=>s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
   const pill=document.getElementById('tpp'),sb=document.getElementById('sbw');
@@ -2068,6 +2195,7 @@ function navegarTela(id){
     's-rep':['Registro de Repetição',null,false,false],
     's-rev':['Revisão',null,false,false],
     's-pin-r':['Aprovação por PIN',null,false,false],
+    's-admin-pin':['Acesso administrativo','Somente administradores autorizados',false,false],
   };
   if(map[id]){
     if(map[id][0])document.getElementById('tpt').textContent=map[id][0];
