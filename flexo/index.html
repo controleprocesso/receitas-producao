@@ -27,6 +27,14 @@ body{font-family:var(--font);background:var(--bg);color:var(--text)}
 .bp{width:100%;background:var(--blue);color:#fff;border:none;border-radius:var(--rad);padding:14px;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:8px;font-family:var(--font);transition:opacity .15s}
 .bp:active{opacity:.85}.bp:disabled{opacity:.4;pointer-events:none}
 .bs{width:100%;background:transparent;color:var(--text2);border:0.5px solid var(--border2);border-radius:var(--rad);padding:12px;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;font-family:var(--font)}
+.bcard{width:100%;background:var(--card);border:0.5px solid var(--border2);border-radius:var(--rad);padding:13px 14px;cursor:pointer;display:flex;align-items:center;gap:12px;font-family:var(--font);margin-bottom:8px;text-align:left}
+.bcard .bci{width:36px;height:36px;border-radius:var(--rad);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.bcard .bct{font-size:14px;font-weight:600;color:var(--text)}
+.bcard .bcs{font-size:11px;color:var(--text3);margin-top:1px}
+.bcard .bca{margin-left:auto;color:var(--text3);flex-shrink:0}
+.bcard-obs{background:#EEF0F2;border-color:#DDE1E5;cursor:default}
+.bcard-reativar{background:var(--blue-light);border-color:var(--blue-mid)}
+.bcard-reativar .bct{color:var(--blue)}
 .nr{display:flex;gap:8px;margin-top:4px;margin-bottom:16px}
 .bnp{flex:1;border:0.5px solid var(--border2);border-radius:var(--rad);padding:12px;font-size:13px;color:var(--text2);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;font-family:var(--font)}
 .bnn{flex:2;background:var(--blue);color:#fff;border:none;border-radius:var(--rad);padding:12px;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;font-family:var(--font)}
@@ -43,7 +51,7 @@ textarea{resize:none;line-height:1.5;width:100%}
 .lb{flex:1;min-width:0}.lt{font-size:13px;font-weight:600;color:var(--text)}
 .ls{font-size:11px;color:var(--text3);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .bok{font-size:10px;padding:2px 8px;border-radius:20px;white-space:nowrap;flex-shrink:0;background:var(--green-light);color:var(--green);font-weight:600}
-.bobs{font-size:10px;padding:2px 8px;border-radius:20px;white-space:nowrap;flex-shrink:0;background:#EDEDED;color:#8A8A8A;font-weight:600}
+.bobs{font-size:10px;padding:2px 8px;border-radius:20px;white-space:nowrap;flex-shrink:0;background:#EEF0F2;color:#7A8694;font-weight:600;display:inline-flex;align-items:center;gap:3px}
 .li.obs{opacity:0.55}
 .chips{display:flex;gap:5px;flex-wrap:wrap;margin-top:6px}
 .chip{font-size:11px;color:var(--text2);background:var(--bg);border-radius:5px;padding:2px 7px;border:0.5px solid var(--border)}
@@ -256,12 +264,12 @@ textarea{resize:none;line-height:1.5;width:100%}
   <div class="card" style="overflow:hidden;padding:0" id="rec-faca-vis"></div>
   <div class="card" id="rec-estufas"></div>
   <div class="card" id="rec-obs" style="display:none"></div>
-  <div id="rec-obs-banner" style="display:none;background:#EDEDED;border-radius:var(--rad);padding:12px 14px;margin-bottom:10px"><div style="display:flex;align-items:center;gap:8px;color:#6B6B6B;font-size:13px;font-weight:600"><i class="ti ti-archive" style="font-size:16px"></i> Receita obsoleta</div><div style="font-size:12px;color:#8A8A8A;margin-top:3px">Esta receita foi descontinuada e não deve ser usada para novas produções.</div></div>
+  <div id="rec-obs-banner" class="bcard bcard-obs" style="display:none"><div class="bci" style="background:#DDE1E5"><i class="ti ti-archive" style="font-size:18px;color:#7A8694"></i></div><div><div class="bct" style="color:#5B6570">Receita obsoleta</div><div class="bcs">Não disponível para produção. Visível apenas para administradores.</div></div></div>
   <button class="bp" id="btn-registrar-rep" onclick="repIniciada=false;ir('s-rep')"><i class="ti ti-clipboard-check"></i> Registrar repetição</button>
   <button class="bs" onclick="abrirHistorico(recIdx)"><i class="ti ti-history"></i> Ver histórico desta receita</button>
   <button class="bs" onclick="imprimirReceita()"><i class="ti ti-printer"></i> Imprimir receita</button>
-  <div id="rec-reativar" style="display:none;margin-top:10px"><div class="card" style="border:1px solid var(--blue-mid);background:var(--blue-light)"><div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><i class="ti ti-refresh" style="font-size:17px;color:var(--blue)"></i><div style="font-size:13px;font-weight:600;color:var(--blue)">Reativar receita</div></div><div style="font-size:12px;color:var(--text2);margin-bottom:10px">Voltar esta receita ao status ativo. Ela ficará disponível novamente para os operadores.</div><button onclick="reativarReceita()" style="width:100%;background:var(--blue);color:#fff;border:none;border-radius:var(--rad);padding:10px;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font)"><i class="ti ti-refresh" style="font-size:14px;vertical-align:-2px"></i> Reativar</button></div></div>
-  <div id="rec-admin-card" style="margin-top:12px;text-align:center"><button onclick="abrirPinAdmin(recIdx,true)" style="background:transparent;border:none;color:var(--text3);font-size:11px;cursor:pointer;padding:6px;font-family:var(--font);opacity:0.6"><i class="ti ti-settings" style="font-size:12px;vertical-align:-1px"></i> Admin</button></div>
+  <button id="rec-reativar" class="bcard bcard-reativar" style="display:none" onclick="reativarReceita()"><div class="bci" style="background:#fff"><i class="ti ti-refresh" style="font-size:18px;color:var(--blue)"></i></div><div><div class="bct">Reativar receita</div><div class="bcs">Torna a receita disponível para produção novamente</div></div><i class="ti ti-chevron-right bca" style="font-size:18px"></i></button>
+  <button id="rec-admin-card" class="bcard" onclick="abrirPinAdmin(recIdx,true)"><div class="bci" style="background:var(--bg)"><i class="ti ti-settings" style="font-size:18px;color:var(--text2)"></i></div><div><div class="bct">Admin</div><div class="bcs">Opções administrativas da receita</div></div><i class="ti ti-chevron-right bca" style="font-size:18px"></i></button>
   <div style="height:16px"></div>
 </div>
 
@@ -423,7 +431,7 @@ async function carregarReceitas(){try{receitas=await apiGet('getReceitasLista');
 async function carregarPendencias(){try{pendencias=await apiGet('getPendencias');uPendBadge()}catch(e){console.error('Erro pendências:',e)}}
 
 // ── LISTA ──
-function rL(lista){if(!receitasCarregadas){document.getElementById('lw').innerHTML='<div class="loading-wrap"><div class="spinner"></div><span style="font-size:13px;color:var(--text3)">Carregando...</span></div>';return}document.getElementById('lw').innerHTML=lista.length?lista.map(r=>{const obs=r.STATUS==='OBSOLETA';return`<div class="li${obs?' obs':''}" onclick="abrirRec(${r.ID})"><div class="lic"><i class="ti ti-file-description"></i></div><div class="lb"><div class="lt">${r.CLIENTE} — ${fmtCodPAExib(r.COD_PA)}</div><div class="ls">${r.SERVICO} · ${r.MAQUINA}</div>${conjChips(r)}</div><span class="${obs?'bobs':'bok'}">${obs?'Obsoleta':'Aprovada'}</span></div>`}).join(''):'<div style="padding:20px 0;text-align:center;font-size:13px;color:var(--text3)">Nenhuma receita encontrada</div>'}
+function rL(lista){if(!receitasCarregadas){document.getElementById('lw').innerHTML='<div class="loading-wrap"><div class="spinner"></div><span style="font-size:13px;color:var(--text3)">Carregando...</span></div>';return}document.getElementById('lw').innerHTML=lista.length?lista.map(r=>{const obs=r.STATUS==='OBSOLETA';return`<div class="li${obs?' obs':''}" onclick="abrirRec(${r.ID})"><div class="lic"><i class="ti ti-file-description"></i></div><div class="lb"><div class="lt">${r.CLIENTE} — ${fmtCodPAExib(r.COD_PA)}</div><div class="ls">${r.SERVICO} · ${r.MAQUINA}</div>${conjChips(r)}</div><span class="${obs?'bobs':'bok'}">${obs?'<i class="ti ti-archive" style="font-size:11px"></i> Obsoleta':'Aprovada'}</span></div>`}).join(''):'<div style="padding:20px 0;text-align:center;font-size:13px;color:var(--text3)">Nenhuma receita encontrada</div>'}
 function filtrar(){const q=document.getElementById('si').value.toLowerCase().trim();const base=filtrarPorMaquina(receitas);if(!q){rL(base);return}rL(base.filter(r=>{const cli=(r.CLIENTE||'').toLowerCase(),cod=fmtCodPAExib(r.COD_PA).toLowerCase(),cod2=String(r.COD_PA||'').toLowerCase(),serv=(r.SERVICO||'').toLowerCase();return cli.includes(q)||cod.includes(q)||cod2.includes(q)||serv.includes(q)}))}
 
 // ── DETALHE RECEITA ──
@@ -469,10 +477,10 @@ async function abrirRec(id){
   document.getElementById('sbw').innerHTML='';document.getElementById('tpp').style.display='';
   // Ajusta UI conforme status (obsoleta vs ativa)
   const isObs=r.STATUS==='OBSOLETA';
-  document.getElementById('rec-obs-banner').style.display=isObs?'block':'none';
+  document.getElementById('rec-obs-banner').style.display=isObs?'flex':'none';
   document.getElementById('btn-registrar-rep').style.display=isObs?'none':'';
-  document.getElementById('rec-reativar').style.display=isObs?'block':'none';
-  document.getElementById('rec-admin-card').style.display=isObs?'none':'block';
+  document.getElementById('rec-reativar').style.display=isObs?'flex':'none';
+  document.getElementById('rec-admin-card').style.display=isObs?'none':'flex';
   ir('s-rec');
 }
 
