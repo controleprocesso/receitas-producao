@@ -989,9 +989,19 @@ async function initApp(){
   carregarPendencias();
 }
 
+let pendContadores={pendentes:0,aprovadas:0,rejeitadas:0};
+
 async function carregarPendencias() {
   try {
-    pendencias = await apiGet('getPendencias');
+    const res = await apiGet('getPendencias');
+    // Compatível com formato novo ({lista, contadores}) e antigo (array)
+    if (Array.isArray(res)) {
+      pendencias = res;
+      pendContadores = {pendentes:res.length, aprovadas:0, rejeitadas:0};
+    } else {
+      pendencias = res.lista || [];
+      pendContadores = res.contadores || {pendentes:pendencias.length, aprovadas:0, rejeitadas:0};
+    }
     atualizarBadgePendencias();
   } catch(e) {
     console.error('Erro ao carregar pendências:', e);
@@ -1578,7 +1588,7 @@ async function pinLock(ctx,v){
       ocultarLoading();
       if(!res.valido){err.textContent='PIN incorreto.';lockBufs[ctx]='';atualizarDotsLock(ctx,dotPfx);return;}
       err.textContent='';lockBufs[ctx]='';atualizarDotsLock(ctx,dotPfx);
-      if(ctx==='pend'){renderPendencias();document.querySelectorAll('.tab-item').forEach(x=>x.classList.remove('ta'));document.getElementById('tab-pend').classList.add('ta');mostrarTela('s-pend');document.getElementById('tpt').textContent='Pendências de Alteração';document.getElementById('tps').textContent='Aguardando aprovação';document.getElementById('tpp').style.display='none';document.getElementById('sbw').innerHTML='';}
+      if(ctx==='pend'){await carregarPendencias();renderPendencias();document.querySelectorAll('.tab-item').forEach(x=>x.classList.remove('ta'));document.getElementById('tab-pend').classList.add('ta');mostrarTela('s-pend');document.getElementById('tpt').textContent='Pendências de Alteração';document.getElementById('tps').textContent='Aguardando aprovação';document.getElementById('tpp').style.display='none';document.getElementById('sbw').innerHTML='';}
       else{document.querySelectorAll('.tab-item').forEach(x=>x.classList.remove('ta'));document.getElementById('tab-p').classList.add('ta');mostrarTela('s-painel');document.getElementById('tpt').textContent='Painel de Supervisão';document.getElementById('tps').textContent='Rotogravura';document.getElementById('tpp').style.display='none';document.getElementById('sbw').innerHTML='';atualizarPainel();}
     }catch(e){ocultarLoading();err.textContent='Erro: '+e.message;lockBufs[ctx]='';atualizarDotsLock(ctx,dotPfx);}
     return;
@@ -1597,17 +1607,26 @@ function sairTelaRestrita(ctx){lockBufs[ctx]='';navegarTab('s-lista','tab-r','Re
 // PENDÊNCIAS
 // ══════════════════════════════════════════════════════════
 
-function atualizarBadgePendencias(){const cnt=pendencias.length;document.getElementById('pend-cnt').textContent=cnt;const b=document.getElementById('pend-badge');b.textContent=cnt;b.style.display=cnt>0?'':'none';}
+function atualizarBadgePendencias(){
+  const cnt=pendencias.length;
+  document.getElementById('pend-cnt').textContent=cnt;
+  const ap=document.getElementById('pend-aprov'),rj=document.getElementById('pend-rej-cnt');
+  if(ap)ap.textContent=pendContadores.aprovadas||0;
+  if(rj)rj.textContent=pendContadores.rejeitadas||0;
+  const b=document.getElementById('pend-badge');
+  b.textContent=cnt;b.style.display=cnt>0?'':'none';
+}
 
 function renderPendencias(){
+  atualizarBadgePendencias();
   if(pendencias.length===0){document.getElementById('pend-list').innerHTML='<div style="padding:24px 0;text-align:center;font-size:13px;color:var(--text3)">Nenhuma pendência no momento.</div>';return;}
   document.getElementById('pend-list').innerHTML=pendencias.map(p=>`
     <div class="pend-card" id="pc-${p.ID}">
       <div class="pend-hdr"><div class="pend-ic"><i class="ti ti-file-pencil"></i></div><div class="pend-bd"><div class="pend-title">${p.CLIENTE?`${p.CLIENTE} — ${formatarCodPAExibicao(p.COD_PA)}`:'Receita'}</div><div class="pend-sub">${p.SERVICO?p.SERVICO+' · ':''}${p.MAQUINA||''}${p.OP_PRODUCAO?' · OP '+p.OP_PRODUCAO:''}</div><div class="pend-sub" style="margin-top:2px">Solicitado por <b>${p.SOLICITANTE}</b></div>${p.ITENS_CONJUGACAO?`<div style="margin-top:4px"><span style="display:inline-flex;align-items:center;gap:4px;background:var(--amber-light);color:var(--amber);font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;border:0.5px solid #E8D5A8"><i class="ti ti-layers-linked" style="font-size:10px"></i> ${p.ITENS_CONJUGACAO}</span></div>`:''}</div><span class="pend-badge">pendente</span></div>
       <div class="pend-body"><div class="pend-row"><div class="pend-lbl">${p.PARAMETRO}</div><div class="pend-vals"><span class="pend-de">De: ${p.VALOR_ATUAL}</span><span class="pend-para">Para: ${p.VALOR_PROPOSTO}</span><div class="pend-just">${p.JUSTIFICATIVA}</div></div></div></div>
-      <div class="pend-footer"><div class="pend-meta">Solicitante: <b>${p.SOLICITANTE}</b></div><div class="pend-actions"><button class="pend-rej" onclick="rejeitarPendencia('${p.ID}')">Rejeitar</button><button class="pend-apr" onclick="abrirPinPendencia('${p.ID}')">Aprovar</button></div></div>
+      <div class="pend-footer"><div class="pend-meta">Solicitante: <b>${p.SOLICITANTE}</b></div><div class="pend-actions"><button class="pend-rej" onclick="abrirPinPendencia('${p.ID}','rejeitar')">Rejeitar</button><button class="pend-apr" onclick="abrirPinPendencia('${p.ID}','aprovar')">Aprovar</button></div></div>
       <div class="pend-pin-wrap" id="ppw-${p.ID}">
-        <div style="font-size:12px;color:var(--text2);margin-bottom:8px;line-height:1.5">Digite seu PIN. Aprovador não pode ser <b>${p.SOLICITANTE}</b>.</div>
+        <div style="font-size:12px;color:var(--text2);margin-bottom:8px;line-height:1.5" id="ppt-${p.ID}">Digite seu PIN. Aprovador não pode ser <b>${p.SOLICITANTE}</b>.</div>
         <div style="display:flex;gap:8px;margin-bottom:10px"><div class="pin-d" id="ppd-${p.ID}-0"></div><div class="pin-d" id="ppd-${p.ID}-1"></div><div class="pin-d" id="ppd-${p.ID}-2"></div><div class="pin-d" id="ppd-${p.ID}-3"></div></div>
         <div class="pin-g" style="gap:6px">
           <button class="pib" style="padding:10px 0;font-size:16px" onclick="pinPendencia('${p.ID}','1')">1</button><button class="pib" style="padding:10px 0;font-size:16px" onclick="pinPendencia('${p.ID}','2')">2</button><button class="pib" style="padding:10px 0;font-size:16px" onclick="pinPendencia('${p.ID}','3')">3</button>
@@ -1622,9 +1641,26 @@ function renderPendencias(){
     </div>`).join('');
 }
 
-function abrirPinPendencia(id){if(!pendPinBufs[id])pendPinBufs[id]='';document.querySelectorAll('.pend-pin-wrap').forEach(p=>p.classList.remove('open'));document.getElementById('ppw-'+id)?.classList.add('open');}
+const pendAcoes={}; // id -> 'aprovar' | 'rejeitar'
+
+function abrirPinPendencia(id,acao){
+  pendAcoes[id]=acao||'aprovar';
+  pendPinBufs[id]='';
+  document.querySelectorAll('.pend-pin-wrap').forEach(p=>p.classList.remove('open'));
+  const wrap=document.getElementById('ppw-'+id);
+  if(wrap)wrap.classList.add('open');
+  atualizarDotsPendencia(id);
+  const err=document.getElementById('ppe-'+id);if(err)err.textContent='';
+  const pend=pendencias.find(p=>String(p.ID)===String(id));
+  const t=document.getElementById('ppt-'+id);
+  if(t){
+    const verbo=pendAcoes[id]==='rejeitar'?'Rejeitador':'Aprovador';
+    t.innerHTML=`Digite seu PIN para <b>${pendAcoes[id]==='rejeitar'?'rejeitar':'aprovar'}</b>. ${verbo} não pode ser <b>${pend?.SOLICITANTE||''}</b>.`;
+  }
+}
 
 async function pinPendencia(id,v){
+  if(salvando)return;
   if(!pendPinBufs[id])pendPinBufs[id]='';
   const err=document.getElementById('ppe-'+id);
   const pend=pendencias.find(p=>String(p.ID)===String(id));
@@ -1632,42 +1668,59 @@ async function pinPendencia(id,v){
   if(v==='ok'){
     if(pendPinBufs[id].length<4){err.textContent='Digite os 4 dígitos';return;}
     const pin=pendPinBufs[id];
-    mostrarLoading('Validando PIN...');
+    const acao=pendAcoes[id]||'aprovar';
+    salvando=true;
+    mostrarLoading(acao==='rejeitar'?'Rejeitando...':'Aprovando...');
     try{
-      const res=await apiPost({action:'validarPin',pin});
-      ocultarLoading();
-      if(!res.valido){err.textContent='PIN incorreto.';pendPinBufs[id]='';atualizarDotsPendencia(id);return;}
-      if(res.nome===pend?.SOLICITANTE){err.textContent='Você não pode aprovar sua própria solicitação.';pendPinBufs[id]='';atualizarDotsPendencia(id);return;}
-      err.textContent='';pendPinBufs[id]='';atualizarDotsPendencia(id);
-      aprovarPendenciaAPI(id,res.nome,pend);
-    }catch(e){ocultarLoading();err.textContent='Erro: '+e.message;pendPinBufs[id]='';atualizarDotsPendencia(id);}
+      // UMA única chamada: o backend valida o PIN e executa a ação
+      let nomeExecutor='';
+      if(acao==='rejeitar'){
+        const res=await apiPost({action:'rejeitarPendencia',idPendencia:id,pin});
+        nomeExecutor=res?.rejeitadaPor||'';
+      }else{
+        const res=await apiPost({action:'aprovarPendencia',idPendencia:id,idReceita:pend?.ID_RECEITA||recIdx,pin});
+        nomeExecutor=res?.aprovador2||'';
+      }
+      pendPinBufs[id]='';atualizarDotsPendencia(id);
+      // Recarrega pendências e permanece na tela
+      await carregarPendencias();
+      if(acao==='aprovar')carregarReceitas(); // atualiza receitas em segundo plano
+      renderPendencias();
+      ocultarLoading();salvando=false;
+      mostrarToastPendencia(acao==='rejeitar'?`Pendência rejeitada por ${nomeExecutor}`:`Pendência aprovada por ${nomeExecutor} — nova versão criada`,acao==='rejeitar');
+    }catch(e){
+      ocultarLoading();salvando=false;
+      const msg=e.message||'';
+      err.textContent=msg.includes('PIN inválido')?'PIN incorreto.'
+        :msg.includes('própria solicitação')||msg.includes('mesmo que solicitou')?'Você não pode '+(acao==='rejeitar'?'rejeitar':'aprovar')+' sua própria solicitação.'
+        :msg.includes('já foi')?msg
+        :'Erro: '+msg;
+      pendPinBufs[id]='';atualizarDotsPendencia(id);
+    }
     return;
   }
   if(pendPinBufs[id].length<4)pendPinBufs[id]+=v;
   atualizarDotsPendencia(id);
 }
 
-async function aprovarPendenciaAPI(idPendencia,aprovador2,pend){
-  mostrarLoading('Aprovando pendência...');
-  try{
-    await apiPost({action:'aprovarPendencia',idPendencia,aprovador2,idReceita:pend.ID_RECEITA||recIdx});
-    await carregarReceitas();
-    await carregarPendencias();
-    renderPendencias();
-    ocultarLoading();
-    mostrarSucesso('Nova versão criada!',`A receita foi atualizada. Versão anterior preservada no histórico.`,[{l:'Aprovador 2',v:aprovador2},{l:'Data',v:new Date().toLocaleDateString('pt-BR')},{l:'Status',v:'Aprovada'}],false,'s-hist');
-  }catch(e){console.error('Erro ao aprovar pendência:',e);}
+// Aviso temporário dentro da própria tela de pendências (sem sair dela)
+function mostrarToastPendencia(msg,ehRejeicao){
+  let el=document.getElementById('pend-toast');
+  if(!el){
+    el=document.createElement('div');
+    el.id='pend-toast';
+    el.style.cssText='position:fixed;left:50%;transform:translateX(-50%);bottom:76px;z-index:9999;padding:10px 18px;border-radius:22px;font-size:13px;font-weight:600;box-shadow:0 4px 14px rgba(0,0,0,.18);transition:opacity .3s;max-width:88%;text-align:center';
+    document.body.appendChild(el);
+  }
+  el.style.background=ehRejeicao?'#F2F2F2':'var(--green-light)';
+  el.style.color=ehRejeicao?'#6A6A6A':'var(--green)';
+  el.style.border='0.5px solid '+(ehRejeicao?'#D8D8D8':'#9AC09A');
+  el.textContent=msg;
+  el.style.opacity='1';
+  clearTimeout(window._pendToastT);
+  window._pendToastT=setTimeout(()=>{el.style.opacity='0';},3200);
 }
 
-async function rejeitarPendencia(id){
-  mostrarLoading('Rejeitando...');
-  try{
-    await apiPost({action:'rejeitarPendencia',idPendencia:id});
-    pendencias=pendencias.filter(p=>String(p.ID)!==String(id));
-    atualizarBadgePendencias();renderPendencias();
-  }catch(e){console.error('Erro ao rejeitar:',e);}
-  ocultarLoading();
-}
 function atualizarDotsPendencia(id){for(let i=0;i<4;i++){const d=document.getElementById(`ppd-${id}-${i}`);if(d)d.classList.toggle('f',i<(pendPinBufs[id]||'').length);}}
 
 // ── HISTÓRICO ────────────────────────────────────────────
@@ -2118,8 +2171,9 @@ function renderRevisaoNovaReceita(){
   const ts=Array.from(document.querySelectorAll('.tbloco')).map((tb,idx)=>{
     const n=parseInt(tb.querySelector('.nc').textContent)||idx+1;
     const ins=tb.querySelectorAll('input');
-    const sr=(ins[3]?.value||'0:0').split(':');
-    return{n,cod:ins[0]?.value||'',nome:ins[1]?.value||'—',camisa:document.getElementById('camisa-'+n)?.value||'',visc:ins[2]?.value||'—',rolo:document.getElementById('rolo-'+n)?.value||'',faca:document.getElementById('faca-'+n)?.value||'',secm:sr[0]||'0',secs:sr[1]||'0',estufa:document.getElementById('estufa-'+n)?.value||''};
+    const secm=document.getElementById('secm-'+n)?.value||'0';
+    const secs=document.getElementById('secs-'+n)?.value||'0';
+    return{n,cod:ins[0]?.value||'',nome:ins[1]?.value||'—',camisa:document.getElementById('camisa-'+n)?.value||'',visc:ins[2]?.value||'—',rolo:document.getElementById('rolo-'+n)?.value||'',faca:document.getElementById('faca-'+n)?.value||'',secm,secs,estufa:document.getElementById('estufa-'+n)?.value||''};
   });
   const pbInputs=document.querySelectorAll('#ns3 .pb input:not(#n-material), #ns3 .pb select');
   const pm=[
@@ -2192,7 +2246,7 @@ function ocultarLoading(){
   if(el)el.classList.remove('active');
 }
 
-function formatarSecagem(m,s){return m>0?`${m} min ${s} s`:`${s} s`;}
+function formatarSecagem(m,s){const mm=parseInt(m)||0,ss=parseInt(s)||0;return mm>0?`${mm} min ${ss} s`:`${ss} s`;}
 function formatarCodPAExibicao(v){
   if(!v)return'—';
   const s=String(v).replace(/\D/g,'');
