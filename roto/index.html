@@ -830,6 +830,10 @@ let repIniciada=false;
 let adminDesbloqueado=false;
 let pinBufAdmin='', adminAcao='', adminAlvoId='';
 const paramRefs={}, compRefs={};
+
+// Normaliza IDs vindos da planilha (podem ter apostrofo, espaco ou vir como numero)
+function normId(v){return (v===null||v===undefined)?'':String(v).replace(/^'/,'').trim();}
+function mesmoId(a,b){const na=normId(a),nb=normId(b);if(na===''||nb==='')return false;if(na===nb)return true;const fa=parseFloat(na),fb=parseFloat(nb);return !isNaN(fa)&&!isNaN(fb)&&fa===fb;}
 let MAQUINAS_ROTO = [];
 let maquinaAtual = localStorage.getItem('roto_maquina') || '';
 
@@ -1020,7 +1024,7 @@ function renderLista(lista) {
     return;
   }
   document.getElementById('lw').innerHTML = lista.length
-    ? lista.map(r=>{const obs=r.STATUS==='OBSOLETA';return `<div class="li${obs?' li-obs':''}" onclick="abrirRec(${r.ID})"><div class="lic"><i class="ti ti-file-description"></i></div><div class="lb"><div class="lt">${r.CLIENTE} — ${formatarCodPAExibicao(r.COD_PA)}</div><div class="ls">${r.SERVICO} · ${r.MAQUINA}</div>${r.ITENS_CONJUGACAO?`<div style="margin-top:4px"><span style="display:inline-flex;align-items:center;gap:4px;background:var(--amber-light);color:var(--amber);font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;border:0.5px solid #E8D5A8"><i class="ti ti-layers-linked" style="font-size:11px"></i> ${r.ITENS_CONJUGACAO}</span></div>`:''}</div><span class="${obs?'bobs':'bok'}">${obs?'<i class="ti ti-archive" style="font-size:10px;vertical-align:-1px"></i> Obsoleta':'Aprovada'}</span></div>`;}).join('')
+    ? lista.map(r=>{const obs=r.STATUS==='OBSOLETA';return `<div class="li${obs?' li-obs':''}" onclick="abrirRec('${r.ID}')"><div class="lic"><i class="ti ti-file-description"></i></div><div class="lb"><div class="lt">${r.CLIENTE} — ${formatarCodPAExibicao(r.COD_PA)}</div><div class="ls">${r.SERVICO} · ${r.MAQUINA}</div>${r.ITENS_CONJUGACAO?`<div style="margin-top:4px"><span style="display:inline-flex;align-items:center;gap:4px;background:var(--amber-light);color:var(--amber);font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;border:0.5px solid #E8D5A8"><i class="ti ti-layers-linked" style="font-size:11px"></i> ${r.ITENS_CONJUGACAO}</span></div>`:''}</div><span class="${obs?'bobs':'bok'}">${obs?'<i class="ti ti-archive" style="font-size:10px;vertical-align:-1px"></i> Obsoleta':'Aprovada'}</span></div>`;}).join('')
     : '<div style="padding:20px 0;text-align:center;font-size:13px;color:var(--text3)">Nenhuma receita encontrada</div>';
 }
 
@@ -1044,10 +1048,18 @@ function filtrarReceitas() {
 // ══════════════════════════════════════════════════════════
 
 async function abrirRec(id) {
-  recIdx = id;
+  recIdx = normId(id);
   repIniciada = false;
-  let r = receitas.find(x => String(x.ID) === String(id));
-  if (!r) return;
+  let r = receitas.find(x => mesmoId(x.ID, id));
+  if (!r) {
+    // Antes isto era um return silencioso: a tela ficava congelada na receita
+    // anterior e parecia que o app tinha travado. Agora avisa o que houve.
+    navegarTela('s-rec');
+    document.getElementById('rec-id').innerHTML =
+      `<div style="padding:24px 0;text-align:center;font-size:13px;color:var(--red);line-height:1.6">Nao foi possivel localizar a receita (ID: ${id===undefined?'vazio':id}).<br><span style="color:var(--text3);font-size:12px">Verifique a coluna ID da aba RECEITAS na planilha.</span></div>`;
+    ['rec-tintas','rec-params-box','rec-estufas','rec-conjugacoes','rec-obs','rec-admin-card','rec-obs-banner'].forEach(elId=>{const el=document.getElementById(elId);if(el)el.innerHTML='';});
+    return;
+  }
 
   // Receita obsoleta: operador não acessa. Pede PIN admin para entrar (e reativar).
   if (r.STATUS === 'OBSOLETA' && !adminDesbloqueado) {
@@ -1067,7 +1079,7 @@ async function abrirRec(id) {
       detalhe.conjugacoes = Array.isArray(detalhe.conjugacoes) ? detalhe.conjugacoes : [];
       detalhe._detalhesCarregados = true;
       // Atualizar na lista em memória
-      const idx2 = receitas.findIndex(x => String(x.ID) === String(id));
+      const idx2 = receitas.findIndex(x => mesmoId(x.ID, id));
       if (idx2 >= 0) receitas[idx2] = detalhe;
       r = detalhe;
     } catch(e) {
@@ -1145,12 +1157,12 @@ async function abrirRec(id) {
     // Sem registrar repetição
     btnRep.style.display = 'none';
     // Card admin: reativar
-    adminCard.innerHTML = `<div class="card" onclick="abrirAdminPin('reativar',${r.ID})" style="cursor:pointer;border:0.5px solid var(--blue-mid);background:var(--blue-light)"><div style="display:flex;align-items:center;gap:10px"><div style="width:32px;height:32px;border-radius:var(--rad);background:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="ti ti-restore" style="font-size:17px;color:var(--blue)"></i></div><div style="flex:1"><div style="font-size:13px;font-weight:600;color:var(--blue)">Reativar receita</div><div style="font-size:11px;color:var(--blue);opacity:.8;margin-top:1px">Torna a receita disponível para produção novamente</div></div><i class="ti ti-chevron-right" style="font-size:16px;color:var(--blue)"></i></div></div>`;
+    adminCard.innerHTML = `<div class="card" onclick="abrirAdminPin('reativar','${r.ID}')" style="cursor:pointer;border:0.5px solid var(--blue-mid);background:var(--blue-light)"><div style="display:flex;align-items:center;gap:10px"><div style="width:32px;height:32px;border-radius:var(--rad);background:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="ti ti-restore" style="font-size:17px;color:var(--blue)"></i></div><div style="flex:1"><div style="font-size:13px;font-weight:600;color:var(--blue)">Reativar receita</div><div style="font-size:11px;color:var(--blue);opacity:.8;margin-top:1px">Torna a receita disponível para produção novamente</div></div><i class="ti ti-chevron-right" style="font-size:16px;color:var(--blue)"></i></div></div>`;
   } else {
     banner.style.display = 'none';
     btnRep.style.display = '';
     // Card admin: obsoletar
-    adminCard.innerHTML = `<div class="card" onclick="abrirAdminPin('obsoletar',${r.ID})" style="cursor:pointer;border:0.5px solid var(--border2)"><div style="display:flex;align-items:center;gap:10px"><div style="width:32px;height:32px;border-radius:var(--rad);background:var(--bg);display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="ti ti-settings" style="font-size:17px;color:var(--text2)"></i></div><div style="flex:1"><div style="font-size:13px;font-weight:600;color:var(--text2)">Admin</div><div style="font-size:11px;color:var(--text3);margin-top:1px">Opções administrativas da receita</div></div><i class="ti ti-chevron-right" style="font-size:16px;color:var(--text3)"></i></div></div>`;
+    adminCard.innerHTML = `<div class="card" onclick="abrirAdminPin('obsoletar','${r.ID}')" style="cursor:pointer;border:0.5px solid var(--border2)"><div style="display:flex;align-items:center;gap:10px"><div style="width:32px;height:32px;border-radius:var(--rad);background:var(--bg);display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="ti ti-settings" style="font-size:17px;color:var(--text2)"></i></div><div style="flex:1"><div style="font-size:13px;font-weight:600;color:var(--text2)">Admin</div><div style="font-size:11px;color:var(--text3);margin-top:1px">Opções administrativas da receita</div></div><i class="ti ti-chevron-right" style="font-size:16px;color:var(--text3)"></i></div></div>`;
   }
 
   document.getElementById('sbw').innerHTML='';
@@ -1170,7 +1182,7 @@ function setConj(v){
 // ── REGISTRO DE REPETIÇÃO ────────────────────────────────
 
 function iniciarRepeticao() {
-  const r = receitas.find(x => String(x.ID) === String(recIdx));
+  const r = receitas.find(x => mesmoId(x.ID, recIdx));
   if (!r) return;
   const n = new Date();
   document.getElementById('rep-dt').textContent = n.toLocaleDateString('pt-BR')+' · '+n.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
@@ -1297,7 +1309,7 @@ function verificarParametro(id){const p=paramsDef.find(x=>x.id===id);if(p.tipo==
 function atualizarProgresso(){const norm=paramsDef.filter(p=>p.tipo!=='info');const f=norm.filter(p=>document.getElementById('pinp-'+p.id)?.value.trim()!=='').length;document.getElementById('rpg').style.width=Math.round((f/norm.length)*100)+'%';atualizarBotaoRevisar();}
 
 function atualizarBotaoRevisar(){
-  const r=receitas.find(x=>String(x.ID)===String(recIdx));
+  const r=receitas.find(x=>mesmoId(x.ID,recIdx));
   if(!r)return;
   const tintas=repTintasAtivas||[];
   const operOk=document.getElementById('oper-inp')?.value.trim()!=='';
@@ -1326,7 +1338,7 @@ function atualizarBotaoRevisar(){
 // ══════════════════════════════════════════════════════════
 
 function getDesvios(){
-  const r=receitas.find(x=>String(x.ID)===String(recIdx));
+  const r=receitas.find(x=>mesmoId(x.ID,recIdx));
   if(!r)return[];
   const tintas=repTintasAtivas||[];
   const pRef=r.parametros||{};
@@ -1357,7 +1369,7 @@ function getDesvios(){
 }
 
 function irRevisar(){
-  const r=receitas.find(x=>String(x.ID)===String(recIdx));
+  const r=receitas.find(x=>mesmoId(x.ID,recIdx));
   if(!r)return;
   const tintas=repTintasAtivas||[];
   const dvs=getDesvios();const cnt=dvs.length;
@@ -1521,7 +1533,7 @@ async function pinRepeticao(v){
 
 async function salvarRepeticao(aprovador) {
   mostrarLoading('Salvando repetição...');
-  const r=receitas.find(x=>String(x.ID)===String(recIdx));
+  const r=receitas.find(x=>mesmoId(x.ID,recIdx));
   if(!r)return;
   const tintas=repTintasAtivas||[];
   const op=document.getElementById('op-inp')?.value||'—';
@@ -1651,7 +1663,7 @@ function abrirPinPendencia(id,acao){
   if(wrap)wrap.classList.add('open');
   atualizarDotsPendencia(id);
   const err=document.getElementById('ppe-'+id);if(err)err.textContent='';
-  const pend=pendencias.find(p=>String(p.ID)===String(id));
+  const pend=pendencias.find(p=>mesmoId(p.ID,id));
   const t=document.getElementById('ppt-'+id);
   if(t){
     const verbo=pendAcoes[id]==='rejeitar'?'Rejeitador':'Aprovador';
@@ -1663,7 +1675,7 @@ async function pinPendencia(id,v){
   if(salvando)return;
   if(!pendPinBufs[id])pendPinBufs[id]='';
   const err=document.getElementById('ppe-'+id);
-  const pend=pendencias.find(p=>String(p.ID)===String(id));
+  const pend=pendencias.find(p=>mesmoId(p.ID,id));
   if(v==='back'){pendPinBufs[id]=pendPinBufs[id].slice(0,-1);atualizarDotsPendencia(id);return;}
   if(v==='ok'){
     if(pendPinBufs[id].length<4){err.textContent='Digite os 4 dígitos';return;}
@@ -1729,7 +1741,7 @@ let histReceita=null;
 
 function renderHistSel(lista){
   document.getElementById('hist-sel-list').innerHTML=lista.length
-    ?lista.map(r=>`<div class="li" onclick="abrirHistorico(${r.ID})"><div class="lic"><i class="ti ti-history"></i></div><div class="lb"><div class="lt">${r.CLIENTE} — ${formatarCodPAExibicao(r.COD_PA)}</div><div class="ls">${r.SERVICO} · ${r.MAQUINA}</div>${r.ITENS_CONJUGACAO?`<div style="margin-top:4px"><span style="display:inline-flex;align-items:center;gap:4px;background:var(--amber-light);color:var(--amber);font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;border:0.5px solid #E8D5A8"><i class="ti ti-layers-linked" style="font-size:11px"></i> ${r.ITENS_CONJUGACAO}</span></div>`:''}</div></div>`).join('')
+    ?lista.map(r=>`<div class="li" onclick="abrirHistorico('${r.ID}')"><div class="lic"><i class="ti ti-history"></i></div><div class="lb"><div class="lt">${r.CLIENTE} — ${formatarCodPAExibicao(r.COD_PA)}</div><div class="ls">${r.SERVICO} · ${r.MAQUINA}</div>${r.ITENS_CONJUGACAO?`<div style="margin-top:4px"><span style="display:inline-flex;align-items:center;gap:4px;background:var(--amber-light);color:var(--amber);font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;border:0.5px solid #E8D5A8"><i class="ti ti-layers-linked" style="font-size:11px"></i> ${r.ITENS_CONJUGACAO}</span></div>`:''}</div></div>`).join('')
     :'<div style="padding:20px 0;text-align:center;font-size:13px;color:var(--text3)">Nenhuma receita encontrada</div>';
 }
 
@@ -1816,7 +1828,7 @@ async function pinAdmin(v){
       mostrarLoading(novoStatus==='OBSOLETA'?'Obsoletando...':'Reativando...');
       const res=await apiPost({action:'alterarStatusReceita',idReceita:adminAlvoId,novoStatus,pin});
 
-      const idx=receitas.findIndex(x=>String(x.ID)===String(adminAlvoId));
+      const idx=receitas.findIndex(x=>mesmoId(x.ID,adminAlvoId));
       if(idx>=0)receitas[idx].STATUS=novoStatus;
       ocultarLoading();salvando=false;
       pinBufAdmin='';atualizarDotsAdmin();
@@ -1840,14 +1852,14 @@ async function imprimirReceita(id){
   mostrarLoading('Preparando impressão...');
   try{
     // Garante detalhe carregado
-    let r=receitas.find(x=>String(x.ID)===String(id));
+    let r=receitas.find(x=>mesmoId(x.ID,id));
     if(!r||!r._detalhesCarregados){
       const detalhe=await apiGet('getReceitaDetalhe',`&id=${id}`);
       detalhe.tintas=Array.isArray(detalhe.tintas)?detalhe.tintas:(detalhe.tintas?[detalhe.tintas]:[]);
       detalhe.parametros=Array.isArray(detalhe.parametros)?(detalhe.parametros[0]||{}):(detalhe.parametros||{});
       detalhe.versoes=Array.isArray(detalhe.versoes)?detalhe.versoes:[];
       detalhe._detalhesCarregados=true;
-      const idx=receitas.findIndex(x=>String(x.ID)===String(id));
+      const idx=receitas.findIndex(x=>mesmoId(x.ID,id));
       if(idx>=0)receitas[idx]=detalhe;
       r=detalhe;
     }
