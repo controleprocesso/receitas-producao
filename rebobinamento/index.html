@@ -83,6 +83,15 @@ textarea{resize:none;line-height:1.5;width:100%}
 .param-inp{width:100px;font-size:13px;padding:7px 10px;border:0.5px solid var(--border2);border-radius:var(--rad);background:var(--card);color:var(--text);text-align:center;outline:none}
 .param-sel{width:120px;font-size:12px;padding:7px 8px;border:0.5px solid var(--border2);border-radius:var(--rad);background:var(--card);color:var(--text);outline:none}
 .param-inp.dv,.param-sel.dv{border-color:var(--red-mid);background:var(--red-light);color:var(--red)}
+.cl-lbl{font-size:11px;color:var(--text3);margin-bottom:5px;font-weight:500}
+.cl-row{display:grid;grid-template-columns:1fr 1.25fr 1fr;gap:6px;align-items:end}
+.cl-cell{display:flex;flex-direction:column;gap:3px}
+.cl-cap{font-size:9px;text-transform:uppercase;letter-spacing:.04em;color:var(--text3);text-align:center}
+.cl-mm{width:100%;font-size:12px;padding:7px 4px;border:0.5px solid var(--border2);border-radius:var(--rad);background:var(--bg);color:var(--text2);text-align:center;outline:none;font-family:var(--font-sans)}
+.cl-val{width:100%;font-size:13px;font-weight:600;padding:7px 6px;border:0.5px solid var(--border2);border-radius:var(--rad);background:var(--card);color:var(--text);text-align:center;outline:none;font-family:var(--font-sans)}
+.cl-val:focus,.cl-mm:focus{border-color:var(--blue)}
+.param-faixa{font-size:10px;color:var(--text3);margin-top:5px;text-align:right}
+.param-faixa.dv{color:var(--red)}
 .just-inp{margin-top:6px}
 .just-inp label{font-size:11px;color:var(--red);font-weight:600;display:flex;align-items:center;gap:4px;margin-bottom:4px}
 .just-inp textarea{font-size:12px;padding:7px 9px;border:0.5px solid var(--red-mid);background:#FFF8F8}
@@ -487,6 +496,51 @@ function chaveMaquinaReb(m){
   return m;
 }
 function getParamsReb(maquina){ return PARAMS_REB[chaveMaquinaReb(maquina)] || []; }
+
+// ---------- Center line ----------
+// Parâmetros que NÃO recebem faixa de mín/máx (comparação continua exata).
+const CL_EXCLUIR = new Set([
+  "Tipo de Corte",
+  "Quant. de Faixas no Rolo Superior",
+  "Quant. de Faixas no Rolo Inferior",
+  "Dureza",
+  "Diâmetro",
+  "Quant. de Faixas no Rolo Dianteiro",
+  "Quant. de Faixas no Rolo Traseiro"
+]);
+// Elegibilidade na CRIAÇÃO (objeto cru do PARAMS_REB, usa p.lbl sem unidade)
+function temCL(p){ return p && p.tipo !== 'sel' && !CL_EXCLUIR.has(p.lbl); }
+function round2(x){ return Math.round(x*100)/100; }
+function numDec(v){ const n = parseFloat(String(v==null?'':v).trim().replace(',', '.')); return isNaN(n)?null:n; }
+// Calcula a banda ±10% a partir do valor central digitado
+function clBanda(valor){
+  const n = numDec(valor);
+  if(n===null) return {min:'',max:''};
+  return { min:String(round2(n*0.9)), max:String(round2(n*1.1)) };
+}
+// Na receita salva (objeto do backend, com VALOR_MIN / VALOR_MAX): tem banda?
+function temBanda(p){
+  return p && String(p.VALOR_MIN==null?'':p.VALOR_MIN).trim()!=='' && String(p.VALOR_MAX==null?'':p.VALOR_MAX).trim()!=='';
+}
+// true = dentro, false = fora, null = não dá pra avaliar (valor/min/max não numérico)
+function dentroBanda(valor, min, max){
+  const v=numDec(valor), lo=numDec(min), hi=numDec(max);
+  if(v===null||lo===null||hi===null) return null;
+  return v>=lo && v<=hi;
+}
+// Decisão única de desvio para um parâmetro na repetição
+function ehDesvio(p, valorReal, isSel){
+  const ref = String(p.VALOR||'');
+  if(temBanda(p)){
+    const d = dentroBanda(valorReal, p.VALOR_MIN, p.VALOR_MAX);
+    if(d!==null) return !d;
+    // fallback se algo não for numérico: compara exato com o valor central
+    return normDec(valorReal)!==normDec(ref);
+  }
+  const vCmp = isSel? valorReal : normDec(valorReal);
+  const refCmp = isSel? ref : normDec(ref);
+  return vCmp!==refCmp;
+}
 </script>
 <script>
 const API = 'https://script.google.com/macros/s/AKfycbwci4vlWiykFbD2_-4fiopy5Yy39R_yAcWCCdnxP-x4ywjcSygIxbQgZgg0Gaa1xAQ4/exec';
@@ -694,7 +748,7 @@ function renderRec(r){
     <div style="margin-top:10px"><div class="fl">Serviço</div><div class="fv">${r.SERVICO||'—'}</div></div>`;
   const params = r.parametros||[];
   document.getElementById('rec-params-box').innerHTML = params.length
-    ? params.map(p=>`<div class="pbox"><div class="pl">${p.CAMPO}</div><div class="pv">${p.VALOR||'—'}</div></div>`).join('')
+    ? params.map(p=>`<div class="pbox"><div class="pl">${p.CAMPO}</div><div class="pv">${p.VALOR||'—'}</div>${temBanda(p)?`<div style="font-size:10px;color:var(--text3);margin-top:2px">${p.VALOR_MIN} – ${p.VALOR_MAX}</div>`:''}</div>`).join('')
     : `<div style="font-size:12px;color:var(--text3)">Sem parâmetros</div>`;
   const obsEl=document.getElementById('rec-obs');
   if(r.OBSERVACOES && String(r.OBSERVACOES).trim()){
@@ -748,11 +802,32 @@ function montarParamCampos(){
   if(cont.dataset.maq === novaMaquina) return;
   cont.dataset.maq = novaMaquina;
   cont.innerHTML = params.map(p=>{
+    const lbl = `${p.lbl}${p.un?' ('+p.un+')':''}`;
+    if(temCL(p)){
+      return `<div style="margin-bottom:12px">
+        <div class="cl-lbl">${lbl}</div>
+        <div class="cl-row">
+          <div class="cl-cell"><span class="cl-cap">Mín</span><input id="pmin-${p.id}" class="cl-mm" type="text" inputmode="decimal" oninput="this.dataset.touched='1'"></div>
+          <div class="cl-cell"><span class="cl-cap">Valor</span><input id="pinp-${p.id}" class="cl-val" type="text" inputmode="decimal" oninput="clSync('${p.id}')"></div>
+          <div class="cl-cell"><span class="cl-cap">Máx</span><input id="pmax-${p.id}" class="cl-mm" type="text" inputmode="decimal" oninput="this.dataset.touched='1'"></div>
+        </div>
+      </div>`;
+    }
     const inp = p.tipo==='sel'
       ? `<select id="pinp-${p.id}" style="width:100%;font-size:12px;padding:7px 9px;border:0.5px solid var(--border2);border-radius:var(--rad);background:var(--card);color:var(--text)"><option value="">—</option>${p.opts.map(o=>`<option>${o}</option>`).join('')}</select>`
       : `<input id="pinp-${p.id}" type="text" inputmode="decimal" style="width:100%;font-size:12px;padding:7px 9px;border:0.5px solid var(--border2);border-radius:var(--rad);background:var(--card);color:var(--text)">`;
-    return `<div style="margin-bottom:8px"><div style="font-size:11px;color:var(--text3);margin-bottom:4px;font-weight:500">${p.lbl}${p.un?' ('+p.un+')':''}</div>${inp}</div>`;
+    return `<div style="margin-bottom:8px"><div style="font-size:11px;color:var(--text3);margin-bottom:4px;font-weight:500">${lbl}</div>${inp}</div>`;
   }).join('');
+}
+// Recalcula a banda ±10% ao digitar o valor central, sem sobrescrever min/máx já editados à mão
+function clSync(id){
+  const vEl=document.getElementById('pinp-'+id);
+  const minEl=document.getElementById('pmin-'+id);
+  const maxEl=document.getElementById('pmax-'+id);
+  if(!vEl||!minEl||!maxEl) return;
+  const b=clBanda(vEl.value);
+  if(minEl.dataset.touched!=='1') minEl.value=b.min;
+  if(maxEl.dataset.touched!=='1') maxEl.value=b.max;
 }
 
 // ---------- Revisão + PIN nova receita ----------
@@ -765,7 +840,16 @@ function bRv(){
   const oper=document.getElementById('n-oper').value.trim();
   const obs=document.getElementById('n-obs').value.trim();
 
-  const vals = params.map(p=>({campo:`${p.lbl}${p.un?' ('+p.un+')':''}`, valor:document.getElementById('pinp-'+p.id)?.value||'—'}));
+  const vals = params.map(p=>{
+    const valor = document.getElementById('pinp-'+p.id)?.value||'—';
+    let banda='';
+    if(temCL(p)){
+      const mn=document.getElementById('pmin-'+p.id)?.value||'';
+      const mx=document.getElementById('pmax-'+p.id)?.value||'';
+      if(mn!==''&&mx!=='') banda=`${mn} – ${mx}`;
+    }
+    return {campo:`${p.lbl}${p.un?' ('+p.un+')':''}`, valor, banda};
+  });
 
   document.getElementById('pnc').textContent = `${cli} — ${fmtCodPAExib(cod)}`;
   document.getElementById('rvw').innerHTML = `
@@ -779,7 +863,7 @@ function bRv(){
     </div>
     <div style="margin-top:8px"><div class="fl">Serviço</div><div class="fv">${serv}</div></div>
     <div class="sl" style="margin-top:16px">Parâmetros da máquina</div>
-    <div class="pb">${vals.map(v=>`<div class="pbox"><div class="pl">${v.campo}</div><div class="pv">${v.valor||'—'}</div></div>`).join('')}</div>
+    <div class="pb">${vals.map(v=>`<div class="pbox"><div class="pl">${v.campo}</div><div class="pv">${v.valor||'—'}</div>${v.banda?`<div style="font-size:10px;color:var(--text3);margin-top:2px">${v.banda}</div>`:''}</div>`).join('')}</div>
     ${obs?`<div class="sl" style="margin-top:16px">Observações</div><div style="font-size:13px;color:var(--text2);line-height:1.5">${obs}</div>`:''}
   `;
 }
@@ -808,10 +892,20 @@ async function salvarNovaReceita(aprovador){
   const params = getParamsReb(novaMaquina);
   const cli=document.getElementById('n-cli').value.trim();
   const cod=document.getElementById('n-cod').value.trim();
-  const parametros = params.map(p=>({
-    campo: `${p.lbl}${p.un?' ('+p.un+')':''}`,
-    valor: p.tipo==='sel' ? (document.getElementById('pinp-'+p.id)?.value||'') : normDec(document.getElementById('pinp-'+p.id)?.value||'')
-  }));
+  const parametros = params.map(p=>{
+    const base = {
+      campo: `${p.lbl}${p.un?' ('+p.un+')':''}`,
+      valor: p.tipo==='sel' ? (document.getElementById('pinp-'+p.id)?.value||'') : normDec(document.getElementById('pinp-'+p.id)?.value||''),
+      valorMin:'', valorMax:''
+    };
+    if(temCL(p)){
+      const mn=document.getElementById('pmin-'+p.id)?.value||'';
+      const mx=document.getElementById('pmax-'+p.id)?.value||'';
+      base.valorMin = mn!==''?normDec(mn):'';
+      base.valorMax = mx!==''?normDec(mx):'';
+    }
+    return base;
+  });
   const receita = {
     cliente:cli, codPA:cod,
     opCriacao:document.getElementById('n-op').value.trim(),
@@ -854,7 +948,8 @@ function irRep(){
     const inp = isSel
       ? `<select class="param-sel" id="rpar-${i}" onchange="chkP(${i},'${ref.replace(/'/g,"\\'")}')"><option value="">—</option><option>Faca</option><option>Lâmina</option></select>`
       : `<input class="param-inp" id="rpar-${i}" type="text" inputmode="decimal" oninput="chkP(${i},'${ref.replace(/'/g,"\\'")}')">`;
-    return `<div class="param-row"><div class="param-top"><div class="param-lbl">${p.CAMPO}</div>${inp}</div><div id="jprow-${i}" style="display:none" class="just-inp"><label><i class="ti ti-alert-triangle" style="font-size:11px;vertical-align:-1px"></i> Fora do especificado — justifique</label><textarea id="jparam-${i}" rows="2" placeholder="Justifique..."></textarea></div></div>`;
+    const faixa = temBanda(p) ? `<div class="param-faixa" id="faixa-${i}">Faixa: ${p.VALOR_MIN} – ${p.VALOR_MAX}</div>` : '';
+    return `<div class="param-row"><div class="param-top"><div class="param-lbl">${p.CAMPO}</div>${inp}</div>${faixa}<div id="jprow-${i}" style="display:none" class="just-inp"><label><i class="ti ti-alert-triangle" style="font-size:11px;vertical-align:-1px"></i> Fora do especificado — justifique</label><textarea id="jparam-${i}" rows="2" placeholder="Justifique..."></textarea></div></div>`;
   }).join('');
   uPrg();
   ir('s-rep');
@@ -881,14 +976,16 @@ function uBtn(){
 function chkP(i, ref){
   const el=document.getElementById('rpar-'+i);
   const just=document.getElementById('jprow-'+i);
+  const faixa=document.getElementById('faixa-'+i);
   const v=el.value.trim();
-  if(!v){ el.className=el.tagName==='SELECT'?'param-sel':'param-inp'; just.style.display='none'; uPrg(); return; }
   const isSel = el.tagName==='SELECT';
-  const vCmp = isSel? v : normDec(v);
-  const refCmp = isSel? String(ref) : normDec(String(ref));
-  const dv = vCmp!==refCmp;
+  if(!v){ el.className=isSel?'param-sel':'param-inp'; just.style.display='none'; if(faixa)faixa.classList.remove('dv'); uPrg(); return; }
+  const r = receitas.find(x=>String(x.ID)===String(recIdx));
+  const p = (r&&r.parametros?r.parametros[i]:null) || {VALOR:ref};
+  const dv = ehDesvio(p, v, isSel);
   el.className=(isSel?'param-sel':'param-inp')+(dv?' dv':'');
   just.style.display = dv?'block':'none';
+  if(faixa) faixa.classList.toggle('dv', dv);
   uPrg();
 }
 function getDvF(){
@@ -899,14 +996,13 @@ function getDvF(){
     const el=document.getElementById('rpar-'+i);
     if(!el) return;
     const v=el.value.trim();
-    const ref=String(p.VALOR||'');
     if(!v) return;
+    const ref=String(p.VALOR||'');
     const isSel = el.tagName==='SELECT';
-    const vCmp = isSel? v : normDec(v);
-    const refCmp = isSel? ref : normDec(ref);
-    if(vCmp!==refCmp){
+    if(ehDesvio(p, v, isSel)){
       const j=document.getElementById('jparam-'+i);
-      dvs.push({ idx:i, key:i, parametro:p.CAMPO, valorReceita:ref, valorReal:v, just: j?j.value.trim():'' });
+      dvs.push({ idx:i, key:i, parametro:p.CAMPO, valorReceita:ref, valorReal:v, just: j?j.value.trim():'',
+                 banda: temBanda(p)?`${p.VALOR_MIN} – ${p.VALOR_MAX}`:'' });
     }
   });
   return dvs;
@@ -930,9 +1026,8 @@ function irRevisar(){
     const val=el?el.value.trim():'';
     const ref=String(p.VALOR||'');
     const isSel = el && el.tagName==='SELECT';
-    const vCmp = isSel? val : normDec(val);
-    const refCmp = isSel? ref : normDec(ref);
-    const isDesvio = val!=='' && vCmp!==refCmp;
+    const isDesvio = val!=='' && ehDesvio(p, val, isSel);
+    const refTxt = temBanda(p) ? `${ref} (${p.VALOR_MIN} – ${p.VALOR_MAX})` : ref;
     if(!isDesvio){
       return `<div class="rev-row"><div class="rev-row-top"><div class="rev-lbl">${p.CAMPO}</div><div class="rev-right"><div class="rev-real">${val||'—'}</div></div></div></div>`;
     }
@@ -940,7 +1035,7 @@ function irRevisar(){
     const just=j?j.value.trim():'';
     return `<div class="rev-row">
       <div class="rev-row-top">
-        <div class="rev-lbl">${p.CAMPO}<div style="font-size:10px;color:var(--text3);margin-top:2px">Receita: ${ref}</div></div>
+        <div class="rev-lbl">${p.CAMPO}<div style="font-size:10px;color:var(--text3);margin-top:2px">Receita: ${refTxt}</div></div>
         <div class="rev-right"><div class="rev-real dv">${val} <span class="rev-dv-pill">desvio</span></div></div>
       </div>
       <div class="rev-just"><div class="rev-just-lbl">Justificativa</div>${just}</div>
