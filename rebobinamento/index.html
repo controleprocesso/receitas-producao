@@ -92,6 +92,25 @@ textarea{resize:none;line-height:1.5;width:100%}
 .cl-val:focus,.cl-mm:focus{border-color:var(--blue)}
 .param-faixa{font-size:10px;color:var(--text3);margin-top:5px;text-align:right}
 .param-faixa.dv{color:var(--red)}
+/* ---- Histórico (Etapa 1) ---- */
+.sec-lbl{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--text3);margin:4px 2px 8px}
+.volta{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:var(--blue);margin-bottom:12px;cursor:pointer}
+.vbloco{background:var(--card);border:0.5px solid var(--border);border-radius:var(--rad-lg);overflow:hidden;margin-bottom:12px}
+.vhead{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;padding:12px 14px}
+.vhead.va{background:var(--blue);color:#fff}
+.vhead.vi{background:var(--text3);color:#fff}
+.vht{font-size:13px;font-weight:700}
+.vhop{font-size:11px;opacity:.85;margin-top:3px}
+.vhr{font-size:10px;line-height:1.45;text-align:right;opacity:.9;white-space:nowrap}
+.vrep{padding:12px 14px;border-top:0.5px solid var(--border)}
+.vrep-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.vrop{font-size:13px;font-weight:700;color:var(--text)}
+.vrsub{font-size:11px;color:var(--text2);margin-top:3px;line-height:1.4}
+.vpill{font-size:10px;font-weight:600;padding:3px 9px;border-radius:20px;white-space:nowrap}
+.vpill.po{color:var(--green);background:var(--green-light)}
+.vpill.pd{color:var(--red);background:var(--red-light)}
+.dvbox{margin-top:9px;padding:9px 11px;background:var(--bg);border-radius:var(--rad)}
+.dvl{font-size:11px;color:var(--text2);line-height:1.6}
 #toast{position:fixed;left:50%;transform:translateX(-50%) translateY(20px);bottom:78px;z-index:9999;background:#1A1A18;color:#fff;font-size:13px;font-weight:500;padding:11px 18px;border-radius:22px;box-shadow:0 4px 16px rgba(0,0,0,.18);opacity:0;pointer-events:none;transition:opacity .22s ease,transform .22s ease;max-width:85%;text-align:center}
 #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 .just-inp{margin-top:6px}
@@ -254,6 +273,7 @@ textarea{resize:none;line-height:1.5;width:100%}
       <div class="card"><div class="sl">Parâmetros da máquina</div><div class="pb" id="rec-params-box"></div></div>
       <div class="card" id="rec-obs" style="display:none"></div>
       <button class="bp" onclick="irRep()"><i class="ti ti-clipboard-check"></i> Registrar repetição</button>
+      <button class="bs" onclick="histDaReceita()"><i class="ti ti-history"></i> Ver histórico desta receita</button>
       <div style="height:16px"></div>
     </div>
 
@@ -390,19 +410,21 @@ textarea{resize:none;line-height:1.5;width:100%}
 
     <!-- HISTÓRICO -->
     <div id="s-hist" class="sc">
-      <div class="met">
-        <div class="mt"><div class="ml">Repetições</div><div class="mv" id="h-tot">—</div></div>
-        <div class="mt"><div class="ml">Com desvio</div><div class="mv" style="color:var(--amber)" id="h-dv">—</div></div>
-        <div class="mt"><div class="ml">Versões</div><div class="mv" id="h-ver">—</div></div>
-        <div class="mt"><div class="ml">Taxa de adesão</div><div class="mv" id="h-taxa">—</div></div>
-      </div>
       <div class="sw" style="margin-bottom:8px"><i class="ti ti-search"></i><input type="text" placeholder="Buscar por Cód. PA ou cliente..." id="hs" oninput="filtrarH()"></div>
+      <div class="sec-lbl">Selecione a receita</div>
+      <div id="hres"></div>
+      <div style="height:16px"></div>
+    </div>
+
+    <!-- HISTÓRICO — detalhe de uma receita (carregado sob demanda) -->
+    <div id="s-hist-det" class="sc">
+      <div class="volta" onclick="voltarHist()"><i class="ti ti-arrow-left"></i> Histórico</div>
       <div class="fcs">
         <div class="fc fa" onclick="setFH(this,'todos')">Todos</div>
         <div class="fc" onclick="setFH(this,'ok')">Sem desvio</div>
         <div class="fc" onclick="setFH(this,'desvio')">Com desvio</div>
       </div>
-      <div id="hres"></div>
+      <div id="hdet"></div>
       <div style="height:16px"></div>
     </div>
 
@@ -666,7 +688,7 @@ function ir(id){
   if(el)el.classList.add('active');
   document.getElementById('main-content').scrollTop=0;
   const tpt=document.getElementById('tpt'), tps=document.getElementById('tps');
-  const map={'s-lista':['Receitas de Produto','Rebobinamento'],'s-rec':['Detalhe da receita','Rebobinamento'],'s-nova':['Nova receita','Rebobinamento'],'s-rep':['Registrar repetição','Rebobinamento'],'s-rev':['Revisão','Rebobinamento'],'s-suc':['Concluído','Rebobinamento'],'s-hist':['Histórico','Por receita · Rebobinamento'],'s-pend':['Pendências','Aguardando aprovação'],'s-pend-lock':['Pendências','Acesso restrito'],'s-painel':['Painel','Rebobinamento'],'s-painel-lock':['Painel','Acesso restrito']};
+  const map={'s-lista':['Receitas de Produto','Rebobinamento'],'s-rec':['Detalhe da receita','Rebobinamento'],'s-nova':['Nova receita','Rebobinamento'],'s-rep':['Registrar repetição','Rebobinamento'],'s-rev':['Revisão','Rebobinamento'],'s-suc':['Concluído','Rebobinamento'],'s-hist':['Histórico','Por receita · Rebobinamento'],'s-hist-det':['Histórico','Rebobinamento'],'s-pend':['Pendências','Aguardando aprovação'],'s-pend-lock':['Pendências','Acesso restrito'],'s-painel':['Painel','Rebobinamento'],'s-painel-lock':['Painel','Acesso restrito']};
   if(map[id]){ tpt.textContent=map[id][0]; tps.textContent=map[id][1]; }
   if(id==='s-hist') atualizarHistorico();
 }
@@ -1222,70 +1244,116 @@ async function garantirReceitasCompletas(){
 let filtroH = 'todos';
 async function atualizarHistorico(){
   if(!document.getElementById('s-hist').classList.contains('active')) return;
-  if(!receitasCompletasCarregadas){
-    document.getElementById('hres').innerHTML = '<div class="loading-wrap"><div class="spinner"></div><span style="font-size:13px;color:var(--text3)">Carregando histórico...</span></div>';
-    await garantirReceitasCompletas();
-  }
-  const totRep=receitasCompletas.reduce((s,r)=>s+(r.versoes||[]).reduce((s2,v)=>s2+(v.reps||[]).length,0),0);
-  const totDv=receitasCompletas.reduce((s,r)=>s+(r.versoes||[]).reduce((s2,v)=>s2+(v.reps||[]).filter(rep=>rep.TEM_DESVIO===true||rep.TEM_DESVIO==='TRUE').length,0),0);
-  const totVer=receitasCompletas.reduce((s,r)=>s+(r.versoes||[]).length,0);
-  const elTot=document.getElementById('h-tot'); if(elTot)elTot.textContent=totRep;
-  const elDv=document.getElementById('h-dv'); if(elDv)elDv.textContent=totDv;
-  const elVer=document.getElementById('h-ver'); if(elVer)elVer.textContent=totVer;
-  const elTaxa=document.getElementById('h-taxa'); if(elTaxa)elTaxa.textContent=totRep>0?Math.round(((totRep-totDv)/totRep)*100)+'%':'—';
-  renderH('', filtroH);
+  // ETAPA 1: nada de carregar todas as versões/repetições. A lista usa a
+  // lista leve que já está em memória; o histórico vem sob demanda ao tocar.
+  if(!receitas.length) await carregarReceitas();
+  renderH(document.getElementById('hs').value.toLowerCase().trim());
 }
-function filtrarH(){ const q=document.getElementById('hs').value.toLowerCase().trim(); renderH(q, filtroH); }
+
+function filtrarH(){ renderH(document.getElementById('hs').value.toLowerCase().trim()); }
+
+// Lista de receitas para seleção.
+function renderH(q){
+  const wrap=document.getElementById('hres');
+  if(!wrap) return;
+  let dados = receitas.slice();
+  if(q) dados = dados.filter(r=>String(r.COD_PA||'').toLowerCase().includes(q) || String(r.CLIENTE||'').toLowerCase().includes(q));
+  if(!dados.length){ wrap.innerHTML='<div class="card" style="text-align:center;font-size:13px;color:var(--text3);padding:20px">Nenhuma receita encontrada</div>'; return; }
+  wrap.innerHTML = dados.map(r=>`
+    <div class="li" onclick="abrirHist('${r.ID}')">
+      <div class="lic"><i class="ti ti-history"></i></div>
+      <div class="lb">
+        <div class="lt">${r.CLIENTE} — ${fmtCodPAExib(r.COD_PA)}</div>
+        <div class="ls">${r.SERVICO||'—'} · ${r.MAQUINA||'—'}</div>
+      </div>
+      <i class="ti ti-chevron-right" style="color:var(--text3);font-size:16px"></i>
+    </div>`).join('');
+}
+
+// Histórico de UMA receita, carregado sob demanda.
+let histDados = null;
+async function abrirHist(id){
+  showLoading('Carregando histórico...');
+  try{
+    histDados = await apiGet('getHistoricoReceita', `&id=${encodeURIComponent(id)}`);
+    hideLoading();
+    document.querySelectorAll('#s-hist-det .fc').forEach((c,i)=>c.classList.toggle('fa', i===0));
+    filtroH='todos';
+    renderHistDet();
+    ir('s-hist-det');
+    document.getElementById('tps').textContent = `${histDados.CLIENTE} · ${fmtCodPAExib(histDados.COD_PA)}`;
+  }catch(e){
+    hideLoading();
+    alert('Erro ao carregar histórico: '+e.message);
+  }
+}
+
+function voltarHist(){ ir('s-hist'); setTab('tab-h'); }
+
+// Atalho a partir da tela de detalhe da receita.
+async function histDaReceita(){
+  if(!recIdx) return;
+  setTab('tab-h');
+  await abrirHist(recIdx);
+}
+
 function setFH(el, t){
-  document.querySelectorAll('#s-hist .fc').forEach(c=>c.classList.remove('fa'));
+  document.querySelectorAll('#s-hist-det .fc').forEach(c=>c.classList.remove('fa'));
   el.classList.add('fa');
   filtroH = t;
-  renderH(document.getElementById('hs').value.toLowerCase().trim(), t);
+  renderHistDet();
 }
-function renderH(q, filtro){
-  let dados = receitasCompletas.filter(r=>(r.versoes||[]).some(v=>(v.reps||[]).length>0));
-  if(q) dados = dados.filter(r=>String(r.COD_PA||'').toLowerCase().includes(q) || String(r.CLIENTE||'').toLowerCase().includes(q));
-  if(filtro==='ok') dados = dados.map(r=>({...r, versoes:(r.versoes||[]).map(v=>({...v, reps:(v.reps||[]).filter(rep=>!(rep.TEM_DESVIO===true||rep.TEM_DESVIO==='TRUE'))})).filter(v=>v.reps.length>0)})).filter(r=>(r.versoes||[]).length>0);
-  if(filtro==='desvio') dados = dados.map(r=>({...r, versoes:(r.versoes||[]).map(v=>({...v, reps:(v.reps||[]).filter(rep=>rep.TEM_DESVIO===true||rep.TEM_DESVIO==='TRUE')})).filter(v=>v.reps.length>0)})).filter(r=>(r.versoes||[]).length>0);
-  const wrap=document.getElementById('hres');
-  if(!dados.length){ wrap.innerHTML=`<div class="card" style="text-align:center;font-size:13px;color:var(--text3);padding:20px">Nenhum resultado encontrado</div>`; return; }
-  wrap.innerHTML = dados.map(r=>{
-    const versoesDesc = (r.versoes||[]).slice().reverse();
+
+function renderHistDet(){
+  const wrap=document.getElementById('hdet');
+  if(!wrap || !histDados) return;
+  const opCriacao = histDados.OP_CRIACAO ? String(histDados.OP_CRIACAO) : '';
+
+  let versoes = (histDados.versoes||[]).map(v=>{
+    let reps = (v.reps||[]).slice();
+    const temDv = rep => rep.TEM_DESVIO===true || String(rep.TEM_DESVIO).toUpperCase()==='TRUE';
+    if(filtroH==='ok') reps = reps.filter(r=>!temDv(r));
+    if(filtroH==='desvio') reps = reps.filter(r=>temDv(r));
+    return {...v, reps};
+  });
+  if(filtroH!=='todos') versoes = versoes.filter(v=>v.reps.length>0);
+
+  if(!versoes.length){
+    wrap.innerHTML='<div class="card" style="text-align:center;font-size:13px;color:var(--text3);padding:20px">Nenhuma repetição neste filtro</div>';
+    return;
+  }
+
+  wrap.innerHTML = versoes.map(v=>{
+    const ativa = v.ATIVA===true || String(v.ATIVA).toUpperCase()==='TRUE';
+    const aprovs = `Aprov. 1: ${v.APROVADOR_1||'—'}` + (v.APROVADOR_2?`<br>Aprov. 2: ${v.APROVADOR_2}`:'');
     return `
-    <div class="card" style="padding:14px 16px 4px">
-      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px">
-        <div>
-          <div style="font-size:14px;font-weight:700;color:var(--text)">${r.CLIENTE} — ${fmtCodPAExib(r.COD_PA)}</div>
-          <div style="font-size:12px;color:var(--text2);margin-top:3px;line-height:1.4">${r.SERVICO||'—'}</div>
-          <div style="font-size:11px;color:var(--text3);margin-top:2px">${r.MAQUINA||'—'}</div>
+    <div class="vbloco">
+      <div class="vhead ${ativa?'va':'vi'}">
+        <div class="vhl">
+          <div class="vht">v${v.NUMERO_VERSAO} · ${ativa?'Receita vigente':'Receita anterior'}</div>
+          ${opCriacao?`<div class="vhop">OP de criação: ${opCriacao}</div>`:''}
         </div>
-        <span style="font-size:11px;font-weight:600;color:var(--blue);background:var(--blue-light);padding:3px 10px;border-radius:20px;white-space:nowrap">${(r.versoes||[]).reduce((s,v)=>s+(v.reps||[]).length,0)} rep.</span>
+        <div class="vhr">${fmtDataHora(v.DATA_CRIACAO)}<br>${aprovs}</div>
       </div>
-      <div style="position:relative;padding-left:20px;padding-bottom:8px">
-        <div style="position:absolute;left:4px;top:6px;bottom:6px;width:2px;background:var(--border2)"></div>
-        ${versoesDesc.map(v=>{
-          const ativa = v.ATIVA===true||v.ATIVA==='TRUE';
-          const porAlteracao = v.ORIGEM==='ALTERACAO_APROVADA';
-          const repsDesc = (v.reps||[]).slice().reverse();
-          return `
-          <div style="position:relative;margin-bottom:16px">
-            <div style="position:absolute;left:-20px;top:2px;width:11px;height:11px;border-radius:50%;background:${ativa?'#993C1D':'var(--text3)'};border:2px solid var(--card)"></div>
-            <div style="font-size:13px;font-weight:600;color:${ativa?'var(--text)':'var(--text2)'}">v${v.NUMERO_VERSAO} · ${ativa?'receita vigente':'receita anterior'}</div>
-            ${porAlteracao?'<span style="display:inline-block;margin-top:4px;font-size:10px;font-weight:600;color:var(--blue);background:var(--blue-light);padding:2px 8px;border-radius:20px">alteração aprovada</span>':''}
-            <div style="font-size:11px;color:var(--text3);margin-top:5px">${fmtDataHora(v.DATA_CRIACAO)} · aprov. 1: ${v.APROVADOR_1||'—'}${v.APROVADOR_2?' · aprov. 2: '+v.APROVADOR_2:''}</div>
-            ${repsDesc.length===0?`<div style="font-size:12px;color:var(--text3);margin-top:8px;padding:8px 10px;background:var(--bg);border-radius:8px">Nenhuma repetição registrada nesta versão.</div>`:repsDesc.map(rep=>{
-              const dv = rep.TEM_DESVIO===true||rep.TEM_DESVIO==='TRUE';
-              return `
-              <div style="position:relative;margin-top:12px;${dv?'border-left:2px solid var(--red-mid);padding-left:10px;margin-left:-10px':''}">
-                <div style="position:absolute;left:${dv?'-19px':'-17px'};top:3px;width:6px;height:6px;border-radius:50%;background:var(--text3)"></div>
-                <div style="font-size:12px;font-weight:600;color:var(--text2)">OP ${rep.OP_PRODUCAO||'—'} · ${rep.OPERADOR||'—'}</div>
-                <div style="font-size:11px;color:var(--text3);margin-top:2px">${fmtDataHora(rep.DATA_HORA)} · aprov: ${rep.APROVADOR||'—'}</div>
-                ${dv?'<span style="display:inline-block;margin-top:4px;font-size:10px;font-weight:600;color:var(--red);background:var(--red-light);padding:2px 8px;border-radius:20px">com desvio</span>':''}
-              </div>`;
-            }).join('')}
-          </div>`;
-        }).join('')}
-      </div>
+      ${v.reps.length===0
+        ? `<div class="vrep" style="color:var(--text3);font-size:12px">Nenhuma repetição registrada nesta versão.</div>`
+        : v.reps.map(rep=>{
+            const dv = rep.TEM_DESVIO===true || String(rep.TEM_DESVIO).toUpperCase()==='TRUE';
+            const desvios = (rep.desvios||[]).map(d=>
+              `<div class="dvl">• <b>${d.PARAMETRO}</b>: ${d.VALOR_RECEITA} → ${d.VALOR_REAL}${d.JUSTIFICATIVA?` <span style="color:var(--text3)">(${d.JUSTIFICATIVA})</span>`:''}</div>`
+            ).join('');
+            return `
+            <div class="vrep">
+              <div class="vrep-top">
+                <div>
+                  <div class="vrop">OP ${rep.OP_PRODUCAO||'—'}</div>
+                  <div class="vrsub">${rep.OPERADOR||'—'} · ${fmtDataHora(rep.DATA_HORA)} · Aprov: ${rep.APROVADOR||'—'}</div>
+                </div>
+                <span class="vpill ${dv?'pd':'po'}">${dv?'Com desvio':'Sem desvio'}</span>
+              </div>
+              ${desvios?`<div class="dvbox">${desvios}</div>`:''}
+            </div>`;
+          }).join('')}
     </div>`;
   }).join('');
 }
