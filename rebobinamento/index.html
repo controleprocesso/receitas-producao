@@ -92,6 +92,8 @@ textarea{resize:none;line-height:1.5;width:100%}
 .cl-val:focus,.cl-mm:focus{border-color:var(--blue)}
 .param-faixa{font-size:10px;color:var(--text3);margin-top:5px;text-align:right}
 .param-faixa.dv{color:var(--red)}
+#toast{position:fixed;left:50%;transform:translateX(-50%) translateY(20px);bottom:78px;z-index:9999;background:#1A1A18;color:#fff;font-size:13px;font-weight:500;padding:11px 18px;border-radius:22px;box-shadow:0 4px 16px rgba(0,0,0,.18);opacity:0;pointer-events:none;transition:opacity .22s ease,transform .22s ease;max-width:85%;text-align:center}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 .just-inp{margin-top:6px}
 .just-inp label{font-size:11px;color:var(--red);font-weight:600;display:flex;align-items:center;gap:4px;margin-bottom:4px}
 .just-inp textarea{font-size:12px;padding:7px 9px;border:0.5px solid var(--red-mid);background:#FFF8F8}
@@ -569,6 +571,9 @@ function jsonp(url){
   });
 }
 function apiGet(action, extra=''){ return jsonp(`${API}?action=${action}${extra}`); }
+
+// LIÇÃO 2: as escritas vão por GET com o corpo em &body= — o redirect do Apps Script
+// converte POST em GET e a resposta volta como HTML ("Unexpected token '<'").
 function apiPost(body){
   const clean = JSON.parse(JSON.stringify(body));
   let encoded;
@@ -577,8 +582,63 @@ function apiPost(body){
   return jsonp(`${API}?action=${body.action}&body=${encoded}`);
 }
 
+// LIÇÃO 4: retry APENAS em ações idempotentes. NUNCA em salvarReceita/salvarRepeticao —
+// se a 1ª chamada chegou e só a resposta se perdeu, o retry duplicaria o registro.
+const ACOES_IDEMPOTENTES = ['validarPin','aprovarPendencia','rejeitarPendencia','obsoletarReceita','reativarReceita'];
+async function apiPostIdem(body, tentativas=2){
+  if(!ACOES_IDEMPOTENTES.includes(body.action)) return apiPost(body);
+  let ultimoErro;
+  for(let i=0;i<tentativas;i++){
+    try { return await apiPost(body); }
+    catch(e){
+      ultimoErro = e;
+      // Não repetir erros de regra de negócio — só falha de transporte.
+      const m = String(e.message||'');
+      if(/PIN inválido|já foi|permissão|diferente de quem/i.test(m)) throw e;
+      if(i < tentativas-1) await new Promise(r=>setTimeout(r, 800));
+    }
+  }
+  throw ultimoErro;
+}
+
+// LIÇÃO 5: guard de "salvando" contra duplo clique em todos os teclados de PIN.
+let _salvando = false;
+function travarEnvio(){ if(_salvando) return false; _salvando = true; return true; }
+function liberarEnvio(){ _salvando = false; }
+
 // ---------- Utils ----------
 function normDec(v){ return String(v==null?'':v).trim().replace(',', '.'); }
+
+// LIÇÃO 6: mesma normalização de ID do backend — o Sheets devolve o mesmo ID ora como
+// número, ora como texto, às vezes com apóstrofo residual ou espaço.
+function normIdJS(v){
+  if(v===null||v===undefined) return '';
+  let s=String(v).trim();
+  while(s.charAt(0)==="'") s=s.substring(1);
+  return s.trim();
+}
+function mesmoIdJS(a,b){
+  const x=normIdJS(a), y=normIdJS(b);
+  if(x===''||y==='') return false;
+  if(x===y) return true;
+  const nx=Number(x), ny=Number(y);
+  return !isNaN(nx)&&!isNaN(ny)&&nx===ny;
+}
+
+// Toast de rodapé (~3s) — usado ao aprovar/rejeitar sem sair da tela.
+let _toastTimer=null;
+function toast(msg){
+  let el=document.getElementById('toast');
+  if(!el){
+    el=document.createElement('div');
+    el.id='toast';
+    document.body.appendChild(el);
+  }
+  el.textContent=msg;
+  el.classList.add('show');
+  clearTimeout(_toastTimer);
+  _toastTimer=setTimeout(()=>el.classList.remove('show'), 3000);
+}
 function fmtCodPA(input){
   let v=input.value.replace(/\D/g,'').slice(0,10);
   let out=v;
@@ -693,7 +753,7 @@ function rL(lista) {
     return;
   }
   document.getElementById('lw').innerHTML = lista.length
-    ? lista.map(r=>`<div class="li" onclick="abrirRec(${r.ID})"><div class="lic"><i class="ti ti-refresh"></i></div><div class="lb"><div class="lt">${r.CLIENTE} — ${fmtCodPAExib(r.COD_PA)}</div><div class="ls">${r.SERVICO} · ${r.MAQUINA}</div></div><span class="bok">Ativa</span></div>`).join('')
+    ? lista.map(r=>`<div class="li" onclick="abrirRec('${r.ID}')"><div class="lic"><i class="ti ti-refresh"></i></div><div class="lb"><div class="lt">${r.CLIENTE} — ${fmtCodPAExib(r.COD_PA)}</div><div class="ls">${r.SERVICO} · ${r.MAQUINA}</div></div><span class="bok">Ativa</span></div>`).join('')
     : '<div style="padding:20px 0;text-align:center;font-size:13px;color:var(--text3)">Nenhuma receita encontrada</div>';
 }
 function filtrar() {
@@ -713,7 +773,7 @@ function filtrar() {
 // ---------- Detalhe da receita ----------
 async function abrirRec(id){
   recIdx = id;
-  let r = receitas.find(x => String(x.ID) === String(id));
+  let r = receitas.find(x => mesmoIdJS(x.ID, id));
   if (!r) return;
   ir('s-rec');
   if (!r._detalhesCarregados) {
@@ -724,7 +784,7 @@ async function abrirRec(id){
       det.parametros = Array.isArray(det.parametros) ? det.parametros : [];
       det.versoes = Array.isArray(det.versoes) ? det.versoes : [];
       det._detalhesCarregados = true;
-      const idx2 = receitas.findIndex(x => String(x.ID) === String(id));
+      const idx2 = receitas.findIndex(x => mesmoIdJS(x.ID, id));
       if (idx2 >= 0) receitas[idx2] = det;
       r = det;
     } catch(e) {
@@ -874,20 +934,22 @@ async function pinN(v){
   if(v==='ok'){
     if(pinBufN.length<4){ err.textContent='Digite os 4 dígitos'; return; }
     const pin=pinBufN;
-    showLoading('Validando PIN...');
+    // LIÇÃO 1: uma chamada só — o PIN vai no payload e o backend valida internamente.
+    if(!travarEnvio()) return;
+    err.textContent='';
     try{
-      const res = await apiPost({action:'validarPin', pin});
-      hideLoading();
-      if(!res.valido){ err.textContent='PIN incorreto. Tente novamente.'; pinBufN=''; updDotsN(); return; }
-      err.textContent=''; pinBufN=''; updDotsN();
-      salvarNovaReceita(res.nome);
-    }catch(e){ hideLoading(); err.textContent='Erro: '+e.message; pinBufN=''; updDotsN(); }
+      await salvarNovaReceita(pin);
+      pinBufN=''; updDotsN();
+    }catch(e){
+      err.textContent = e.message || 'Erro ao salvar.';
+      pinBufN=''; updDotsN();
+    }finally{ liberarEnvio(); }
     return;
   }
   if(pinBufN.length<4) pinBufN+=v;
   updDotsN();
 }
-async function salvarNovaReceita(aprovador){
+async function salvarNovaReceita(pin){
   showLoading('Salvando receita...');
   const params = getParamsReb(novaMaquina);
   const cli=document.getElementById('n-cli').value.trim();
@@ -915,7 +977,8 @@ async function salvarNovaReceita(aprovador){
     observacoes:document.getElementById('n-obs').value.trim()
   };
   try{
-    await apiPost({action:'salvarReceita', receita, parametros, aprovador});
+    const res = await apiPost({action:'salvarReceita', receita, parametros, pin});
+    const aprovador = (res && res.aprovador) || '—';
     hideLoading();
     document.getElementById('suc-title').textContent='Receita salva!';
     document.getElementById('suc-sub').textContent=`${cli} · ${cod} está disponível para os operadores.`;
@@ -925,13 +988,13 @@ async function salvarNovaReceita(aprovador){
       <div class="trr"><span class="trl">Status</span><span class="trv">Ativa</span></div>`;
     ir('s-suc');
     await carregarReceitas();
-  }catch(e){ hideLoading(); document.getElementById('pne').textContent='Erro ao salvar: '+e.message; }
+  }catch(e){ hideLoading(); throw e; }
 }
 </script>
 <script>
 // ---------- Registro de repetição ----------
 function irRep(){
-  const r = receitas.find(x => String(x.ID) === String(recIdx));
+  const r = receitas.find(x => mesmoIdJS(x.ID, recIdx));
   if (!r) return;
   document.getElementById('oper-inp').value='';
   document.getElementById('op-inp').value='';
@@ -955,7 +1018,7 @@ function irRep(){
   ir('s-rep');
 }
 function uPrg(){
-  const r = receitas.find(x => String(x.ID) === String(recIdx));
+  const r = receitas.find(x => mesmoIdJS(x.ID, recIdx));
   const params = r?(r.parametros||[]):[];
   let f=0;
   params.forEach((p,i)=>{ if(document.getElementById('rpar-'+i)?.value.trim()!=='') f++; });
@@ -965,7 +1028,7 @@ document.addEventListener('input', e => {
   if (e.target.id && e.target.id.startsWith('jparam-')) uBtn();
 });
 function uBtn(){
-  const r = receitas.find(x => String(x.ID) === String(recIdx));
+  const r = receitas.find(x => mesmoIdJS(x.ID, recIdx));
   const params = r?(r.parametros||[]):[];
   const operOk=document.getElementById('oper-inp')?.value.trim()!=='';
   const opOk=document.getElementById('op-inp')?.value.trim()!=='';
@@ -980,7 +1043,7 @@ function chkP(i, ref){
   const v=el.value.trim();
   const isSel = el.tagName==='SELECT';
   if(!v){ el.className=isSel?'param-sel':'param-inp'; just.style.display='none'; if(faixa)faixa.classList.remove('dv'); uPrg(); return; }
-  const r = receitas.find(x=>String(x.ID)===String(recIdx));
+  const r = receitas.find(x=>mesmoIdJS(x.ID, recIdx));
   const p = (r&&r.parametros?r.parametros[i]:null) || {VALOR:ref};
   const dv = ehDesvio(p, v, isSel);
   el.className=(isSel?'param-sel':'param-inp')+(dv?' dv':'');
@@ -989,7 +1052,7 @@ function chkP(i, ref){
   uPrg();
 }
 function getDvF(){
-  const r = receitas.find(x => String(x.ID) === String(recIdx));
+  const r = receitas.find(x => mesmoIdJS(x.ID, recIdx));
   const params = r?(r.parametros||[]):[];
   const dvs=[];
   params.forEach((p,i)=>{
@@ -1010,7 +1073,7 @@ function getDvF(){
 
 // ---------- Revisão da repetição ----------
 function irRevisar(){
-  const r = receitas.find(x => String(x.ID) === String(recIdx));
+  const r = receitas.find(x => mesmoIdJS(x.ID, recIdx));
   const params = r?(r.parametros||[]):[];
   document.getElementById('rpctx').textContent = `${r.CLIENTE} — ${fmtCodPAExib(r.COD_PA)}`;
   const dvs = getDvF();
@@ -1064,7 +1127,7 @@ function irPinR(){
   const di=document.getElementById('rpd'); di.innerHTML='';
   if(dvs.length-altCnt>0) di.innerHTML+=`<span style="display:inline-flex;align-items:center;gap:4px;font-size:11px;background:var(--amber-light);color:var(--amber);padding:2px 8px;border-radius:20px;font-weight:600"><i class="ti ti-alert-triangle" style="font-size:10px"></i> ${dvs.length-altCnt} pontual(is)</span> `;
   if(altCnt>0) di.innerHTML+=`<span style="display:inline-flex;align-items:center;gap:4px;font-size:11px;background:var(--blue-light);color:var(--blue);padding:2px 8px;border-radius:20px;font-weight:600"><i class="ti ti-clock" style="font-size:10px"></i> ${altCnt} para pendência</span>`;
-  const r = receitas.find(x => String(x.ID) === String(recIdx));
+  const r = receitas.find(x => mesmoIdJS(x.ID, recIdx));
   document.getElementById('rpctx').textContent = r ? `${r.CLIENTE} — ${fmtCodPAExib(r.COD_PA)}` : '—';
   ir('s-pin-r');
 }
@@ -1089,20 +1152,21 @@ async function pinR(v){
   if(v==='ok'){
     if(pinBufR.length<4){ err.textContent='Digite os 4 dígitos'; return; }
     const pin=pinBufR;
-    showLoading('Validando PIN...');
+    if(!travarEnvio()) return;
+    err.textContent='';
     try{
-      const res = await apiPost({action:'validarPin', pin});
-      hideLoading();
-      if(!res.valido){ err.textContent='PIN incorreto. Tente novamente.'; pinBufR=''; updDotsR(); return; }
-      err.textContent=''; pinBufR=''; updDotsR();
-      salvarRepeticao(res.nome);
-    }catch(e){ hideLoading(); err.textContent='Erro: '+e.message; pinBufR=''; updDotsR(); }
+      await salvarRepeticao(pin);
+      pinBufR=''; updDotsR();
+    }catch(e){
+      err.textContent = e.message || 'Erro ao salvar.';
+      pinBufR=''; updDotsR();
+    }finally{ liberarEnvio(); }
     return;
   }
   if(pinBufR.length<4) pinBufR+=v;
   updDotsR();
 }
-async function salvarRepeticao(aprovador){
+async function salvarRepeticao(pin){
   showLoading('Salvando repetição...');
   const op=document.getElementById('op-inp')?.value||'—';
   const oper=document.getElementById('oper-inp')?.value||'—';
@@ -1119,10 +1183,11 @@ async function salvarRepeticao(aprovador){
   }));
 
   try{
-    await apiPost({action:'salvarRepeticao', idReceita:recIdx, opProducao:op, operador:oper, aprovador, temDesvio:dvs.length>0, desvios, pendencias:pends});
+    const res = await apiPost({action:'salvarRepeticao', idReceita:recIdx, opProducao:op, operador:oper, pin, temDesvio:dvs.length>0, desvios, pendencias:pends});
+    const aprovador = (res && res.aprovador) || '—';
     if(altCnt>0) await carregarPendencias();
-    const r = receitas.find(x => String(x.ID) === String(recIdx));
-    const idx2 = receitas.findIndex(x => String(x.ID) === String(recIdx));
+    const r = receitas.find(x => mesmoIdJS(x.ID, recIdx));
+    const idx2 = receitas.findIndex(x => mesmoIdJS(x.ID, recIdx));
     if(idx2>=0) receitas[idx2]._detalhesCarregados=false;
     receitasCompletasCarregadas=false;
     hideLoading();
@@ -1134,7 +1199,7 @@ async function salvarRepeticao(aprovador){
       <div class="trr"><span class="trl">Desvios</span><span class="trv">${dvs.length}</span></div>
       ${altCnt?`<div class="trr"><span class="trl">Enviado para pendência</span><span class="trv">${altCnt}</span></div>`:''}`;
     ir('s-suc');
-  }catch(e){ hideLoading(); document.getElementById('pre2').textContent='Erro ao salvar: '+e.message; }
+  }catch(e){ hideLoading(); throw e; }
 }
 </script>
 <script>
@@ -1282,7 +1347,7 @@ function abrirPendPin(id){
   if(!pendPinBufs[id])pendPinBufs[id]='';
   document.querySelectorAll('.pend-pin-wrap').forEach(p=>p.classList.remove('open'));
   document.getElementById('ppw-'+id)?.classList.add('open');
-  const pend=pendencias.find(p=>String(p.ID)===String(id));
+  const pend=pendencias.find(p=>mesmoIdJS(p.ID, id));
   document.getElementById('pptxt-'+id).innerHTML=`Digite seu PIN para <b>aprovar</b>. Não pode ser <b>${pend?.SOLICITANTE||'—'}</b>.`;
   const ok=document.getElementById('ppok-'+id); if(ok){ ok.style.background='var(--blue-light)'; ok.style.color='var(--blue)'; }
   pendPinBufs[id]='';
@@ -1293,7 +1358,7 @@ function abrirRejPin(id){
   if(!pendPinBufs[id])pendPinBufs[id]='';
   document.querySelectorAll('.pend-pin-wrap').forEach(p=>p.classList.remove('open'));
   document.getElementById('ppw-'+id)?.classList.add('open');
-  const pend=pendencias.find(p=>String(p.ID)===String(id));
+  const pend=pendencias.find(p=>mesmoIdJS(p.ID, id));
   document.getElementById('pptxt-'+id).innerHTML=`Digite seu PIN para <b>rejeitar</b> esta solicitação de <b>${pend?.SOLICITANTE||'—'}</b>.`;
   const ok=document.getElementById('ppok-'+id); if(ok){ ok.style.background='var(--red-light)'; ok.style.color='var(--red)'; }
   pendPinBufs[id]='';
@@ -1310,28 +1375,30 @@ async function pinPend(id, v){
   if(v==='back'){ pendPinBufs[id]=pendPinBufs[id].slice(0,-1); updPendDots(id); return; }
   if(v==='ok'){
     if(pendPinBufs[id].length<4){ err.textContent='Digite os 4 dígitos'; return; }
-    const pend=pendencias.find(p=>String(p.ID)===String(id));
+    const pend=pendencias.find(p=>mesmoIdJS(p.ID, id));
     const modo=pendActionMode[id]||'aprovar';
-    showLoading('Validando PIN...');
+    // LIÇÃO 1 + 5: uma chamada só, com guard contra duplo clique.
+    // A regra "aprovador ≠ solicitante" agora é validada NO SERVIDOR.
+    if(!travarEnvio()) return;
+    showLoading(modo==='aprovar'?'Aprovando...':'Rejeitando...');
     try{
-      const res=await apiPost({action:'validarPin', pin:pendPinBufs[id]});
-      if(!res.valido){ hideLoading(); err.textContent='PIN incorreto.'; pendPinBufs[id]=''; updPendDots(id); return; }
-      if(pend && res.nome===pend.SOLICITANTE){ hideLoading(); err.textContent='Deve ser diferente de quem solicitou.'; pendPinBufs[id]=''; updPendDots(id); return; }
+      const acao = modo==='aprovar' ? 'aprovarPendencia' : 'rejeitarPendencia';
+      await apiPostIdem({action:acao, idPendencia:id, pin:pendPinBufs[id]});
       if(modo==='aprovar'){
-        showLoading('Aprovando...');
-        await apiPost({action:'aprovarPendencia', idPendencia:id, aprovador2:res.nome});
-        const rec = receitas.find(r=>String(r.ID)===String(pend?.ID_RECEITA));
+        const rec = receitas.find(r=>mesmoIdJS(r.ID, pend&&pend.ID_RECEITA));
         if(rec) rec._detalhesCarregados=false;
         receitasCompletasCarregadas=false;
-      } else {
-        showLoading('Rejeitando...');
-        await apiPost({action:'rejeitarPendencia', idPendencia:id, rejeitadoPor:res.nome});
       }
       hideLoading();
-      pendencias = pendencias.filter(p=>String(p.ID)!==String(id));
-      carregarPendencias();
+      pendPinBufs[id]=''; pendActionMode[id]=null;
+      await carregarPendencias();
       renderPend();
-    }catch(e){ hideLoading(); err.textContent='Erro: '+e.message; pendPinBufs[id]=''; updPendDots(id); }
+      toast(modo==='aprovar'?'Pendência aprovada.':'Pendência rejeitada.');
+    }catch(e){
+      hideLoading();
+      err.textContent = e.message || 'Erro ao processar.';
+      pendPinBufs[id]=''; updPendDots(id);
+    }finally{ liberarEnvio(); }
     return;
   }
   if(pendPinBufs[id].length<4) pendPinBufs[id]+=v;
