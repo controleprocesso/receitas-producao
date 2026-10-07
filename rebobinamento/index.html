@@ -675,8 +675,8 @@ function fmtCodPAExib(cod){
 }
 function fmtDataHora(s){
   if(!s) return '—';
-  const m = String(s).match(/(\d{2})\/(\d{2})\/\d{4},?\s*(\d{2}):(\d{2})/);
-  return m ? `${m[1]}/${m[2]} às ${m[3]}:${m[4]}` : String(s);
+  const m = String(s).match(/(\d{2})\/(\d{2})\/(\d{4}),?\s*(\d{2}):(\d{2})/);
+  return m ? `${m[1]}/${m[2]}/${m[3]} às ${m[4]}:${m[5]}` : String(s);
 }
 function showLoading(msg){ document.getElementById('overlay-msg').textContent=msg||'Carregando...'; document.getElementById('overlay-loading').classList.add('active'); }
 function hideLoading(){ document.getElementById('overlay-loading').classList.remove('active'); }
@@ -1033,8 +1033,9 @@ function irRep(){
     const inp = isSel
       ? `<select class="param-sel" id="rpar-${i}" onchange="chkP(${i},'${ref.replace(/'/g,"\\'")}')"><option value="">—</option><option>Faca</option><option>Lâmina</option></select>`
       : `<input class="param-inp" id="rpar-${i}" type="text" inputmode="decimal" oninput="chkP(${i},'${ref.replace(/'/g,"\\'")}')">`;
-    const faixa = temBanda(p) ? `<div class="param-faixa" id="faixa-${i}">Faixa: ${p.VALOR_MIN} – ${p.VALOR_MAX}</div>` : '';
-    return `<div class="param-row"><div class="param-top"><div class="param-lbl">${p.CAMPO}</div>${inp}</div>${faixa}<div id="jprow-${i}" style="display:none" class="just-inp"><label><i class="ti ti-alert-triangle" style="font-size:11px;vertical-align:-1px"></i> Fora do especificado — justifique</label><textarea id="jparam-${i}" rows="2" placeholder="Justifique..."></textarea></div></div>`;
+    // A faixa (center line) NÃO é exibida ao operador: ela só decide, nos bastidores,
+    // se o valor digitado conta como desvio.
+    return `<div class="param-row"><div class="param-top"><div class="param-lbl">${p.CAMPO}</div>${inp}</div><div id="jprow-${i}" style="display:none" class="just-inp"><label><i class="ti ti-alert-triangle" style="font-size:11px;vertical-align:-1px"></i> Fora do especificado — justifique</label><textarea id="jparam-${i}" rows="2" placeholder="Justifique..."></textarea></div></div>`;
   }).join('');
   uPrg();
   ir('s-rep');
@@ -1061,16 +1062,14 @@ function uBtn(){
 function chkP(i, ref){
   const el=document.getElementById('rpar-'+i);
   const just=document.getElementById('jprow-'+i);
-  const faixa=document.getElementById('faixa-'+i);
   const v=el.value.trim();
   const isSel = el.tagName==='SELECT';
-  if(!v){ el.className=isSel?'param-sel':'param-inp'; just.style.display='none'; if(faixa)faixa.classList.remove('dv'); uPrg(); return; }
+  if(!v){ el.className=isSel?'param-sel':'param-inp'; just.style.display='none'; uPrg(); return; }
   const r = receitas.find(x=>mesmoIdJS(x.ID, recIdx));
   const p = (r&&r.parametros?r.parametros[i]:null) || {VALOR:ref};
   const dv = ehDesvio(p, v, isSel);
   el.className=(isSel?'param-sel':'param-inp')+(dv?' dv':'');
   just.style.display = dv?'block':'none';
-  if(faixa) faixa.classList.toggle('dv', dv);
   uPrg();
 }
 function getDvF(){
@@ -1307,7 +1306,6 @@ function setFH(el, t){
 function renderHistDet(){
   const wrap=document.getElementById('hdet');
   if(!wrap || !histDados) return;
-  const opCriacao = histDados.OP_CRIACAO ? String(histDados.OP_CRIACAO) : '';
 
   let versoes = (histDados.versoes||[]).map(v=>{
     let reps = (v.reps||[]).slice();
@@ -1331,7 +1329,7 @@ function renderHistDet(){
       <div class="vhead ${ativa?'va':'vi'}">
         <div class="vhl">
           <div class="vht">v${v.NUMERO_VERSAO} · ${ativa?'Receita vigente':'Receita anterior'}</div>
-          ${opCriacao?`<div class="vhop">OP de criação: ${opCriacao}</div>`:''}
+          ${v.OP_ORIGEM?`<div class="vhop">${(parseInt(v.NUMERO_VERSAO)||0)<=1?'OP de criação':'OP de origem'}: ${v.OP_ORIGEM}</div>`:''}
         </div>
         <div class="vhr">${fmtDataHora(v.DATA_CRIACAO)}<br>${aprovs}</div>
       </div>
@@ -1339,9 +1337,7 @@ function renderHistDet(){
         ? `<div class="vrep" style="color:var(--text3);font-size:12px">Nenhuma repetição registrada nesta versão.</div>`
         : v.reps.map(rep=>{
             const dv = rep.TEM_DESVIO===true || String(rep.TEM_DESVIO).toUpperCase()==='TRUE';
-            const desvios = (rep.desvios||[]).map(d=>
-              `<div class="dvl">• <b>${d.PARAMETRO}</b>: ${d.VALOR_RECEITA} → ${d.VALOR_REAL}${d.JUSTIFICATIVA?` <span style="color:var(--text3)">(${d.JUSTIFICATIVA})</span>`:''}</div>`
-            ).join('');
+            // Só a pill indica se houve desvio; o detalhe fica fora do histórico.
             return `
             <div class="vrep">
               <div class="vrep-top">
@@ -1351,7 +1347,6 @@ function renderHistDet(){
                 </div>
                 <span class="vpill ${dv?'pd':'po'}">${dv?'Com desvio':'Sem desvio'}</span>
               </div>
-              ${desvios?`<div class="dvbox">${desvios}</div>`:''}
             </div>`;
           }).join('')}
     </div>`;
