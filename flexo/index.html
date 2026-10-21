@@ -151,6 +151,7 @@ textarea{resize:none;line-height:1.5;width:100%}
 .ver-hdr-block.obsoleta{background:var(--bg);border:0.5px solid var(--border);border-bottom:none;border-radius:var(--rad-lg) var(--rad-lg) 0 0}
 .ver-hdr-lbl{font-size:14px;font-weight:700;display:flex;align-items:center;gap:6px}
 .ver-hdr-op{font-size:11px;margin-top:3px}
+.ver-hdr-alt{font-size:11px;margin-top:2px;line-height:1.4}.ver-hdr-block.vigente .ver-hdr-alt{color:rgba(255,255,255,0.92)}.ver-hdr-block.obsoleta .ver-hdr-alt{color:var(--text2)}
 .ver-hdr-block.vigente .ver-hdr-op{color:rgba(255,255,255,0.75)}.ver-hdr-block.obsoleta .ver-hdr-op{color:var(--text3)}
 .ver-hdr-block.vigente .ver-hdr-lbl{color:#fff}.ver-hdr-block.obsoleta .ver-hdr-lbl{color:var(--text2)}
 .ver-hdr-right{display:flex;flex-direction:column;align-items:flex-end;gap:3px}
@@ -186,6 +187,14 @@ textarea{resize:none;line-height:1.5;width:100%}
 .pend-rej{padding:7px 14px;border-radius:var(--rad);font-size:12px;font-weight:600;border:0.5px solid var(--border2);background:transparent;color:var(--text2);cursor:pointer;font-family:var(--font)}
 .pend-apr{padding:7px 14px;border-radius:var(--rad);font-size:12px;font-weight:600;border:none;background:var(--blue);color:#fff;cursor:pointer;font-family:var(--font)}
 .pend-pin-wrap{background:var(--bg);padding:12px 14px;display:none;border-top:0.5px solid var(--border)}.pend-pin-wrap.open{display:block}
+.pend-apr:disabled{opacity:.45;cursor:not-allowed}
+.pend-item{padding:10px 0;border-bottom:0.5px solid var(--border)}.pend-item:first-child{padding-top:0}.pend-item:last-child{border-bottom:none;padding-bottom:0}
+.pend-item .pend-row{padding:0;border:none}
+.pend-dec{display:flex;gap:6px;justify-content:flex-end;margin-top:8px}
+.pd-btn{padding:6px 12px;border-radius:var(--rad);font-size:12px;font-weight:600;border:0.5px solid var(--border2);background:var(--card);color:var(--text2);cursor:pointer;font-family:var(--font);display:inline-flex;align-items:center;gap:4px}
+.pd-btn i{font-size:13px}.pd-btn.on-apr{background:var(--blue);border-color:var(--blue);color:#fff}.pd-btn.on-rej{background:var(--red-light);border-color:var(--red-mid);color:var(--red)}
+.pend-all{display:flex;align-items:center;justify-content:flex-end;gap:4px;font-size:11px;color:var(--text3);margin-bottom:10px}
+.pend-all button{background:transparent;border:none;color:var(--blue);font-size:11px;font-weight:600;cursor:pointer;font-family:var(--font);padding:2px 4px}
 .pin-w{display:flex;flex-direction:column;align-items:center;padding:4px 0 8px}
 .pin-t{font-size:15px;font-weight:700;color:var(--text);margin-bottom:4px}
 .pin-s{font-size:12px;color:var(--text2);margin-bottom:14px;text-align:center;line-height:1.5}
@@ -227,19 +236,21 @@ textarea{resize:none;line-height:1.5;width:100%}
 @media print{
   body *{visibility:hidden}
   #print-area,#print-area *{visibility:visible}
-  #print-area{position:absolute;left:0;top:0;width:100%;padding:0;margin:0}
+  #print-area{position:absolute;left:0;top:0;width:100%;padding:0;margin:0;color:#111;font-family:Arial,Helvetica,sans-serif}
   @page{size:A4;margin:10mm}
-  .pa-h{font-size:15px;font-weight:700;margin-bottom:2px}
-  .pa-sub{font-size:10px;color:#555;margin-bottom:8px}
-  .pa-sec{font-size:10px;font-weight:700;text-transform:uppercase;color:#333;border-bottom:1px solid #333;padding-bottom:2px;margin:8px 0 4px}
-  .pa-grid{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:2px 10px;font-size:9px;margin-bottom:4px}
-  .pa-grid .l{color:#666}.pa-grid .v{font-weight:600}
-  .pa-conj{background:#F5E9CC!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;padding:4px 8px;font-size:10px;font-weight:600;margin-bottom:6px;border:1px solid #C9A94D}
-  table.pa-t{width:100%;border-collapse:collapse;font-size:9px;margin-bottom:6px}
-  table.pa-t th,table.pa-t td{border:0.5px solid #999;padding:2px 4px;text-align:left}
-  table.pa-t th{background:#EEE!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;font-weight:700}
-  .pa-ver{font-size:10px;font-weight:700;margin:6px 0 2px;background:#EEE!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;padding:2px 6px}
-  .pa-dv{color:#B00;font-weight:600}
+  .pa-h{font-size:20px;font-weight:700;margin-bottom:2px}
+  .pa-sub{font-size:11px;color:#444;margin-bottom:6px}
+  .pa-alerta{border:1px solid #B00;color:#B00;border-radius:4px;padding:5px 8px;font-size:10px;margin:6px 0}
+  .pa-sec{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.3px;border-bottom:1.5px solid #111;padding-bottom:3px;margin:12px 0 6px}
+  .pa-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:5px 14px}
+  .pa-f .l{font-size:8px;text-transform:uppercase;color:#666;letter-spacing:.2px}
+  .pa-f .v{font-size:10.5px;font-weight:700}
+  table.pa-t{width:100%;border-collapse:collapse;font-size:10px}
+  table.pa-t th,table.pa-t td{border:0.5px solid #888;padding:4px 6px;text-align:left}
+  table.pa-t th{font-size:8.5px;text-transform:uppercase;background:#EEE!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;font-weight:700}
+  .pa-chips{display:flex;gap:8px}
+  .pa-chip{border:1px solid #888;border-radius:5px;padding:3px 10px;font-size:10px}
+  .pa-obs{margin:0;padding-left:16px;font-size:10px;line-height:1.5}
 }
 #print-area{display:none}
 @media print{#print-area{display:block}}
@@ -265,7 +276,7 @@ textarea{resize:none;line-height:1.5;width:100%}
   <div class="card"><div class="sl">Temperatura de secagem</div><div class="pb"><div class="pbox"><div class="pl">Entre Cores</div><div class="pv" id="rec-sec-ec">—</div></div><div class="pbox"><div class="pl">Superior</div><div class="pv" id="rec-sec-sup">—</div></div></div></div>
   <div class="card" style="overflow:hidden;padding:0" id="rec-faca-vis"></div>
   <div class="card" id="rec-obs" style="display:none"></div>
-  <div id="rec-obs-banner" class="bcard bcard-obs" style="display:none"><div class="bci" style="background:#DDE1E5"><i class="ti ti-archive" style="font-size:18px;color:#7A8694"></i></div><div><div class="bct" style="color:#5B6570">Receita obsoleta</div><div class="bcs">Não disponível para produção. Visível apenas para administradores.</div></div></div>
+  <div id="rec-obs-banner" class="bcard bcard-obs" style="display:none;align-items:flex-start"><div class="bci" style="background:#DDE1E5"><i class="ti ti-archive" style="font-size:18px;color:#7A8694"></i></div><div><div class="bct" style="color:#5B6570">Receita obsoleta</div><div class="bcs">Não disponível para produção. Visível apenas para administradores.</div><div id="rec-obs-info" style="margin-top:6px;font-size:12px;color:#5B6570;line-height:1.5"></div></div></div>
   <button class="bp" id="btn-registrar-rep" onclick="repIniciada=false;ir('s-rep')"><i class="ti ti-clipboard-check"></i> Registrar repetição</button>
   <button class="bs" onclick="abrirHistorico(recIdx)"><i class="ti ti-history"></i> Ver histórico desta receita</button>
   <button class="bs" onclick="imprimirReceita()"><i class="ti ti-printer"></i> Imprimir receita</button>
@@ -302,7 +313,7 @@ textarea{resize:none;line-height:1.5;width:100%}
 
 <div id="s-pin-r" class="sc"><div class="card"><div class="pin-w"><div class="pin-t">Aprovação do supervisor</div><div class="pin-s" id="rps">Supervisor, revise e aprove com PIN.</div><div class="pin-cx"><div class="pcl">Repetição sendo aprovada</div><div class="pcv" id="rpctx">—</div><div id="rpd" style="margin-top:6px;display:flex;flex-wrap:wrap;gap:4px"></div><div style="margin-top:6px;font-size:11px;color:var(--text3)">Operador: <span id="rep-oper-display" style="font-weight:600;color:var(--text)">—</span></div><div style="font-size:11px;color:var(--text3);margin-top:2px">Aprovador: <span style="font-weight:600;color:var(--blue)">identificado pelo PIN</span></div></div><div class="pin-ds"><div class="pin-d" id="prd0"></div><div class="pin-d" id="prd1"></div><div class="pin-d" id="prd2"></div><div class="pin-d" id="prd3"></div></div><div class="pin-g"><button class="pib" onclick="ppR('1')">1</button><button class="pib" onclick="ppR('2')">2</button><button class="pib" onclick="ppR('3')">3</button><button class="pib" onclick="ppR('4')">4</button><button class="pib" onclick="ppR('5')">5</button><button class="pib" onclick="ppR('6')">6</button><button class="pib" onclick="ppR('7')">7</button><button class="pib" onclick="ppR('8')">8</button><button class="pib" onclick="ppR('9')">9</button><button class="pib" style="font-size:15px" onclick="ppR('back')">⌫</button><button class="pib" onclick="ppR('0')">0</button><button class="pib" style="background:var(--blue-light);color:var(--blue);font-size:13px;font-weight:700" onclick="ppR('ok')">OK</button></div><div class="pie" id="pre2"></div></div></div><button class="bs" onclick="ir('s-rev')"><i class="ti ti-arrow-left"></i> Voltar à revisão</button><div style="height:16px"></div></div>
 
-<div id="s-pin-admin" class="sc"><div class="card"><div class="pin-w"><div class="pin-t">Acesso administrativo</div><div class="pin-s" id="admin-sub">Digite o PIN de supervisor autorizado.</div><div class="pin-cx"><div class="pcl">Receita</div><div class="pcv" id="admin-ctx">—</div></div><div class="pin-ds"><div class="pin-d" id="pad0"></div><div class="pin-d" id="pad1"></div><div class="pin-d" id="pad2"></div><div class="pin-d" id="pad3"></div></div><div class="pin-g"><button class="pib" onclick="ppAdmin('1')">1</button><button class="pib" onclick="ppAdmin('2')">2</button><button class="pib" onclick="ppAdmin('3')">3</button><button class="pib" onclick="ppAdmin('4')">4</button><button class="pib" onclick="ppAdmin('5')">5</button><button class="pib" onclick="ppAdmin('6')">6</button><button class="pib" onclick="ppAdmin('7')">7</button><button class="pib" onclick="ppAdmin('8')">8</button><button class="pib" onclick="ppAdmin('9')">9</button><button class="pib" style="font-size:15px" onclick="ppAdmin('back')">⌫</button><button class="pib" onclick="ppAdmin('0')">0</button><button class="pib" style="background:var(--blue-light);color:var(--blue);font-size:13px;font-weight:700" onclick="ppAdmin('ok')">OK</button></div><div class="pie" id="pade"></div></div></div><button class="bs" onclick="ir('s-lista')"><i class="ti ti-arrow-left"></i> Voltar à lista</button><div style="height:16px"></div></div>
+<div id="s-pin-admin" class="sc"><div class="card"><div class="pin-w"><div class="pin-t">Acesso administrativo</div><div class="pin-s" id="admin-sub">Digite o PIN de supervisor autorizado.</div><div class="pin-cx"><div class="pcl">Receita</div><div class="pcv" id="admin-ctx">—</div></div><div id="admin-motivo-wrap" style="display:none;width:100%;text-align:left;margin-bottom:14px"><div class="fdl" id="admin-motivo-lbl">Motivo <span>*</span></div><textarea id="admin-motivo" rows="3" maxlength="300" style="width:100%"></textarea></div><div class="pin-ds"><div class="pin-d" id="pad0"></div><div class="pin-d" id="pad1"></div><div class="pin-d" id="pad2"></div><div class="pin-d" id="pad3"></div></div><div class="pin-g"><button class="pib" onclick="ppAdmin('1')">1</button><button class="pib" onclick="ppAdmin('2')">2</button><button class="pib" onclick="ppAdmin('3')">3</button><button class="pib" onclick="ppAdmin('4')">4</button><button class="pib" onclick="ppAdmin('5')">5</button><button class="pib" onclick="ppAdmin('6')">6</button><button class="pib" onclick="ppAdmin('7')">7</button><button class="pib" onclick="ppAdmin('8')">8</button><button class="pib" onclick="ppAdmin('9')">9</button><button class="pib" style="font-size:15px" onclick="ppAdmin('back')">⌫</button><button class="pib" onclick="ppAdmin('0')">0</button><button class="pib" style="background:var(--blue-light);color:var(--blue);font-size:13px;font-weight:700" onclick="ppAdmin('ok')">OK</button></div><div class="pie" id="pade"></div></div></div><button class="bs" onclick="ir('s-lista')"><i class="ti ti-arrow-left"></i> Voltar à lista</button><div style="height:16px"></div></div>
 
 <!-- HISTÓRICO v2: sob demanda -->
 <div id="s-hist" class="sc"><div id="hist-sel"><div class="sw"><i class="ti ti-search"></i><input type="text" placeholder="Buscar por Cód. PA ou cliente..." id="hs" oninput="filtrarHistSel()"></div><div class="sl">Selecione uma receita para ver o histórico</div><div class="card" style="padding:0 14px" id="hist-sel-list"></div></div><div id="hist-det" style="display:none"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><button class="bb" style="margin-bottom:0" onclick="voltarHistSel()"><i class="ti ti-arrow-left"></i> Todas as receitas</button><button class="bb" style="margin-bottom:0;font-weight:600" onclick="verReceitaDoHist()">Ver receita <i class="ti ti-arrow-right"></i></button></div><div class="fcs" id="hist-filtros"><div class="fc fa" onclick="setFH(this,'todos')">Todos</div><div class="fc" onclick="setFH(this,'ok')">Sem desvio</div><div class="fc" onclick="setFH(this,'desvio')">Com desvio</div></div><div id="hres"></div></div><div style="height:16px"></div></div>
@@ -385,7 +396,7 @@ function apiGet(action,extraParams){
 }
 // Ações idempotentes: podem ter retry sem risco de duplicar dados.
 // Ações que criam registros (salvarReceita/salvarRepeticao) NÃO entram aqui.
-const ACOES_IDEMPOTENTES=['validarPin','alterarStatusReceita','aprovarPendencia','rejeitarPendencia'];
+const ACOES_IDEMPOTENTES=['validarPin','alterarStatusReceita','aprovarPendencia','rejeitarPendencia','decidirPendenciasRepeticao'];
 function apiPost(body,_tentativa){
   const t=_tentativa||1;
   return fetch(API,{
@@ -416,6 +427,11 @@ function dfOptsHtmlSel(sel){const s=String(sel||'').trim().toUpperCase();return'
 function normAnilox(v){return String(v==null?'':v).replace(/[\s\-–—]+/g,' ').trim().toUpperCase()}
 function anioxOptsHtml(sel){const selNorm=sel?normAnilox(sel):'';return'<option value="">—</option>'+Object.entries(ANILOX_GRUPOS).map(([l,c])=>`<optgroup label="${l}">${c.map(x=>{const val=`${l} ${x}`;const isSel=selNorm&&normAnilox(val)===selNorm?' selected':'';return`<option value="${val}"${isSel}>${l} ${x}</option>`}).join('')}</optgroup>`).join('')}
 function showLoading(msg){const el=document.getElementById('overlay-loading'),ml=document.getElementById('overlay-msg');if(el){el.classList.add('active');if(ml)ml.textContent=msg||'Salvando...'}}
+function escH(v){return String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function txtBusca(v){return String(v==null?'':v).toLowerCase()}
+// Valores aprovados antigos podem ter vindo com unidade ("23 s", "1.5 Bar")
+function semUnidade(v){const s=String(v==null?'':v).trim();const m=s.match(/^(-?\d+(?:[.,]\d+)?)\s*(?:s|bar)$/i);return m?m[1]:v}
+function limpaUnidadeTinta(t){const vi=semUnidade(t.VISCOSIDADE);return{...t,VISCOSIDADE:typeof vi==='string'?vi.replace(',','.'):vi,PRESSAO_FACA:semUnidade(t.PRESSAO_FACA)}}
 function tintaPreenchida(t){return String(t.COD_TINTA||'').trim()!==''||String(t.NOME_COR||'').trim()!==''}
 function hideLoading(){const el=document.getElementById('overlay-loading');if(el)el.classList.remove('active')}
 function setConj(v){document.getElementById('n-conj').value=v;const n=document.getElementById('conj-nao'),s=document.getElementById('conj-sim'),tg=document.getElementById('conj-toggle');if(v==='NAO'){n.style.background='var(--bg)';n.style.color='var(--text)';s.style.background='transparent';s.style.color='var(--text3)';tg.style.borderColor='var(--border2)'}else{n.style.background='transparent';n.style.color='var(--text3)';s.style.background='var(--amber-light)';s.style.color='var(--amber)';tg.style.borderColor='var(--amber)'}document.getElementById('conj-itens-wrap').style.display=v==='SIM'?'block':'none'}
@@ -439,7 +455,7 @@ async function carregarPendencias(){try{pendencias=await apiGet('getPendencias')
 
 // ── LISTA ──
 function rL(lista){if(!receitasCarregadas){document.getElementById('lw').innerHTML='<div class="loading-wrap"><div class="spinner"></div><span style="font-size:13px;color:var(--text3)">Carregando...</span></div>';return}document.getElementById('lw').innerHTML=lista.length?lista.map(r=>{const obs=r.STATUS==='OBSOLETA';return`<div class="li${obs?' obs':''}" onclick="abrirRec(${r.ID})"><div class="lic"><i class="ti ti-file-description"></i></div><div class="lb"><div class="lt">${r.CLIENTE} — ${fmtCodPAExib(r.COD_PA)}</div><div class="ls">${r.SERVICO} · ${r.MAQUINA}</div>${conjChips(r)}</div><span class="${obs?'bobs':'bok'}">${obs?'<i class="ti ti-archive" style="font-size:11px"></i> Obsoleta':'Aprovada'}</span></div>`}).join(''):'<div style="padding:20px 0;text-align:center;font-size:13px;color:var(--text3)">Nenhuma receita encontrada</div>'}
-function filtrar(){const q=document.getElementById('si').value.toLowerCase().trim();const base=filtrarPorMaquina(receitas);if(!q){rL(base);return}rL(base.filter(r=>{const cli=(r.CLIENTE||'').toLowerCase(),cod=fmtCodPAExib(r.COD_PA).toLowerCase(),cod2=String(r.COD_PA||'').toLowerCase(),serv=(r.SERVICO||'').toLowerCase();return cli.includes(q)||cod.includes(q)||cod2.includes(q)||serv.includes(q)}))}
+function filtrar(){const q=document.getElementById('si').value.toLowerCase().trim();const base=filtrarPorMaquina(receitas);if(!q){rL(base);return}rL(base.filter(r=>{const cli=txtBusca(r.CLIENTE),cod=txtBusca(fmtCodPAExib(r.COD_PA)),cod2=txtBusca(r.COD_PA),serv=txtBusca(r.SERVICO),conj=txtBusca(r.ITENS_CONJUGACAO);return cli.includes(q)||cod.includes(q)||cod2.includes(q)||serv.includes(q)||conj.includes(q)}))}
 
 // ── DETALHE RECEITA ──
 async function abrirRec(id){
@@ -449,7 +465,7 @@ async function abrirRec(id){
   if(!r._detalhesCarregados){
     ir('s-rec');document.getElementById('rec-tintas').innerHTML='';
     document.getElementById('rec-params-box').innerHTML='<div style="padding:30px 0;text-align:center"><div class="spinner"></div><div style="font-size:13px;color:var(--text3);margin-top:12px">Carregando...</div></div>';
-    try{const d=await apiGet('getReceitaDetalhe',`&id=${id}`);d.tintas=(Array.isArray(d.tintas)?d.tintas:(d.tintas?[d.tintas]:[])).filter(tintaPreenchida);d.parametros=Array.isArray(d.parametros)?(d.parametros[0]||{}):(d.parametros||{});d.versoes=Array.isArray(d.versoes)?d.versoes:[];d._detalhesCarregados=true;const i2=receitas.findIndex(x=>String(x.ID)===String(id));if(i2>=0)receitas[i2]=d;r=d}catch(e){document.getElementById('rec-params-box').innerHTML=`<div style="padding:20px 0;text-align:center;font-size:13px;color:var(--red)">Erro: ${e.message}</div>`;return}
+    try{const d=await apiGet('getReceitaDetalhe',`&id=${id}`);d.tintas=(Array.isArray(d.tintas)?d.tintas:(d.tintas?[d.tintas]:[])).filter(tintaPreenchida).map(limpaUnidadeTinta);d.historicoStatus=Array.isArray(d.historicoStatus)?d.historicoStatus:[];d.parametros=Array.isArray(d.parametros)?(d.parametros[0]||{}):(d.parametros||{});d.versoes=Array.isArray(d.versoes)?d.versoes:[];d._detalhesCarregados=true;const i2=receitas.findIndex(x=>String(x.ID)===String(id));if(i2>=0)receitas[i2]=d;r=d}catch(e){document.getElementById('rec-params-box').innerHTML=`<div style="padding:20px 0;text-align:center;font-size:13px;color:var(--red)">Erro: ${e.message}</div>`;return}
   }
   const tintas=Array.isArray(r.tintas)?r.tintas:(r.tintas?[r.tintas]:[]);
   const p=Array.isArray(r.parametros)?(r.parametros[0]||{}):(r.parametros||{});
@@ -478,6 +494,7 @@ async function abrirRec(id){
   // Ajusta UI conforme status (obsoleta vs ativa)
   const isObs=r.STATUS==='OBSOLETA';
   document.getElementById('rec-obs-banner').style.display=isObs?'flex':'none';
+  if(isObs){const ult=(r.historicoStatus||[]).filter(s=>s.STATUS==='OBSOLETA').slice(-1)[0];document.getElementById('rec-obs-info').innerHTML=ult?`<div><b>Motivo:</b> ${escH(ult.MOTIVO)}</div><div>Obsoletada por <b>${escH(ult.AUTOR||'—')}</b> em ${fmtDataHist(ult.DATA_HORA)}</div>`:'<div>Obsoletada antes do registro de motivo.</div>'}
   document.getElementById('btn-registrar-rep').style.display=isObs?'none':'';
   document.getElementById('rec-reativar').style.display=isObs?'flex':'none';
   document.getElementById('rec-admin-card').style.display=isObs?'none':'flex';
@@ -495,7 +512,7 @@ function rRep(){
   document.getElementById('rpctx').textContent=`${r.CLIENTE} · ${fmtCodPAExib(r.COD_PA)}`;
   const tintas=Array.isArray(r.tintas)?r.tintas:(r.tintas?[r.tintas]:[]);
 
-  document.getElementById('tintas-rep').innerHTML=tintas.map(t=>`<div class="vbloco"><div class="vhdr"><div class="nc">${t.ESTACAO}</div><div><div style="font-size:13px;font-weight:600">${t.NOME_COR}</div><div style="font-size:11px;color:var(--text3)">${t.COD_TINTA}</div></div></div><div class="vg"><div class="vf"><label>Viscosidade (s)</label><div class="vi-row"><input class="vi" id="visc-${t.ESTACAO}" type="text" inputmode="decimal" style="width:70px" oninput="chkV('${t.ESTACAO}',${t.VISCOSIDADE})"><span class="vi-sep">s</span></div><div id="vtv-${t.ESTACAO}" style="display:none" class="just-inp"><label><i class="ti ti-alert-triangle" style="font-size:11px;vertical-align:-1px"></i> Fora do especificado</label><textarea id="jvisc-${t.ESTACAO}" rows="2" placeholder="Justifique..."></textarea></div></div><div class="vf"><label>Secagem</label><div class="vi-row"><input class="vi" id="secm-${t.ESTACAO}" type="text" inputmode="numeric" placeholder="0" style="width:44px" maxlength="2" oninput="chkSec('${t.ESTACAO}',${t.SECAGEM_MIN||0},${t.SECAGEM_SEG||0})"><span class="vi-sep">min</span><input class="vi" id="secs-${t.ESTACAO}" type="text" inputmode="numeric" placeholder="0" style="width:44px" maxlength="2" oninput="chkSec('${t.ESTACAO}',${t.SECAGEM_MIN||0},${t.SECAGEM_SEG||0})"><span class="vi-sep">s</span></div><div id="vts-${t.ESTACAO}" style="display:none" class="just-inp"><label><i class="ti ti-alert-triangle" style="font-size:11px;vertical-align:-1px"></i> Fora do especificado</label><textarea id="jsec-${t.ESTACAO}" rows="2" placeholder="Justifique..."></textarea></div></div></div></div>`).join('');
+  document.getElementById('tintas-rep').innerHTML=tintas.map(t=>`<div class="vbloco"><div class="vhdr"><div class="nc">${t.ESTACAO}</div><div><div style="font-size:13px;font-weight:600">${t.NOME_COR}</div><div style="font-size:11px;color:var(--text3)">${t.COD_TINTA}</div></div></div><div class="vg"><div class="vf"><label>Viscosidade (s)</label><div class="vi-row"><input class="vi" id="visc-${t.ESTACAO}" type="text" inputmode="decimal" style="width:70px" oninput="chkV('${t.ESTACAO}',${(x=>isNaN(x)?'NaN':x)(parseFloat(String(t.VISCOSIDADE).replace(',','.')))})"><span class="vi-sep">s</span></div><div id="vtv-${t.ESTACAO}" style="display:none" class="just-inp"><label><i class="ti ti-alert-triangle" style="font-size:11px;vertical-align:-1px"></i> Fora do especificado</label><textarea id="jvisc-${t.ESTACAO}" rows="2" placeholder="Justifique..."></textarea></div></div><div class="vf"><label>Secagem</label><div class="vi-row"><input class="vi" id="secm-${t.ESTACAO}" type="text" inputmode="numeric" placeholder="0" style="width:44px" maxlength="2" oninput="chkSec('${t.ESTACAO}',${t.SECAGEM_MIN||0},${t.SECAGEM_SEG||0})"><span class="vi-sep">min</span><input class="vi" id="secs-${t.ESTACAO}" type="text" inputmode="numeric" placeholder="0" style="width:44px" maxlength="2" oninput="chkSec('${t.ESTACAO}',${t.SECAGEM_MIN||0},${t.SECAGEM_SEG||0})"><span class="vi-sep">s</span></div><div id="vts-${t.ESTACAO}" style="display:none" class="just-inp"><label><i class="ti ti-alert-triangle" style="font-size:11px;vertical-align:-1px"></i> Fora do especificado</label><textarea id="jsec-${t.ESTACAO}" rows="2" placeholder="Justifique..."></textarea></div></div></div></div>`).join('');
 
   const pRef=Array.isArray(r.parametros)?(r.parametros[0]||{}):(r.parametros||{});
   paramsDef.forEach(p=>{paramRefs[p.id]=getParamRef(p.id,pRef)||p.ref});
@@ -628,14 +645,14 @@ function abrirPinAdmin(id,deReceita){
   const r=receitas.find(x=>String(x.ID)===String(id));
   const isObs=r&&r.STATUS==='OBSOLETA';
   adminAcao=isObs?'ver':'obsoletar';  // obsoleta→desbloquear/ver; ativa→obsoletar
+  prepMotivoAdmin(adminAcao);
   document.getElementById('admin-ctx').textContent=r?`${r.CLIENTE} · ${fmtCodPAExib(r.COD_PA)}`:'—';
   document.getElementById('admin-sub').textContent=isObs?'Receita obsoleta. Digite o PIN de supervisor autorizado para acessá-la.':'Digite o PIN de supervisor autorizado para obsoletar esta receita.';
   irRaw('s-pin-admin');
   document.getElementById('tpt').textContent='Acesso administrativo';document.getElementById('tps').textContent='Supervisor autorizado';document.getElementById('tpp').style.display='none';document.getElementById('sbw').innerHTML='';
 }
 function ppAdmin(v){const err=document.getElementById('pade');if(v==='back'){pinBufAdmin=pinBufAdmin.slice(0,-1);updDotsAdmin();return}if(v==='ok'){if(salvando)return;if(pinBufAdmin.length<4){err.textContent='PIN deve ter 4 dígitos';return}
-  if(adminAcao==='obsoletar'){executarAlterarStatus(adminCtxId,'OBSOLETA',pinBufAdmin)}
-  else if(adminAcao==='reativar'){executarAlterarStatus(adminCtxId,'ATIVA',pinBufAdmin)}
+  if(adminAcao==='obsoletar'||adminAcao==='reativar'){const mot=document.getElementById('admin-motivo').value.trim();if(mot.length<5){err.textContent='Informe o motivo (mínimo de 5 caracteres).';return}executarAlterarStatus(adminCtxId,adminAcao==='obsoletar'?'OBSOLETA':'ATIVA',pinBufAdmin,mot)}
   else{desbloquearObsoleta(adminCtxId,pinBufAdmin)}
   return}
   if(pinBufAdmin.length<4)pinBufAdmin+=v;updDotsAdmin()}
@@ -650,20 +667,21 @@ function desbloquearObsoleta(id,pin){
     adminDesbloqueado=true;pinBufAdmin='';updDotsAdmin();abrirRec(id);
   }).catch(e=>{hideLoading();salvando=false;err.textContent='Erro: '+e.message;pinBufAdmin='';updDotsAdmin()});
 }
-function executarAlterarStatus(id,novoStatus,pin){
+function executarAlterarStatus(id,novoStatus,pin,motivo){
   const err=document.getElementById('pade');salvando=true;showLoading(novoStatus==='OBSOLETA'?'Obsoletando...':'Reativando...');
-  apiPost({action:'alterarStatusReceita',pin,idReceita:id,novoStatus}).then(res=>{hideLoading();salvando=false;
+  apiPost({action:'alterarStatusReceita',pin,idReceita:id,novoStatus,motivoStatus:motivo}).then(res=>{hideLoading();salvando=false;
     if(!res.ok){err.textContent=res.motivo||'Não autorizado.';pinBufAdmin='';updDotsAdmin();return}
     pinBufAdmin='';updDotsAdmin();
     // Atualiza local e recarrega
     const i=receitas.findIndex(x=>String(x.ID)===String(id));if(i>=0){receitas[i].STATUS=novoStatus;receitas[i]._detalhesCarregados=false}
     adminDesbloqueado=false;
     carregarReceitas();
-    showSuc(novoStatus==='OBSOLETA'?'Receita obsoletada':'Receita reativada',novoStatus==='OBSOLETA'?'A receita foi marcada como obsoleta.':'A receita está ativa novamente.',[{l:'Responsável',v:res.nome||'—'},{l:'Status',v:novoStatus==='OBSOLETA'?'Obsoleta':'Ativa'}],false,'s-lista');
+    showSuc(novoStatus==='OBSOLETA'?'Receita obsoletada':'Receita reativada',novoStatus==='OBSOLETA'?'A receita foi marcada como obsoleta.':'A receita está ativa novamente.',[{l:'Responsável',v:res.nome||'—'},{l:'Status',v:novoStatus==='OBSOLETA'?'Obsoleta':'Ativa'},{l:'Motivo',v:motivo||'—'}],false,'s-lista');
   }).catch(e=>{hideLoading();salvando=false;err.textContent='Erro: '+e.message;pinBufAdmin='';updDotsAdmin()});
 }
+function prepMotivoAdmin(acao){const w=document.getElementById('admin-motivo-wrap'),t=document.getElementById('admin-motivo'),l=document.getElementById('admin-motivo-lbl');const pede=acao==='obsoletar'||acao==='reativar';w.style.display=pede?'block':'none';t.value='';t.placeholder=acao==='obsoletar'?'Ex.: produto descontinuado pelo cliente':'Ex.: cliente voltou a pedir o item';l.innerHTML=(acao==='obsoletar'?'Motivo da obsolescência':'Motivo da reativação')+' <span>*</span>'}
 function reativarReceita(){
-  adminCtxId=recIdx;adminAcao='reativar';pinBufAdmin='';updDotsAdmin();document.getElementById('pade').textContent='';
+  adminCtxId=recIdx;adminAcao='reativar';pinBufAdmin='';updDotsAdmin();document.getElementById('pade').textContent='';prepMotivoAdmin('reativar');
   const r=receitas.find(x=>String(x.ID)===String(recIdx));
   document.getElementById('admin-ctx').textContent=r?`${r.CLIENTE} · ${fmtCodPAExib(r.COD_PA)}`:'—';
   document.getElementById('admin-sub').textContent='Digite o PIN de supervisor autorizado para reativar esta receita.';
@@ -679,101 +697,91 @@ function sairLock(ctx){lockBufs[ctx]='';tIr('s-lista','tab-r','Receitas de Produ
 
 // ── PENDÊNCIAS ──
 function uPendBadge(){const cnt=pendencias.length;document.getElementById('pend-cnt').textContent=cnt;const b=document.getElementById('pend-badge');b.textContent=cnt;b.style.display=cnt>0?'':'none'}
-function renderPend(){if(!pendencias.length){document.getElementById('pend-list').innerHTML='<div style="padding:24px 0;text-align:center;font-size:13px;color:var(--text3)">Nenhuma pendência.</div>';return}document.getElementById('pend-list').innerHTML=pendencias.map(p=>`<div class="pend-card" id="pc-${p.ID}"><div class="pend-hdr"><div class="pend-ic"><i class="ti ti-file-pencil"></i></div><div class="pend-bd"><div class="pend-title">${p.CLI||'Receita'}${p.COD_PA?' — '+fmtCodPAExib(p.COD_PA):''}</div><div class="pend-sub" style="line-height:1.4">${[p.SERVICO,p.MAQUINA,p.OP_PRODUCAO?'OP '+p.OP_PRODUCAO:''].filter(Boolean).join(' · ')||'—'}</div><div class="pend-sub">Solicitado por <b>${p.SOLICITANTE||'—'}</b></div></div><span class="pend-badge">pendente</span></div><div class="pend-body"><div class="pend-row"><div class="pend-lbl">${p.PARAMETRO}</div><div class="pend-vals"><span class="pend-de">De: ${p.VALOR_ATUAL}</span><span class="pend-para">Para: ${p.VALOR_PROPOSTO}</span><div class="pend-just">${p.JUSTIFICATIVA}</div></div></div></div><div class="pend-footer"><div class="pend-meta">Solicitante: <b>${p.SOLICITANTE}</b></div><div class="pend-actions"><button class="pend-rej" onclick="abrirPendPin('${p.ID}','rejeitar')">Rejeitar</button><button class="pend-apr" onclick="abrirPendPin('${p.ID}','aprovar')">Aprovar</button></div></div><div class="pend-pin-wrap" id="ppw-${p.ID}"><div style="font-size:12px;color:var(--text2);margin-bottom:8px;line-height:1.5" id="ppt-${p.ID}">Digite seu PIN. Aprovador não pode ser <b>${p.SOLICITANTE}</b>.</div><div style="display:flex;gap:8px;margin-bottom:10px"><div class="pin-d" id="ppd-${p.ID}-0"></div><div class="pin-d" id="ppd-${p.ID}-1"></div><div class="pin-d" id="ppd-${p.ID}-2"></div><div class="pin-d" id="ppd-${p.ID}-3"></div></div><div class="pin-g" style="gap:6px"><button class="pib" style="padding:10px 0;font-size:16px" onclick="ppPend('${p.ID}','1')">1</button><button class="pib" style="padding:10px 0;font-size:16px" onclick="ppPend('${p.ID}','2')">2</button><button class="pib" style="padding:10px 0;font-size:16px" onclick="ppPend('${p.ID}','3')">3</button><button class="pib" style="padding:10px 0;font-size:16px" onclick="ppPend('${p.ID}','4')">4</button><button class="pib" style="padding:10px 0;font-size:16px" onclick="ppPend('${p.ID}','5')">5</button><button class="pib" style="padding:10px 0;font-size:16px" onclick="ppPend('${p.ID}','6')">6</button><button class="pib" style="padding:10px 0;font-size:16px" onclick="ppPend('${p.ID}','7')">7</button><button class="pib" style="padding:10px 0;font-size:16px" onclick="ppPend('${p.ID}','8')">8</button><button class="pib" style="padding:10px 0;font-size:16px" onclick="ppPend('${p.ID}','9')">9</button><button class="pib" style="padding:10px 0;font-size:14px" onclick="ppPend('${p.ID}','back')">⌫</button><button class="pib" style="padding:10px 0;font-size:16px" onclick="ppPend('${p.ID}','0')">0</button><button class="pib" id="ppok-${p.ID}" style="padding:10px 0;font-size:12px;font-weight:700;background:var(--blue-light);color:var(--blue)" onclick="ppPend('${p.ID}','ok')">OK</button></div><div class="pie" id="ppe-${p.ID}" style="margin-top:6px"></div></div></div>`).join('')}
-let pendPinModo={};
-function abrirPendPin(id,modo){
-  modo=modo||'aprovar';const pend=pendencias.find(p=>String(p.ID)===String(id));
-  // Trocar de modo (ou de card) zera o PIN digitado
-  if(pendPinModo[id]!==modo){pendPinBufs[id]='';updPendDots(id)}
-  pendPinModo[id]=modo;if(!pendPinBufs[id])pendPinBufs[id]='';
-  document.querySelectorAll('.pend-pin-wrap').forEach(p=>p.classList.remove('open'));document.getElementById('ppw-'+id)?.classList.add('open');
-  const err=document.getElementById('ppe-'+id);if(err)err.textContent='';
-  const sol=pend?.SOLICITANTE||'—',t=document.getElementById('ppt-'+id),ok=document.getElementById('ppok-'+id);
-  if(t)t.innerHTML=modo==='rejeitar'?`<b style="color:var(--red)">Rejeitar alteração.</b> Digite seu PIN — a receita não será alterada. Não pode ser <b>${sol}</b>.`:`Digite seu PIN para aprovar. Aprovador não pode ser <b>${sol}</b>.`;
-  if(ok){ok.textContent=modo==='rejeitar'?'Rejeitar':'OK';ok.style.background=modo==='rejeitar'?'var(--red-light)':'var(--blue-light)';ok.style.color=modo==='rejeitar'?'var(--red)':'var(--blue)'}
+// Pendências agrupadas por repetição: o supervisor 2 decide todas de uma vez,
+// com um único PIN, e o backend cria uma única versão nova.
+function grpKey(p){return(p.ID_REPETICAO!==undefined&&p.ID_REPETICAO!==null&&String(p.ID_REPETICAO)!=='')?'r'+p.ID_REPETICAO:'p'+p.ID}
+function gruposPend(){const m={},ordem=[];pendencias.forEach(p=>{const k=grpKey(p);if(!m[k]){m[k]=[];ordem.push(k)}m[k].push(p)});return ordem.map(k=>({k,itens:m[k]}))}
+function itensGrupo(k){return pendencias.filter(p=>grpKey(p)===k)}
+let pendDecisao={},grpPinBuf={};
+function renderPend(){
+  const lista=document.getElementById('pend-list');
+  if(!pendencias.length){lista.innerHTML='<div style="padding:24px 0;text-align:center;font-size:13px;color:var(--text3)">Nenhuma pendência.</div>';return}
+  const teclas=k=>['1','2','3','4','5','6','7','8','9','back','0','ok'].map(v=>`<button class="pib" style="padding:10px 0;font-size:${v==='ok'?'12px;font-weight:700;background:var(--blue-light);color:var(--blue)':v==='back'?'14px':'16px'}" onclick="ppGrp('${k}','${v}')">${v==='back'?'⌫':v==='ok'?'OK':v}</button>`).join('');
+  lista.innerHTML=gruposPend().map(({k,itens})=>{const p=itens[0],n=itens.length;
+    return`<div class="pend-card" id="pg-${k}"><div class="pend-hdr"><div class="pend-ic"><i class="ti ti-file-pencil"></i></div><div class="pend-bd"><div class="pend-title">${escH(p.CLI||'Receita')}${p.COD_PA?' — '+fmtCodPAExib(p.COD_PA):''}</div><div class="pend-sub" style="line-height:1.4">${escH([p.SERVICO,p.MAQUINA,p.OP_PRODUCAO?'OP '+p.OP_PRODUCAO:''].filter(Boolean).join(' · ')||'—')}</div><div class="pend-sub">Solicitado por <b>${escH(p.SOLICITANTE||'—')}</b>${p.DATA_REP?' · '+fmtDataHist(p.DATA_REP):''}</div></div><span class="pend-badge">${n} ${n===1?'alteração':'alterações'}</span></div>`
+    +`<div class="pend-body">${n>1?`<div class="pend-all"><span>Marcar todas:</span><button type="button" onclick="marcarTodas('${k}','REJEITAR')">Rejeitar</button><button type="button" onclick="marcarTodas('${k}','APROVAR')">Aprovar</button></div>`:''}`
+    +itens.map(x=>{const d=pendDecisao[String(x.ID)]||'';return`<div class="pend-item"><div class="pend-row"><div class="pend-lbl">${escH(x.PARAMETRO)}</div><div class="pend-vals"><span class="pend-de">De: ${escH(x.VALOR_ATUAL)}</span><span class="pend-para">Para: ${escH(x.VALOR_PROPOSTO)}</span>${x.JUSTIFICATIVA?`<div class="pend-just">${escH(x.JUSTIFICATIVA)}</div>`:''}</div></div><div class="pend-dec"><button type="button" class="pd-btn${d==='REJEITAR'?' on-rej':''}" id="pdr-${x.ID}" onclick="setDecisao('${x.ID}','REJEITAR')"><i class="ti ti-x"></i> Rejeitar</button><button type="button" class="pd-btn${d==='APROVAR'?' on-apr':''}" id="pda-${x.ID}" onclick="setDecisao('${x.ID}','APROVAR')"><i class="ti ti-check"></i> Aprovar</button></div></div>`}).join('')+`</div>`
+    +`<div class="pend-footer"><div class="pend-meta" id="pgs-${k}"></div><div class="pend-actions"><button class="pend-apr" id="pgc-${k}" onclick="abrirGrpPin('${k}')" disabled>Confirmar</button></div></div>`
+    +`<div class="pend-pin-wrap" id="pgw-${k}"><div style="font-size:12px;color:var(--text2);margin-bottom:8px;line-height:1.5" id="pgt-${k}"></div><div style="display:flex;gap:8px;margin-bottom:10px">${[0,1,2,3].map(i=>`<div class="pin-d" id="pgd-${k}-${i}"></div>`).join('')}</div><div class="pin-g" style="gap:6px">${teclas(k)}</div><div class="pie" id="pge-${k}" style="margin-top:6px"></div></div></div>`}).join('');
+  gruposPend().forEach(g=>updGrpResumo(g.k));
 }
-function ppPend(id,v){if(!pendPinBufs[id])pendPinBufs[id]='';const err=document.getElementById('ppe-'+id),pend=pendencias.find(p=>String(p.ID)===String(id));if(v==='back')pendPinBufs[id]=pendPinBufs[id].slice(0,-1);else if(v==='ok'){if(pendPinModo[id]==='rejeitar'){if(pendPinBufs[id].length<4){err.textContent='PIN deve ter 4 dígitos';return}const pin=pendPinBufs[id];pendPinBufs[id]='';updPendDots(id);rejeitarPendenciaAPI(id,pin,pend);return}const a2=SUPERVISORES[pendPinBufs[id]];if(a2&&a2!==pend?.SOLICITANTE){err.textContent='';pendPinBufs[id]='';updPendDots(id);aprovarPendenciaAPI(id,a2,pend)}else if(a2===pend?.SOLICITANTE){err.textContent='Você não pode aprovar sua própria solicitação.';pendPinBufs[id]=''}else{err.textContent='PIN incorreto.';pendPinBufs[id]=''}}else{if(pendPinBufs[id].length<4)pendPinBufs[id]+=v}updPendDots(id)}
-let pendAprovCnt=0,pendOkTimer=null;
-function avisoPend(msg,tipo){const b=document.getElementById('pend-ok');document.getElementById('pend-ok-txt').textContent=msg;const rej=tipo==='rej';b.style.background=rej?'var(--bg)':'var(--green-light)';b.style.color=rej?'var(--text2)':'var(--green)';b.style.border=rej?'0.5px solid var(--border2)':'none';b.style.display='flex';clearTimeout(pendOkTimer);pendOkTimer=setTimeout(()=>{b.style.display='none'},5000)}
-// Aprova e permanece na tela de Pendências (permite várias aprovações seguidas).
-// A tela só é bloqueada quando o supervisor toca no cadeado ou sai da aba.
-async function aprovarPendenciaAPI(idP,aprov2,pend){
-  if(salvando)return;salvando=true;showLoading('Aprovando...');
+function setDecisao(id,dec){id=String(id);pendDecisao[id]=pendDecisao[id]===dec?'':dec;const a=document.getElementById('pda-'+id),r=document.getElementById('pdr-'+id);if(a)a.className='pd-btn'+(pendDecisao[id]==='APROVAR'?' on-apr':'');if(r)r.className='pd-btn'+(pendDecisao[id]==='REJEITAR'?' on-rej':'');const p=pendencias.find(x=>String(x.ID)===id);if(p)updGrpResumo(grpKey(p))}
+function marcarTodas(k,dec){itensGrupo(k).forEach(p=>{pendDecisao[String(p.ID)]='';setDecisao(p.ID,dec)})}
+function contGrupo(k){const it=itensGrupo(k),nA=it.filter(p=>pendDecisao[String(p.ID)]==='APROVAR').length,nR=it.filter(p=>pendDecisao[String(p.ID)]==='REJEITAR').length;return{it,nA,nR,nF:it.length-nA-nR}}
+function updGrpResumo(k){const{nA,nR,nF}=contGrupo(k);const s=document.getElementById('pgs-'+k),b=document.getElementById('pgc-'+k),w=document.getElementById('pgw-'+k);
+  if(s)s.innerHTML=nF?`<b style="color:var(--amber)">${nF} sem decisão</b>${nA||nR?` · ${nA} aprovar · ${nR} rejeitar`:''}`:`${nA} aprovar · ${nR} rejeitar`;
+  if(b)b.disabled=nF>0;
+  if(w&&w.classList.contains('open')){if(nF>0){w.classList.remove('open');grpPinBuf[k]='';updGrpDots(k)}else textoGrpPin(k)}}
+function textoGrpPin(k){const{it,nA,nR}=contGrupo(k);const t=document.getElementById('pgt-'+k);if(t)t.innerHTML=`Confirme com seu PIN: <b>${nA} aprovação(ões)</b> e <b>${nR} rejeição(ões)</b>. ${nA?'Será criada <b>uma</b> nova versão da receita.':'A receita não será alterada.'} Não pode ser <b>${escH(it[0]?.SOLICITANTE||'—')}</b>.`}
+function abrirGrpPin(k){if(contGrupo(k).nF>0)return;document.querySelectorAll('.pend-pin-wrap').forEach(w=>w.classList.remove('open'));grpPinBuf[k]='';updGrpDots(k);const e=document.getElementById('pge-'+k);if(e)e.textContent='';textoGrpPin(k);document.getElementById('pgw-'+k)?.classList.add('open')}
+function updGrpDots(k){for(let i=0;i<4;i++){const d=document.getElementById(`pgd-${k}-${i}`);if(d)d.classList.toggle('f',i<(grpPinBuf[k]||'').length)}}
+function ppGrp(k,v){if(!grpPinBuf[k])grpPinBuf[k]='';const e=document.getElementById('pge-'+k);if(v==='back')grpPinBuf[k]=grpPinBuf[k].slice(0,-1);else if(v==='ok'){if(grpPinBuf[k].length<4){if(e)e.textContent='PIN deve ter 4 dígitos';return}const pin=grpPinBuf[k];grpPinBuf[k]='';updGrpDots(k);decidirGrupoAPI(k,pin);return}else if(grpPinBuf[k].length<4)grpPinBuf[k]+=v;updGrpDots(k)}
+let pendAprovCnt=0,pendRejCnt=0,pendOkTimer=null;
+function avisoPend(msg,tipo){const b=document.getElementById('pend-ok');document.getElementById('pend-ok-txt').textContent=msg;const rej=tipo==='rej';b.style.background=rej?'var(--bg)':'var(--green-light)';b.style.color=rej?'var(--text2)':'var(--green)';b.style.border=rej?'0.5px solid var(--border2)':'none';b.style.display='flex';clearTimeout(pendOkTimer);pendOkTimer=setTimeout(()=>{b.style.display='none'},6000)}
+// Envia todas as decisões da repetição numa única chamada e permanece na tela.
+async function decidirGrupoAPI(k,pin){
+  if(salvando)return;const it=itensGrupo(k);if(!it.length)return;
+  const decisoes=it.map(p=>({idPendencia:p.ID,decisao:pendDecisao[String(p.ID)]}));
+  if(decisoes.some(d=>!d.decisao))return;
+  const p0=it[0],ref=`${p0.CLI||'Receita'}${p0.COD_PA?' — '+fmtCodPAExib(p0.COD_PA):''}${p0.OP_PRODUCAO?' · OP '+p0.OP_PRODUCAO:''}`;
+  salvando=true;showLoading('Registrando decisões...');
   try{
-    await apiPost({action:'aprovarPendencia',idPendencia:idP,aprovador2:aprov2,idReceita:pend.ID_RECEITA||recIdx});
-    pendencias=pendencias.filter(p=>String(p.ID)!==String(idP));delete pendPinBufs[idP];
-    pendAprovCnt++;document.getElementById('pend-aprov').textContent=pendAprovCnt;
-    uPendBadge();renderPend();hideLoading();salvando=false;
-    avisoPend(`Aprovada por ${aprov2}: ${pend.CLI||'Receita'}${pend.COD_PA?' — '+fmtCodPAExib(pend.COD_PA):''} · ${pend.PARAMETRO}. Nova versão criada.`);
-    // A receita mudou: atualiza a lista em segundo plano (detalhe será recarregado ao abrir)
-    const ir2=receitas.findIndex(x=>String(x.ID)===String(pend.ID_RECEITA));if(ir2>=0)receitas[ir2]._detalhesCarregados=false;
-    carregarReceitas();
-  }catch(e){hideLoading();salvando=false;const err=document.getElementById('ppe-'+idP);if(err)err.textContent='Erro ao aprovar: '+e.message}
-}
-let pendRejCnt=0;
-// Rejeita no backend (que revalida o PIN) e permanece na tela de Pendências
-async function rejeitarPendenciaAPI(idP,pin,pend){
-  if(salvando)return;salvando=true;showLoading('Rejeitando...');
-  const err=()=>document.getElementById('ppe-'+idP);
-  try{
-    const res=await apiPost({action:'rejeitarPendencia',idPendencia:idP,pin});
+    const res=await apiPost({action:'decidirPendenciasRepeticao',pin,decisoes});
     hideLoading();salvando=false;
-    if(!res||!res.ok){const e=err();if(e)e.textContent=(res&&res.motivo)||'Não foi possível rejeitar.';return}
-    pendencias=pendencias.filter(p=>String(p.ID)!==String(idP));delete pendPinBufs[idP];delete pendPinModo[idP];
-    pendRejCnt++;document.getElementById('pend-rej-cnt').textContent=pendRejCnt;
+    if(!res||!res.ok){const msg=(res&&res.motivo)||'Não foi possível registrar as decisões.';
+      if(res&&res.recarregar){await carregarPendencias();renderPend();avisoPend(msg,'rej')}
+      else{const e=document.getElementById('pge-'+k);if(e)e.textContent=msg}
+      return}
+    const ids=new Set(it.map(p=>String(p.ID)));
+    pendencias=pendencias.filter(p=>!ids.has(String(p.ID)));ids.forEach(id=>{delete pendDecisao[id]});delete grpPinBuf[k];
+    pendAprovCnt+=res.aprovadas||0;pendRejCnt+=res.rejeitadas||0;
+    document.getElementById('pend-aprov').textContent=pendAprovCnt;document.getElementById('pend-rej-cnt').textContent=pendRejCnt;
     uPendBadge();renderPend();
-    avisoPend(`Rejeitada por ${res.nome||'supervisor'}: ${pend?.CLI||'Receita'}${pend?.COD_PA?' — '+fmtCodPAExib(pend.COD_PA):''} · ${pend?.PARAMETRO||''}. A receita não foi alterada.`,'rej');
-  }catch(e){hideLoading();salvando=false;const x=err();if(x)x.textContent='Erro ao rejeitar: '+e.message}
+    avisoPend(`${res.nome||'Supervisor'} registrou ${ref}: ${res.aprovadas||0} aprovada(s), ${res.rejeitadas||0} rejeitada(s). ${res.novaVersao?`Nova versão v${res.novaVersao} criada.`:(res.aprovadas?'':'A receita não foi alterada.')}`,res.aprovadas?'':'rej');
+    if(res.aprovadas)carregarReceitas();
+  }catch(e){hideLoading();salvando=false;const x=document.getElementById('pge-'+k);if(x)x.textContent='Erro: '+e.message}
 }
-function updPendDots(id){for(let i=0;i<4;i++){const d=document.getElementById(`ppd-${id}-${i}`);if(d)d.classList.toggle('f',i<(pendPinBufs[id]||'').length)}}
 
 // ── HISTÓRICO v2: sob demanda ──
-function filtrarHistSel(){const q=document.getElementById('hs').value.toLowerCase().trim();const base=filtrarPorMaquina(receitas);const lista=q?base.filter(r=>{const c=(r.CLIENTE||'').toLowerCase(),k=fmtCodPAExib(r.COD_PA).toLowerCase(),s=(r.SERVICO||'').toLowerCase();return c.includes(q)||k.includes(q)||s.includes(q)}):base;renderHistSel(lista)}
+function filtrarHistSel(){const q=document.getElementById('hs').value.toLowerCase().trim();const base=filtrarPorMaquina(receitas);const lista=q?base.filter(r=>{const c=txtBusca(r.CLIENTE),k=txtBusca(fmtCodPAExib(r.COD_PA)),s=txtBusca(r.SERVICO),cj=txtBusca(r.ITENS_CONJUGACAO);return c.includes(q)||k.includes(q)||s.includes(q)||cj.includes(q)}):base;renderHistSel(lista)}
 function renderHistSel(lista){document.getElementById('hist-sel-list').innerHTML=lista.length?lista.map(r=>`<div class="li" onclick="abrirHistorico(${r.ID})"><div class="lic"><i class="ti ti-history"></i></div><div class="lb"><div class="lt">${r.CLIENTE} — ${fmtCodPAExib(r.COD_PA)}</div><div class="ls">${r.SERVICO} · ${r.MAQUINA}</div>${conjChips(r)}</div></div>`).join(''):'<div style="padding:20px 0;text-align:center;font-size:13px;color:var(--text3)">Nenhuma receita encontrada</div>'}
-async function imprimirReceita(){
-  const r=receitas.find(x=>String(x.ID)===String(recIdx));if(!r)return;
-  showLoading('Preparando impressão...');
-  let hist=null;
-  try{hist=await apiGet('getHistoricoReceita',`&id=${recIdx}`)}catch(e){hist=null}
-  const tintas=(Array.isArray(r.tintas)?r.tintas:[]).filter(t=>t.COD_TINTA||t.NOME_COR);
+// Imprime somente a receita (sem histórico), no padrão da folha da Rotogravura.
+function imprimirReceita(){
+  const r=receitas.find(x=>String(x.ID)===String(recIdx));if(!r||!r._detalhesCarregados)return;
+  const tintas=(Array.isArray(r.tintas)?r.tintas:[]).filter(tintaPreenchida).sort((a,b)=>(parseInt(a.ESTACAO)||0)-(parseInt(b.ESTACAO)||0));
   const p=Array.isArray(r.parametros)?(r.parametros[0]||{}):(r.parametros||{});
   const conj=r.ITENS_CONJUGACAO||r.itensConjugacao||'';
-  // Tintas
-  const tintasLinhas=tintas.map(t=>`<tr><td>${t.ESTACAO}</td><td>${t.NOME_COR||'—'}</td><td>${t.COD_TINTA||'—'}</td><td>${t.VISCOSIDADE||'—'} s</td><td>${secStr(parseInt(t.SECAGEM_MIN)||0,parseInt(t.SECAGEM_SEG)||0)}</td><td>${t.ANILOX||'—'}</td><td>${t.DUPLA_FACE||'—'}</td><td>${t.PRESSAO_FACA||'—'}</td></tr>`).join('');
-  // Parâmetros
-  const params=[['Tensão Freio',p.TENSAO_FREIO,'N'],['Contra Pressão Pivê',p.CONTRA_PRESSAO_PIVE,'Bar'],['Avanço',p.AVANCO,'N'],['C. Pressão Tambor',p.C_PRESSAO_TAMBOR,'Bar'],['Tensão Rebobinador',p.TENSAO_REBOBINADOR,'N'],['Taxa de Redução',p.TAXA_REDUCAO,'%'],['Pressão Cil. Borracha',p.PRESSAO_CIL_BORRACHA,''],['Pressão Compactador',p.PRESSAO_COMPACTADOR,'Bar'],['Avanço CR',p.AVANCO_CR,'N'],['Posição Compactador',p.POSICAO_COMPACTADOR,''],['Velocidade',p.VELOCIDADE,'m/min'],['Temp. Ambiente',p.TEMP_AMBIENTE,'°C'],['Largura do Filme',p.LARGURA_FILME,'mm']];
-  const paramsGrid=params.map(([l,v,u])=>`<div><span class="l">${l}:</span> <span class="v">${v||'—'}${u?' '+u:''}</span></div>`).join('');
-  // Histórico por versão
-  let histHtml='';
-  if(hist&&hist.versoes&&hist.versoes.length){
-    histHtml=hist.versoes.map(v=>{
-      const reps=(v.reps||[]);
-      if(!reps.length)return `<div class="pa-ver">Versão ${v.NUMERO_VERSAO} — sem repetições</div>`;
-      const repRows=reps.map(rep=>{
-        const dvs=(rep.desvios||[]);
-        const dvTxt=dvs.length?dvs.map(d=>`${d.PARAMETRO||d.LABEL||'?'}: ${d.VALOR_REAL||d.VALOR||'?'} (ref ${d.VALOR_REFERENCIA||d.REF||'?'})`).join('; '):'—';
-        const dtRaw=rep.DATA_HORA||rep.DATA||'';let dt='—';try{const d=new Date(dtRaw);if(!isNaN(d))dt=d.toLocaleDateString('pt-BR')}catch(e){}
-        return `<tr><td>${dt}</td><td>${rep.OP_PRODUCAO||'—'}</td><td>${rep.OPERADOR||'—'}</td><td>${rep.APROVADOR||'—'}</td><td class="${dvs.length?'pa-dv':''}">${dvs.length?dvs.length+' desvio(s)':'OK'}</td><td>${dvTxt}</td></tr>`;
-      }).join('');
-      return `<div class="pa-ver">Versão ${v.NUMERO_VERSAO}</div><table class="pa-t"><thead><tr><th>Data</th><th>OP</th><th>Operador</th><th>Aprovador</th><th>Status</th><th>Desvios</th></tr></thead><tbody>${repRows}</tbody></table>`;
-    }).join('');
-  }else{histHtml='<div style="font-size:9px;color:#666">Sem histórico de repetições.</div>';}
-
+  const vs=Array.isArray(r.versoes)?r.versoes:[];const vAtiva=vs.find(v=>v.ATIVA===true||v.ATIVA==='TRUE')||vs[vs.length-1];
+  const val=(v,u)=>(v===undefined||v===null||String(v).trim()==='')?'—':escH(v)+(u?' '+u:'');
+  const campo=(l,v,span)=>`<div class="pa-f"${span?` style="grid-column:span ${span}"`:''}><div class="l">${l}</div><div class="v">${v}</div></div>`;
+  const obsInfo=r.STATUS==='OBSOLETA'?(r.historicoStatus||[]).filter(s=>s.STATUS==='OBSOLETA').slice(-1)[0]:null;
+  const params=[['Tensão Freio Desbob.',p.TENSAO_FREIO,'N'],['Contra Pressão Pivê',p.CONTRA_PRESSAO_PIVE,'Bar'],['Avanço',p.AVANCO,'N'],['C. Pressão Tambor',p.C_PRESSAO_TAMBOR,'Bar'],['Tensão Rebobinador',p.TENSAO_REBOBINADOR,'N'],['Taxa de Redução',p.TAXA_REDUCAO,'%'],['Pressão Cil. Borracha',p.PRESSAO_CIL_BORRACHA,''],['Pressão Compactador',p.PRESSAO_COMPACTADOR,'Bar'],['Avanço CR',p.AVANCO_CR,'N'],['Posição Compactador',p.POSICAO_COMPACTADOR,''],['Velocidade',p.VELOCIDADE,'m/min'],['Temp. Ambiente',p.TEMP_AMBIENTE,'°C'],['Largura do Filme',p.LARGURA_FILME,'mm'],['Material',p.MATERIAL,'']];
+  const linhas=tintas.map(t=>`<tr><td>${escH(t.ESTACAO)}</td><td>${val(t.NOME_COR)}</td><td>${val(t.COD_TINTA)}</td><td>${val(t.VISCOSIDADE)}</td><td>${secStr(parseInt(t.SECAGEM_MIN)||0,parseInt(t.SECAGEM_SEG)||0)}</td><td>${val(t.ANILOX)}</td><td>${val(t.DUPLA_FACE)}</td><td>${val(t.PRESSAO_FACA)}</td></tr>`).join('');
+  const obsTxt=String(r.OBSERVACOES||r.OBSERVACAO||'').split('\n').map(l=>l.trim()).filter(Boolean);
   document.getElementById('print-area').innerHTML=`
-    <div class="pa-h">${r.CLIENTE} — ${fmtCodPAExib(r.COD_PA)}${r.STATUS==='OBSOLETA'?' (OBSOLETA)':''}</div>
-    <div class="pa-sub">${r.SERVICO||''} · ${r.MAQUINA||''} · Flexografia · Impresso em ${new Date().toLocaleDateString('pt-BR')} ${new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}</div>
-    ${conj?`<div class="pa-conj">CONJUGAÇÃO: ${conj}</div>`:''}
+    <div class="pa-h">${escH(r.CLIENTE)} — ${fmtCodPAExib(r.COD_PA)}</div>
+    <div class="pa-sub">${[r.SERVICO,r.MAQUINA,'Flexografia'].filter(Boolean).map(escH).join(' · ')}</div>
+    ${r.STATUS==='OBSOLETA'?`<div class="pa-alerta"><b>RECEITA OBSOLETA</b> — não usar para produção.${obsInfo?` Motivo: ${escH(obsInfo.MOTIVO)} · Por ${escH(obsInfo.AUTOR||'—')} em ${fmtDataHist(obsInfo.DATA_HORA)}`:''}</div>`:''}
     <div class="pa-sec">Identificação</div>
-    <div class="pa-grid"><div><span class="l">Cliente:</span> <span class="v">${r.CLIENTE||'—'}</span></div><div><span class="l">Cód. PA:</span> <span class="v">${fmtCodPAExib(r.COD_PA)}</span></div><div><span class="l">Máquina:</span> <span class="v">${r.MAQUINA||'—'}</span></div><div><span class="l">OP Criação:</span> <span class="v">${r.OP_CRIACAO||'—'}</span></div><div><span class="l">Operador:</span> <span class="v">${r.OPERADOR||'—'}</span></div><div><span class="l">Aprovador:</span> <span class="v">${r.APROVADOR||'—'}</span></div></div>
+    <div class="pa-grid">${campo('Cliente',val(r.CLIENTE))}${campo('Cód. PA',fmtCodPAExib(r.COD_PA))}${campo('Máquina',val(r.MAQUINA))}${campo('OP Criação',val(r.OP_CRIACAO))}${campo('Operador',val(r.OPERADOR))}${campo('Aprovador',val(r.APROVADOR))}${campo('Data criação',r.DATA_CRIACAO?fmtDataHist(r.DATA_CRIACAO):'—')}${campo('Status',r.STATUS==='OBSOLETA'?'OBSOLETA':'ATIVA')}${vAtiva?campo('Versão vigente',`v${escH(vAtiva.NUMERO_VERSAO)}${vAtiva.DATA_CRIACAO?' · '+fmtDataHist(vAtiva.DATA_CRIACAO):''}`):''}${conj?campo('Conjugação',escH(conj),3):''}</div>
     <div class="pa-sec">Tintas por estação</div>
-    <table class="pa-t"><thead><tr><th>Est.</th><th>Cor</th><th>Código</th><th>Visc.</th><th>Secagem</th><th>Anilox</th><th>Dupla Face</th><th>Faca</th></tr></thead><tbody>${tintasLinhas||'<tr><td colspan="8">—</td></tr>'}</tbody></table>
+    <table class="pa-t"><thead><tr><th style="width:6%">Est.</th><th>Cor</th><th>Código</th><th>Visc. (s)</th><th>Secagem</th><th>Anilox</th><th>Dupla face</th><th>Faca (Bar)</th></tr></thead><tbody>${linhas||'<tr><td colspan="8">—</td></tr>'}</tbody></table>
     <div class="pa-sec">Parâmetros da máquina</div>
-    <div class="pa-grid" style="grid-template-columns:1fr 1fr 1fr">${paramsGrid}</div>
-    <div class="pa-grid" style="grid-template-columns:1fr 1fr"><div><span class="l">Temp. Sec. Entre Cores:</span> <span class="v">${p.TEMP_SEC_ENTRECORES||'—'} °C</span></div><div><span class="l">Temp. Sec. Superior:</span> <span class="v">${p.TEMP_SEC_SUPERIOR||'—'} °C</span></div>${p.MATERIAL?`<div style="grid-column:span 2"><span class="l">Material:</span> <span class="v">${p.MATERIAL}</span></div>`:''}</div>
-    <div class="pa-sec">Histórico de repetições${hist&&hist.metricas?` — ${hist.metricas.totalRepeticoes} rep., ${hist.metricas.taxaAdesao}% adesão`:''}</div>
-    ${histHtml}
+    <div class="pa-grid">${params.map(([l,v,u])=>campo(l,val(v,u))).join('')}</div>
+    <div class="pa-sec">Temperatura de secagem</div>
+    <div class="pa-chips"><span class="pa-chip">Entre cores: <b>${val(p.TEMP_SEC_ENTRECORES,'°C')}</b></span><span class="pa-chip">Superior: <b>${val(p.TEMP_SEC_SUPERIOR,'°C')}</b></span></div>
+    ${obsTxt.length?`<div class="pa-sec">Observações técnicas</div><ul class="pa-obs">${obsTxt.map(l=>`<li>${escH(l)}</li>`).join('')}</ul>`:''}
   `;
-  hideLoading();
   setTimeout(()=>{window.print()},200);
 }
 
@@ -795,7 +803,7 @@ function renderHistDet(){
   else if(filtroH==='desvio')versoes=versoes.map(v=>({...v,reps:(v.reps||[]).filter(rep=>rep.TEM_DESVIO===true||rep.TEM_DESVIO==='TRUE')})).filter(v=>v.reps.length>0);
   const totalReps=histDados.versoes.reduce((s,v)=>s+(v.reps||[]).length,0);
   if(!versoes.length){document.getElementById('hres').innerHTML='<div class="card" style="text-align:center;font-size:13px;color:var(--text3);padding:20px">Nenhuma repetição encontrada</div>';return}
-  document.getElementById('hres').innerHTML=`<div style="margin-bottom:14px"><div style="background:var(--blue-light);border:0.5px solid var(--border);border-radius:var(--rad-lg) var(--rad-lg) 0 0;padding:10px 14px;display:flex;justify-content:space-between;align-items:flex-start;gap:10px"><div style="min-width:0"><div style="font-size:13px;font-weight:700;color:var(--blue)">${r.CLIENTE} — ${fmtCodPAExib(r.COD_PA)}</div>${r.SERVICO?`<div style="font-size:12px;font-weight:600;color:var(--text);margin-top:3px">${r.SERVICO}</div>`:''}<div style="font-size:11px;color:var(--blue);opacity:.7;margin-top:2px">${r.MAQUINA}</div>${conjChips({ITENS_CONJUGACAO:conjH})}</div><span style="font-size:11px;color:var(--blue);font-weight:600;white-space:nowrap;flex-shrink:0">${totalReps} rep.</span></div>${versoes.map((v,vi)=>{const isV=v.ATIVA===true||v.ATIVA==='TRUE',cls=isV?'vigente':'obsoleta';return`<div><div class="ver-hdr-block ${cls}" style="${vi===0?'':'border-radius:0'}"><div style="min-width:0"><div class="ver-hdr-lbl">v${v.NUMERO_VERSAO} · ${isV?'Receita vigente':'Receita anterior'}</div><div class="ver-hdr-op">${(parseInt(v.NUMERO_VERSAO)||1)<=1?`OP de criação: ${opCriacao||'—'}`:`OP de origem: ${v.OP_ORIGEM||'—'}`}</div></div><div class="ver-hdr-right"><span class="ver-hdr-date">${fmtDataHist(v.DATA_CRIACAO)}</span><span class="ver-aprov">Aprov. 1: ${v.APROVADOR_1||'—'}</span>${v.APROVADOR_2?`<span class="ver-aprov">Aprov. 2: ${v.APROVADOR_2}</span>`:''}</div></div><div class="ver-body-block" style="${vi<versoes.length-1?'border-radius:0':''}">${(v.reps||[]).length===0?`<div style="padding:10px 14px;font-size:12px;color:var(--text3);background:var(--${isV?'card':'bg'})">Nenhuma repetição.</div>`:(v.reps||[]).map(rep=>`<div class="rep-item-hist ${cls}"><div style="flex:1"><div class="rep-num-h">OP ${rep.OP_PRODUCAO||'—'}</div><div class="rep-meta-h">${rep.OPERADOR||'—'} · ${fmtDataHist(rep.DATA_HORA)} · Aprov: ${rep.APROVADOR||'—'}</div></div><span class="rep-pill-h ${(rep.TEM_DESVIO===true||rep.TEM_DESVIO==='TRUE')?'pill-dv':'pill-ok'}">${(rep.TEM_DESVIO===true||rep.TEM_DESVIO==='TRUE')?'Com desvio':'Sem desvio'}</span></div>`).join('')}</div></div>`}).join('')}</div>`;
+  document.getElementById('hres').innerHTML=`<div style="margin-bottom:14px"><div style="background:var(--blue-light);border:0.5px solid var(--border);border-radius:var(--rad-lg) var(--rad-lg) 0 0;padding:10px 14px;display:flex;justify-content:space-between;align-items:flex-start;gap:10px"><div style="min-width:0"><div style="font-size:13px;font-weight:700;color:var(--blue)">${r.CLIENTE} — ${fmtCodPAExib(r.COD_PA)}</div>${r.SERVICO?`<div style="font-size:12px;font-weight:600;color:var(--text);margin-top:3px">${r.SERVICO}</div>`:''}<div style="font-size:11px;color:var(--blue);opacity:.7;margin-top:2px">${r.MAQUINA}</div>${conjChips({ITENS_CONJUGACAO:conjH})}</div><span style="font-size:11px;color:var(--blue);font-weight:600;white-space:nowrap;flex-shrink:0">${totalReps} rep.</span></div>${versoes.map((v,vi)=>{const isV=v.ATIVA===true||v.ATIVA==='TRUE',cls=isV?'vigente':'obsoleta';return`<div><div class="ver-hdr-block ${cls}" style="${vi===0?'':'border-radius:0'}"><div style="min-width:0"><div class="ver-hdr-lbl">v${v.NUMERO_VERSAO} · ${isV?'Receita vigente':'Receita anterior'}</div><div class="ver-hdr-op">${(parseInt(v.NUMERO_VERSAO)||1)<=1?`OP de criação: ${opCriacao||'—'}`:`OP de origem: ${v.OP_ORIGEM||'—'}`}</div>${(v.ALTERACOES||[]).map(a=>`<div class="ver-hdr-alt">• ${escH(a.PARAMETRO)}: ${escH(a.DE)} → <b>${escH(a.PARA)}</b></div>`).join('')}${v.REJEITADAS?`<div class="ver-hdr-alt" style="opacity:.75">${v.REJEITADAS} alteração(ões) rejeitada(s) na mesma decisão</div>`:''}</div><div class="ver-hdr-right"><span class="ver-hdr-date">${fmtDataHist(v.DATA_CRIACAO)}</span><span class="ver-aprov">Aprov. 1: ${v.APROVADOR_1||'—'}</span>${v.APROVADOR_2?`<span class="ver-aprov">Aprov. 2: ${v.APROVADOR_2}</span>`:''}</div></div><div class="ver-body-block" style="${vi<versoes.length-1?'border-radius:0':''}">${(v.reps||[]).length===0?`<div style="padding:10px 14px;font-size:12px;color:var(--text3);background:var(--${isV?'card':'bg'})">Nenhuma repetição.</div>`:(v.reps||[]).map(rep=>`<div class="rep-item-hist ${cls}"><div style="flex:1"><div class="rep-num-h">OP ${rep.OP_PRODUCAO||'—'}</div><div class="rep-meta-h">${rep.OPERADOR||'—'} · ${fmtDataHist(rep.DATA_HORA)} · Aprov: ${rep.APROVADOR||'—'}</div></div><span class="rep-pill-h ${(rep.TEM_DESVIO===true||rep.TEM_DESVIO==='TRUE')?'pill-dv':'pill-ok'}">${(rep.TEM_DESVIO===true||rep.TEM_DESVIO==='TRUE')?'Com desvio':'Sem desvio'}</span></div>`).join('')}</div></div>`}).join('')}</div>`;
 }
 function setFH(el,t){document.querySelectorAll('#hist-filtros .fc').forEach(c=>c.classList.remove('fa'));el.classList.add('fa');filtroH=t;renderHistDet()}
 
