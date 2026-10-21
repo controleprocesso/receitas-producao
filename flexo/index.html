@@ -679,7 +679,7 @@ function executarAlterarStatus(id,novoStatus,pin,motivo){
     showSuc(novoStatus==='OBSOLETA'?'Receita obsoletada':'Receita reativada',novoStatus==='OBSOLETA'?'A receita foi marcada como obsoleta.':'A receita está ativa novamente.',[{l:'Responsável',v:res.nome||'—'},{l:'Status',v:novoStatus==='OBSOLETA'?'Obsoleta':'Ativa'},{l:'Motivo',v:motivo||'—'}],false,'s-lista');
   }).catch(e=>{hideLoading();salvando=false;err.textContent='Erro: '+e.message;pinBufAdmin='';updDotsAdmin()});
 }
-function prepMotivoAdmin(acao){const w=document.getElementById('admin-motivo-wrap'),t=document.getElementById('admin-motivo'),l=document.getElementById('admin-motivo-lbl');const pede=acao==='obsoletar'||acao==='reativar';w.style.display=pede?'block':'none';t.value='';t.placeholder=acao==='obsoletar'?';l.innerHTML=(acao==='obsoletar'?'Motivo da obsolescência':'Motivo da reativação')+' <span>*</span>'}
+function prepMotivoAdmin(acao){const w=document.getElementById('admin-motivo-wrap'),t=document.getElementById('admin-motivo'),l=document.getElementById('admin-motivo-lbl');const pede=acao==='obsoletar'||acao==='reativar';w.style.display=pede?'block':'none';t.value='';t.placeholder=acao==='obsoletar'?'Ex.: produto descontinuado pelo cliente':'Ex.: cliente voltou a pedir o item';l.innerHTML=(acao==='obsoletar'?'Motivo da obsolescência':'Motivo da reativação')+' <span>*</span>'}
 function reativarReceita(){
   adminCtxId=recIdx;adminAcao='reativar';pinBufAdmin='';updDotsAdmin();document.getElementById('pade').textContent='';prepMotivoAdmin('reativar');
   const r=receitas.find(x=>String(x.ID)===String(recIdx));
