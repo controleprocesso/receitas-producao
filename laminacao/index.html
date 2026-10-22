@@ -227,6 +227,13 @@ textarea{resize:none;line-height:1.5;width:100%}
   .pa-obs{margin:0;padding-left:16px;font-size:10px;line-height:1.5}
   .pa-rod{margin-top:14px;font-size:8.5px;color:#666}
 }
+.param-sel{width:190px;max-width:55%;font-size:12px;padding:7px 6px;border:0.5px solid var(--border2);border-radius:var(--rad);background:var(--card);color:var(--text);outline:none;font-family:var(--font-sans)}
+.param-sel.dv{border-color:var(--red-mid);background:var(--red-light);color:var(--red)}
+.tol-hint{font-size:10px;color:var(--green);margin-top:4px;display:flex;align-items:center;gap:3px}
+.rep-falta{font-size:12px;color:var(--amber);background:var(--amber-light);border-radius:var(--rad);padding:8px 12px;margin-bottom:8px;text-align:center;font-weight:500}
+.rpd-pill{font-size:10px;padding:2px 8px;border-radius:20px;font-weight:600}
+.rev-tol{font-size:10px;padding:1px 6px;border-radius:20px;background:var(--green-light);color:var(--green);white-space:nowrap;font-weight:600}
+select.fdsel{width:100%;font-size:14px;padding:11px 12px;border:0.5px solid var(--border2);border-radius:var(--rad);background:var(--card);color:var(--text);font-family:var(--font-sans);outline:none}
 </style>
 </head>
 <body>
@@ -354,7 +361,7 @@ textarea{resize:none;line-height:1.5;width:100%}
           <div class="sl">Informações do adesivo</div>
           <div id="info-campos"></div>
         </div>
-        <div class="nr"><button class="bnp" onclick="nStep(1)"><i class="ti ti-arrow-left"></i> Voltar</button><button class="bnn" onclick="nStep(3)">Parâmetros <i class="ti ti-arrow-right"></i></button></div>
+        <div class="nr"><button class="bnp" onclick="nStep(1)"><i class="ti ti-arrow-left"></i> Voltar</button><button class="bnn" id="btn-ns2" onclick="nStep(3)">Parâmetros <i class="ti ti-arrow-right"></i></button></div>
       </div>
 
       <!-- PASSO 3: PARÂMETROS -->
@@ -393,7 +400,7 @@ textarea{resize:none;line-height:1.5;width:100%}
 
     <!-- REGISTRO DE REPETIÇÃO -->
     <div id="s-rep" class="sc">
-      <button class="bb" onclick="ir('s-rec')"><i class="ti ti-arrow-left"></i> Voltar à receita</button>
+      <button class="bb" onclick="sairRep()"><i class="ti ti-arrow-left"></i> Voltar à receita</button>
       <div class="ibox" style="background:var(--green-light);border:0.5px solid #C0DD97">
         <div class="ibic" style="background:rgba(255,255,255,0.6)"><i class="ti ti-user" style="color:var(--green)"></i></div>
         <div style="flex:1"><div style="font-size:11px;color:var(--green);margin-bottom:4px;font-weight:600">Operador</div><input class="ibinp" style="color:var(--green)" type="text" id="oper-inp" oninput="uBtn()"></div>
@@ -416,8 +423,9 @@ textarea{resize:none;line-height:1.5;width:100%}
         <div class="prg"><div class="prf" id="rpg" style="width:0%"></div></div>
         <div id="params-rep"></div>
       </div>
+      <div id="rep-falta" class="rep-falta" style="display:none"></div>
       <div class="nr">
-        <button class="bnp" onclick="ir('s-rec')"><i class="ti ti-x"></i> Cancelar</button>
+        <button class="bnp" onclick="sairRep()"><i class="ti ti-x"></i> Cancelar</button>
         <button class="bnn" id="btn-revisar" onclick="irRevisar()" disabled>Revisar <i class="ti ti-arrow-right"></i></button>
       </div>
     </div>
@@ -425,14 +433,29 @@ textarea{resize:none;line-height:1.5;width:100%}
     <!-- REVISÃO DA REPETIÇÃO -->
     <div id="s-rev" class="sc">
       <button class="bb" onclick="ir('s-rep')"><i class="ti ti-arrow-left"></i> Voltar ao registro</button>
-      <div id="rev-dv-banner" style="display:none" class="rev-dv-banner"><i class="ti ti-alert-triangle" style="font-size:18px;color:var(--red)"></i><div><div style="font-size:13px;font-weight:600;color:var(--red)">Desvios identificados</div><div style="font-size:11px;color:var(--red);margin-top:2px" id="rev-dv-count"></div></div></div>
-      <div id="alt-banner" style="display:none" class="alt-banner"><i class="ti ti-file-pencil" style="font-size:18px;color:var(--blue)"></i><div><div style="font-size:13px;font-weight:600;color:var(--blue)">Alteração na receita solicitada</div><div style="font-size:11px;color:var(--blue);margin-top:2px" id="alt-count"></div></div></div>
-      <div class="card"><div class="sl">Revisão dos parâmetros</div><div id="rev-params"></div></div>
+      <div id="rev-dv-banner" style="display:none" class="rev-dv-banner"><i class="ti ti-alert-triangle" style="font-size:18px;color:var(--red);flex-shrink:0"></i><div><div style="font-size:13px;font-weight:600;color:var(--red)" id="rev-dv-count"></div><div style="font-size:11px;color:var(--red);margin-top:1px;opacity:.8">Para cada desvio, escolha: desvio pontual ou alterar na receita.</div></div></div>
+      <div class="card" id="rev-info-card"><div class="sl">Informações do adesivo — revisão</div><div id="rev-info"></div></div>
+      <div class="card"><div class="sl">Parâmetros da máquina — revisão</div><div id="rev-params"></div></div>
+      <div id="alt-banner" style="display:none" class="alt-banner"><i class="ti ti-file-pencil" style="font-size:18px;color:var(--blue);flex-shrink:0"></i><div><div style="font-size:13px;font-weight:600;color:var(--blue)" id="alt-count"></div><div style="font-size:11px;color:var(--blue);margin-top:1px;opacity:.8">Um segundo supervisor aprovará na tela de Pendências.</div></div></div>
+      <div id="rev-pin-hint" class="rep-falta" style="display:none"></div>
+      <div class="nr">
+        <button class="bnp" onclick="ir('s-rep')"><i class="ti ti-arrow-left"></i> Editar</button>
+        <button class="bnn" id="btn-ir-pin" onclick="irPinR()" disabled><i class="ti ti-lock"></i> Aprovar com PIN</button>
+      </div>
+    </div>
+
+    <!-- PIN DA REPETIÇÃO -->
+    <div id="s-pin-r" class="sc">
       <div class="card">
         <div class="pin-w">
           <div class="pin-t">Aprovação do supervisor</div>
-          <div class="pin-s">Registre sua aprovação com PIN</div>
-          <div class="pin-cx"><div class="pcl">Receita</div><div class="pcv" id="rpctx">—</div></div>
+          <div class="pin-s">Supervisor, confira e aprove com PIN.</div>
+          <div class="pin-cx">
+            <div class="pcl">Repetição sendo aprovada</div><div class="pcv" id="rpctx">—</div>
+            <div id="rpd" style="margin-top:6px;display:flex;flex-wrap:wrap;gap:4px;justify-content:center"></div>
+            <div style="margin-top:6px;font-size:11px;color:var(--text3)">Operador: <span id="rep-oper-display" style="font-weight:600;color:var(--text)">—</span> · OP <span id="rep-op-display" style="font-weight:600;color:var(--text)">—</span></div>
+            <div style="font-size:11px;color:var(--text3);margin-top:2px">Aprovador: <span style="font-weight:600;color:var(--blue)">identificado pelo PIN</span></div>
+          </div>
           <div class="pin-ds" id="pnd-r"><div class="pin-d" id="pd-r-0"></div><div class="pin-d" id="pd-r-1"></div><div class="pin-d" id="pd-r-2"></div><div class="pin-d" id="pd-r-3"></div></div>
           <div class="pin-g">
             <button class="pib" onclick="pinR('1')">1</button><button class="pib" onclick="pinR('2')">2</button><button class="pib" onclick="pinR('3')">3</button>
@@ -445,7 +468,8 @@ textarea{resize:none;line-height:1.5;width:100%}
           <div class="pie" id="pre2"></div>
         </div>
       </div>
-      <div class="nr"><button class="bnp" onclick="ir('s-rep')"><i class="ti ti-arrow-left"></i> Editar</button></div>
+      <button class="bs" onclick="ir('s-rev')"><i class="ti ti-arrow-left"></i> Voltar à revisão</button>
+      <div style="height:16px"></div>
     </div>
 
     <!-- SUCESSO -->
@@ -518,11 +542,11 @@ textarea{resize:none;line-height:1.5;width:100%}
 
   </div>
   <div class="tab-bar">
-    <button class="tab-item ta" id="tab-r" onclick="setTab('tab-r');irLista()"><i class="ti ti-file-text"></i><span class="tbl">Receitas</span></button>
-    <button class="tab-item" id="tab-h" onclick="setTab('tab-h');ir('s-hist')"><i class="ti ti-history"></i><span class="tbl">Histórico</span></button>
-    <button class="tab-item" id="tab-n" onclick="setTab('tab-n');irNova()"><i class="ti ti-plus"></i><span class="tbl">Nova</span></button>
-    <button class="tab-item" id="tab-pend" onclick="setTab('tab-pend');irPendLock()"><i class="ti ti-clock"></i><span class="tbl">Pendências</span><span class="tab-badge" id="pend-badge" style="display:none">0</span></button>
-    <button class="tab-item" id="tab-p" onclick="setTab('tab-p');irPainelLock()"><i class="ti ti-chart-bar"></i><span class="tbl">Painel</span></button>
+    <button class="tab-item ta" id="tab-r" onclick="navTab('tab-r',()=>irLista())"><i class="ti ti-file-text"></i><span class="tbl">Receitas</span></button>
+    <button class="tab-item" id="tab-h" onclick="navTab('tab-h',()=>ir('s-hist'))"><i class="ti ti-history"></i><span class="tbl">Histórico</span></button>
+    <button class="tab-item" id="tab-n" onclick="navTab('tab-n',()=>irNova())"><i class="ti ti-plus"></i><span class="tbl">Nova</span></button>
+    <button class="tab-item" id="tab-pend" onclick="navTab('tab-pend',()=>irPendLock())"><i class="ti ti-clock"></i><span class="tbl">Pendências</span><span class="tab-badge" id="pend-badge" style="display:none">0</span></button>
+    <button class="tab-item" id="tab-p" onclick="navTab('tab-p',()=>irPainelLock())"><i class="ti ti-chart-bar"></i><span class="tbl">Painel</span></button>
   </div>
 </div>
 
@@ -599,7 +623,7 @@ function ir(id){
   document.getElementById('main-content').scrollTop=0;
   // título
   const tpt=document.getElementById('tpt'), tps=document.getElementById('tps');
-  const map={'s-lista':['Receitas de Produto','Laminação'],'s-rec':['Detalhe da receita','Laminação'],'s-nova':['Nova receita','Laminação'],'s-rep':['Registrar repetição','Laminação'],'s-rev':['Revisão','Laminação'],'s-suc':['Concluído','Laminação'],'s-hist':['Histórico','Por receita · Laminação'],'s-pend':['Pendências','Aguardando aprovação'],'s-pend-lock':['Pendências','Acesso restrito'],'s-painel':['Painel','Laminação'],'s-painel-lock':['Painel','Acesso restrito'],'s-maquina-setup':['Máquina deste tablet','Laminação'],'s-pin-admin':['Acesso administrativo','Supervisor autorizado']};
+  const map={'s-lista':['Receitas de Produto','Laminação'],'s-rec':['Detalhe da receita','Laminação'],'s-nova':['Nova receita','Laminação'],'s-rep':['Registrar repetição','Laminação'],'s-rev':['Revisão','Laminação'],'s-suc':['Concluído','Laminação'],'s-hist':['Histórico','Por receita · Laminação'],'s-pend':['Pendências','Aguardando aprovação'],'s-pend-lock':['Pendências','Acesso restrito'],'s-painel':['Painel','Laminação'],'s-painel-lock':['Painel','Acesso restrito'],'s-maquina-setup':['Máquina deste tablet','Laminação'],'s-pin-admin':['Acesso administrativo','Supervisor autorizado'],'s-pin-r':['Aprovação','Repetição']};
   if(map[id]){ tpt.textContent=map[id][0]; tps.textContent=map[id][1]; }
 }
 function setTab(id){ document.querySelectorAll('.tab-item').forEach(t=>t.classList.remove('ta')); document.getElementById(id).classList.add('ta'); }
@@ -876,11 +900,18 @@ function uNs1(){
 });
 
 // ---------- Passos da nova receita ----------
+// Passo 2 só avança com o adesivo escolhido
+function uNs2(){
+  const campos=getCampos(novaTipo, novaMaq), btn=document.getElementById('btn-ns2');
+  if(!campos){ btn.disabled=true; return; }
+  const i=campos.info.findIndex(ehCampoAdesivo);
+  btn.disabled = i>=0 && !(document.getElementById('inf-'+i)?.value||'').trim();
+}
 function nStep(n){
   nsn=n;
   ['ns1','ns2','ns3','ns4'].forEach((id,i)=>document.getElementById(id).style.display=(i+1)===n?'block':'none');
   document.getElementById('main-content').scrollTop=0;
-  if(n===2) montarInfoCampos();
+  if(n===2){ montarInfoCampos(); uNs2(); }
   if(n===3) montarParamCampos();
   if(n===4) bRv();
 }
@@ -890,8 +921,10 @@ function montarInfoCampos(){
   const cont=document.getElementById('info-campos');
   if(cont.dataset.key === novaTipo+'|'+novaMaq) return; // já montado
   cont.dataset.key = novaTipo+'|'+novaMaq;
-  cont.innerHTML = campos.info.map((c,i)=>`
-    <div class="fd"><div class="fdl">${c}</div><input type="text" id="inf-${i}" inputmode="text"></div>`).join('');
+  // Adesivo: lista fixa conforme o tipo de laminação (obrigatório)
+  cont.innerHTML = campos.info.map((c,i)=> ehCampoAdesivo(c)
+    ? `<div class="fd"><div class="fdl">${escH(c)} <span style="color:var(--red-mid)">*</span></div><select class="fdsel" id="inf-${i}" onchange="uNs2()"><option value="">Selecione o adesivo</option>${(ADESIVOS[novaTipo]||[]).map(o=>`<option value="${escH(o)}">${escH(o)}</option>`).join('')}</select></div>`
+    : `<div class="fd"><div class="fdl">${escH(c)}</div><input type="text" id="inf-${i}" inputmode="decimal"></div>`).join('');
 }
 function montarParamCampos(){
   const campos = getCampos(novaTipo, novaMaq);
@@ -1008,162 +1041,221 @@ function hideOverlay(){ document.getElementById('overlay-loading').classList.rem
 </script>
 
 <script>
+// ---------- Adesivos e tolerâncias ----------
+// Opções do campo de adesivo por tipo de laminação
+const ADESIVOS = {
+  'Base Solvente':  ['Fuller SB 101 / R 201', 'Henkel 3752 / 6850', 'Toyo TM250HV / CATRT86L'],
+  'Solvente Less':  ['Coim 5485 / 5500'],
+  'Monocomponente': ['Coim SF2930']
+};
+function ehCampoAdesivo(campo){ const c=normTxt(campo); return c==='adesivo' || c==='adesivo/catalisador'; }
+// Opções para um campo de adesivo; inclui o valor atual se for antigo (fora da lista)
+function opcoesAdesivo(tipo, atual){
+  const ops=(ADESIVOS[tipo]||[]).slice();
+  const a=String(atual==null?'':atual).trim();
+  if(a && !ops.some(o=>normTxt(o)===normTxt(a))) ops.unshift(a);
+  return ops;
+}
+// Variação aceita sem gerar desvio (mesma unidade da receita)
+const TOLERANCIAS = [
+  { teste: c => c.startsWith('gramatura aplicada'), tol: 0.2 },
+  { teste: c => c === 'viscosidade do adesivo',     tol: 1 }
+];
+function toleranciaDe(campo){ const c=normTxt(campo); const t=TOLERANCIAS.find(x=>x.teste(c)); return t?t.tol:0; }
+function normTxt(v){ return String(v==null?'':v).trim().toLowerCase().replace(/\s+/g,' '); }
+function numBR(v){ const s=String(v==null?'':v).trim(); return /^-?\d+(?:[.,]\d+)?$/.test(s) ? parseFloat(s.replace(',','.')) : null; }
+function fmtTol(t){ return '±'+String(t).replace('.',','); }
+/**
+ * Compara o valor real com o da receita.
+ * 'vazio' (não preenchido) · 'ok' (igual) · 'tol' (dentro da tolerância) · 'desvio'
+ * Números: "2,5" = "2.50". Texto: ignora caixa e espaços extras.
+ * Sem valor na receita não há referência: nunca é desvio.
+ */
+function compararLam(campo, ref, val){
+  const v=String(val==null?'':val).trim(), r=String(ref==null?'':ref).trim();
+  if(!v) return 'vazio';
+  if(!r) return 'ok';
+  const nv=numBR(v), nr=numBR(r);
+  if(nv!==null && nr!==null){
+    if(nv===nr) return 'ok';
+    const tol=toleranciaDe(campo);
+    return (tol && Math.abs(nv-nr) <= tol+1e-9) ? 'tol' : 'desvio';
+  }
+  return normTxt(v)===normTxt(r) ? 'ok' : 'desvio';
+}
+
 // ---------- Registro de repetição ----------
+// repItens: informações do adesivo + parâmetros, na ordem da receita
+let repItens = [], repSalva = false;
+function repReceita(){ return receitas.find(x=>String(x.ID)===String(recIdx)); }
 function irRep(){
-  const r = receitas.find(x=>String(x.ID)===String(recIdx));
+  const r = repReceita();
   if(!r || r.STATUS==='OBSOLETA') return;
+  repSalva=false;
+  pinBufR=''; updDotsR();
+  Object.keys(altOpts).forEach(k=>delete altOpts[k]);
   document.getElementById('oper-inp').value='';
   document.getElementById('op-inp').value='';
   document.getElementById('rep-dt').textContent = new Date().toLocaleString('pt-BR');
-  // Identificação
   document.getElementById('rep-id-grid').innerHTML = `
     <div><div class="fl">Cliente</div><div class="fv">${escH(r.CLIENTE||'—')}</div></div>
     <div><div class="fl">Cód. PA</div><div class="fv">${escH(fmtCodPAExib(r.COD_PA))}</div></div>
     <div><div class="fl">Nº laminação</div><div class="fv fvac">${escH(r.NUMERO_LAMINACAO||'—')}</div></div>
     <div><div class="fl">Máquina</div><div class="fv">${escH(r.MAQUINA||'—')}</div></div>`;
-  // Informações (read-only, mostra referência)
-  const infos = r.informacoes||[];
-  document.getElementById('rep-info').innerHTML = infos.length
-    ? `<div class="pb">${infos.map(i=>`<div class="pbox"><div class="pl">${escH(i.CAMPO)}</div><div class="pv">${escH(i.VALOR===''||i.VALOR==null?'—':i.VALOR)}</div></div>`).join('')}</div>`
-    : `<div style="font-size:12px;color:var(--text3)">Sem informações</div>`;
-  // Parâmetros — campos editáveis com detecção de desvio
-  const params = r.parametros||[];
-  document.getElementById('params-rep').innerHTML = params.map((p,i)=>{
-    const ref = String(p.VALOR||'');
-    return `<div class="param-row" id="rprow-${i}">
+  repItens = []
+    .concat((r.informacoes||[]).map((x,i)=>({k:'i'+i, tipo:'INFORMACAO', campo:String(x.CAMPO||''), ref:String(x.VALOR==null?'':x.VALOR).trim()})))
+    .concat((r.parametros||[]).map((x,i)=>({k:'p'+i, tipo:'PARAMETRO', campo:String(x.CAMPO||''), ref:String(x.VALOR==null?'':x.VALOR).trim()})));
+  const linha = it => {
+    const tol=toleranciaDe(it.campo);
+    const entrada = ehCampoAdesivo(it.campo)
+      ? `<select class="param-sel" id="rinp-${it.k}" onchange="chkP('${it.k}')"><option value="">Selecione</option>${opcoesAdesivo(r.TIPO_LAMINACAO, it.ref).map(o=>`<option value="${escH(o)}">${escH(o)}</option>`).join('')}</select>`
+      : `<input class="param-inp" type="text" inputmode="decimal" id="rinp-${it.k}" oninput="chkP('${it.k}')">`;
+    return `<div class="param-row" id="rprow-${it.k}">
       <div class="param-top">
-        <div class="param-lbl">${p.CAMPO}<div style="font-size:10px;color:var(--text3);margin-top:2px">Receita: ${ref||'—'}</div></div>
-        <input class="param-inp" type="text" inputmode="text" id="rpar-${i}" oninput="chkP(${i},'${ref.replace(/'/g,"\\'")}')">
+        <div class="param-lbl">${escH(it.campo)}<div style="font-size:10px;color:var(--text3);margin-top:2px">Receita: ${escH(it.ref||'—')}${tol?` <span style="color:var(--green)">· tolerância ${fmtTol(tol)}</span>`:''}</div></div>
+        ${entrada}
       </div>
-      <div class="just-inp" id="rjust-${i}" style="display:none">
+      <div class="tol-hint" id="rtol-${it.k}" style="display:none"><i class="ti ti-check"></i> Dentro da tolerância</div>
+      <div class="just-inp" id="rjust-${it.k}" style="display:none">
         <label><i class="ti ti-alert-triangle"></i> Desvio — justifique</label>
-        <textarea id="rjt-${i}" rows="2" placeholder="Justifique o desvio..."></textarea>
+        <textarea id="rjt-${it.k}" rows="2" placeholder="Justifique o desvio..." oninput="uBtn()"></textarea>
       </div>
     </div>`;
-  }).join('');
+  };
+  const infos=repItens.filter(x=>x.tipo==='INFORMACAO'), params=repItens.filter(x=>x.tipo==='PARAMETRO');
+  document.getElementById('rep-info-card').style.display = infos.length?'block':'none';
+  document.getElementById('rep-info').innerHTML = infos.map(linha).join('');
+  document.getElementById('params-rep').innerHTML = params.length ? params.map(linha).join('') : '<div style="font-size:12px;color:var(--text3)">Sem parâmetros</div>';
   uBtn();
-  uProg();
   ir('s-rep');
 }
-function chkP(i, ref){
-  const inp=document.getElementById('rpar-'+i);
-  const just=document.getElementById('rjust-'+i);
-  const val=inp.value.trim();
-  // comparação exata, com normalização de separador decimal (, ou .)
-  const valCmp=normDec(val), refCmp=normDec(ref);
-  const desvio = valCmp!=='' && refCmp!=='' && valCmp!==refCmp;
-  if(desvio){ inp.classList.add('dv'); just.style.display='block'; }
-  else { inp.classList.remove('dv'); just.style.display='none'; }
-  uBtn(); uProg();
+function valRep(k){ const e=document.getElementById('rinp-'+k); return e?e.value.trim():''; }
+function chkP(k){
+  const it=repItens.find(x=>x.k===k); if(!it) return;
+  const inp=document.getElementById('rinp-'+k);
+  const est=compararLam(it.campo, it.ref, inp.value);
+  inp.classList.toggle('dv', est==='desvio');
+  document.getElementById('rjust-'+k).style.display = est==='desvio'?'block':'none';
+  document.getElementById('rtol-'+k).style.display = est==='tol'?'flex':'none';
+  uBtn();
 }
-
-function normDec(v){
-  return String(v==null?'':v).trim().replace(',', '.');
-}
+// Obrigatório: todo campo que tem valor na receita
+function itensObrigatorios(){ return repItens.filter(it=>it.ref!==''); }
 function uProg(){
-  const r = receitas.find(x=>String(x.ID)===String(recIdx));
-  const params = r?(r.parametros||[]):[];
-  const total=params.length;
-  let preench=0;
-  params.forEach((p,i)=>{ const v=document.getElementById('rpar-'+i); if(v&&v.value.trim()!=='') preench++; });
-  document.getElementById('rpg').style.width = total?Math.round(preench/total*100)+'%':'0%';
+  const obr=itensObrigatorios();
+  const f=obr.filter(it=>valRep(it.k)!=='').length;
+  document.getElementById('rpg').style.width = obr.length?Math.round(f/obr.length*100)+'%':'100%';
 }
 function uBtn(){
-  const r = receitas.find(x=>String(x.ID)===String(recIdx));
-  const params = r?(r.parametros||[]):[];
-  const oper=document.getElementById('oper-inp').value.trim();
-  const op=document.getElementById('op-inp').value.trim();
-  // todos os parâmetros preenchidos + justificativas de desvio preenchidas
-  let ok = oper!=='' && op!=='';
-  params.forEach((p,i)=>{
-    const v=document.getElementById('rpar-'+i);
-    if(!v||v.value.trim()==='') ok=false;
-    const j=document.getElementById('rjust-'+i);
-    if(j&&j.style.display!=='none'){ const jt=document.getElementById('rjt-'+i); if(!jt||jt.value.trim()==='') ok=false; }
-  });
-  document.getElementById('btn-revisar').disabled=!ok;
+  uProg();
+  const falta=[];
+  if(!document.getElementById('oper-inp').value.trim()) falta.push('operador');
+  if(!document.getElementById('op-inp').value.trim()) falta.push('OP');
+  const vazios=itensObrigatorios().filter(it=>valRep(it.k)==='').length;
+  if(vazios) falta.push(vazios+' campo(s)');
+  const semJust=getDesvios().filter(d=>!d.justificativa).length;
+  if(semJust) falta.push(semJust+' justificativa(s)');
+  document.getElementById('btn-revisar').disabled = falta.length>0;
+  const el=document.getElementById('rep-falta');
+  // Só mostra o que falta depois que o registro começou
+  const iniciou = repTemDados();
+  el.style.display = (falta.length && iniciou) ? 'block' : 'none';
+  el.textContent = 'Falta preencher: '+falta.join(', ');
+}
+function repTemDados(){
+  return !!(document.getElementById('oper-inp').value.trim() || document.getElementById('op-inp').value.trim() || repItens.some(it=>valRep(it.k)!==''));
 }
 
 // ---------- Coletar desvios ----------
 function getDesvios(){
-  const r = receitas.find(x=>String(x.ID)===String(recIdx));
-  const params = r?(r.parametros||[]):[];
-  const dvs=[];
-  params.forEach((p,i)=>{
-    const inp=document.getElementById('rpar-'+i);
-    if(!inp) return;
-    const val=inp.value.trim();
-    const ref=String(p.VALOR||'');
-    const valCmp=normDec(val), refCmp=normDec(ref);
-    if(valCmp!==''&&refCmp!==''&&valCmp!==refCmp){
-      const jt=document.getElementById('rjt-'+i);
-      dvs.push({ idx:i, parametro:p.CAMPO, valorReceita:ref, valorReal:val, justificativa:jt?jt.value.trim():'' });
-    }
+  return repItens.filter(it=>compararLam(it.campo, it.ref, valRep(it.k))==='desvio').map(it=>{
+    const jt=document.getElementById('rjt-'+it.k);
+    return { k:it.k, tipo:it.tipo, parametro:it.campo, valorReceita:it.ref, valorReal:valRep(it.k), justificativa:jt?jt.value.trim():'' };
   });
-  return dvs;
 }
 
 // ---------- Revisão da repetição ----------
+// A escolha (pontual x alterar receita) é obrigatória para cada desvio e
+// fica guardada ao voltar para editar; some se o desvio deixar de existir.
 function irRevisar(){
-  const r = receitas.find(x=>String(x.ID)===String(recIdx));
-  const params = r?(r.parametros||[]):[];
+  const r = repReceita(); if(!r) return;
   const dvs=getDesvios();
-  document.getElementById('rpctx').textContent=`${r.CLIENTE} — ${fmtCodPAExib(r.COD_PA)}`;
-
-  // Banner de desvios
-  const dvBanner=document.getElementById('rev-dv-banner');
-  if(dvs.length){ dvBanner.style.display='flex'; document.getElementById('rev-dv-count').textContent=`${dvs.length} parâmetro(s) com desvio`; }
-  else dvBanner.style.display='none';
-
-  // Limpar opções de alteração anteriores
-  Object.keys(altOpts).forEach(k=>delete altOpts[k]);
-
-  // Renderizar revisão de parâmetros
-  document.getElementById('rev-params').innerHTML = params.map((p,i)=>{
-    const inp=document.getElementById('rpar-'+i);
-    const val=inp?inp.value.trim():'';
-    const ref=String(p.VALOR||'');
-    const isDesvio = val!==''&&ref!==''&&val!==String(ref);
-    const jt=document.getElementById('rjt-'+i);
-    const just=jt?jt.value.trim():'';
-    if(!isDesvio){
-      return `<div class="rev-row"><div class="rev-row-top"><div class="rev-lbl">${p.CAMPO}</div><div class="rev-right"><div class="rev-real">${val||'—'}</div></div></div></div>`;
+  const chaves=dvs.map(d=>d.k);
+  Object.keys(altOpts).forEach(k=>{ if(!chaves.includes(k)) delete altOpts[k]; });
+  document.getElementById('rev-dv-banner').style.display = dvs.length?'flex':'none';
+  document.getElementById('rev-dv-count').textContent = `${dvs.length} campo(s) com desvio`;
+  const linha = it => {
+    const val=valRep(it.k), est=compararLam(it.campo, it.ref, val);
+    if(est!=='desvio'){
+      return `<div class="rev-row"><div class="rev-row-top"><div class="rev-lbl">${escH(it.campo)}</div><div class="rev-right"><div class="rev-real">${escH(val||'—')}${est==='tol'?' <span class="rev-tol">tolerância</span>':''}</div></div></div></div>`;
     }
-    // Com desvio: mostra valor, justificativa e opções (pontual vs alterar receita)
+    const d=dvs.find(x=>x.k===it.k), op=altOpts[it.k];
     return `<div class="rev-row">
       <div class="rev-row-top">
-        <div class="rev-lbl">${p.CAMPO}<div style="font-size:10px;color:var(--text3);margin-top:2px">Receita: ${ref}</div></div>
-        <div class="rev-right"><div class="rev-real dv">${val} <span class="rev-dv-pill">desvio</span></div></div>
+        <div class="rev-lbl">${escH(it.campo)}<div style="font-size:10px;color:var(--text3);margin-top:2px">Receita: ${escH(it.ref)}</div></div>
+        <div class="rev-right"><div class="rev-real dv">${escH(val)} <span class="rev-dv-pill">desvio</span></div></div>
       </div>
-      <div class="rev-just"><div class="rev-just-lbl">Justificativa</div>${just}</div>
+      <div class="rev-just"><div class="rev-just-lbl">Justificativa</div>${escH(d.justificativa)}</div>
       <div class="alt-opts">
-        <div class="alt-btn sel-pont" id="alt-pont-${i}" onclick="selAlt(${i},'pontual')"><i class="ti ti-bolt"></i>Desvio pontual</div>
-        <div class="alt-btn" id="alt-rec-${i}" onclick="selAlt(${i},'receita')"><i class="ti ti-file-pencil"></i>Alterar receita</div>
+        <div class="alt-btn${op==='pontual'?' sel-pont':''}" id="alt-pont-${it.k}" onclick="selAlt('${it.k}','pontual')"><i class="ti ti-bolt"></i>Desvio pontual</div>
+        <div class="alt-btn${op==='receita'?' sel-rec':''}" id="alt-rec-${it.k}" onclick="selAlt('${it.k}','receita')"><i class="ti ti-file-pencil"></i>Alterar receita</div>
       </div>
     </div>`;
-  }).join('');
-
-  // default: todos pontual
-  dvs.forEach(d=>{ altOpts[d.idx]='pontual'; });
+  };
+  const infos=repItens.filter(x=>x.tipo==='INFORMACAO'), params=repItens.filter(x=>x.tipo==='PARAMETRO');
+  document.getElementById('rev-info-card').style.display = infos.length?'block':'none';
+  document.getElementById('rev-info').innerHTML = infos.map(linha).join('');
+  document.getElementById('rev-params').innerHTML = params.map(linha).join('') || '<div style="font-size:12px;color:var(--text3)">Sem parâmetros</div>';
   updAltBanner();
-
-  // reset PIN
-  pinBufR=''; updDotsR();
-  document.getElementById('pre2').textContent='';
   ir('s-rev');
 }
-function selAlt(i, tipo){
-  altOpts[i]=tipo;
-  document.getElementById('alt-pont-'+i).className='alt-btn'+(tipo==='pontual'?' sel-pont':'');
-  document.getElementById('alt-rec-'+i).className='alt-btn'+(tipo==='receita'?' sel-rec':'');
+function selAlt(k, tipo){
+  altOpts[k]=tipo;
+  document.getElementById('alt-pont-'+k).className='alt-btn'+(tipo==='pontual'?' sel-pont':'');
+  document.getElementById('alt-rec-'+k).className='alt-btn'+(tipo==='receita'?' sel-rec':'');
   updAltBanner();
 }
 function updAltBanner(){
-  const nAlt=Object.values(altOpts).filter(v=>v==='receita').length;
-  const banner=document.getElementById('alt-banner');
-  if(nAlt>0){ banner.style.display='flex'; document.getElementById('alt-count').textContent=`${nAlt} alteração(ões) irão para aprovação dupla`; }
-  else banner.style.display='none';
+  const dvs=getDesvios();
+  const nAlt=dvs.filter(d=>altOpts[d.k]==='receita').length;
+  const semEscolha=dvs.filter(d=>!altOpts[d.k]).length;
+  document.getElementById('alt-banner').style.display = nAlt?'flex':'none';
+  document.getElementById('alt-count').textContent = `${nAlt} alteração(ões) enviada(s) para pendência`;
+  const hint=document.getElementById('rev-pin-hint');
+  hint.style.display = semEscolha?'block':'none';
+  hint.textContent = `Escolha pontual ou alterar receita em ${semEscolha} desvio(s)`;
+  document.getElementById('btn-ir-pin').disabled = semEscolha>0;
 }
+function irPinR(){
+  const r=repReceita(); if(!r) return;
+  const dvs=getDesvios();
+  if(dvs.some(d=>!altOpts[d.k])) return;
+  const nAlt=dvs.filter(d=>altOpts[d.k]==='receita').length;
+  document.getElementById('rpctx').textContent=`${r.CLIENTE} — ${fmtCodPAExib(r.COD_PA)} · ${r.NUMERO_LAMINACAO||''} laminação`;
+  document.getElementById('rpd').innerHTML = !dvs.length
+    ? '<span class="rpd-pill" style="background:var(--green-light);color:var(--green)">Sem desvios</span>'
+    : `<span class="rpd-pill" style="background:var(--red-light);color:var(--red)">${dvs.length} desvio(s)</span>${nAlt?`<span class="rpd-pill" style="background:var(--blue-light);color:var(--blue)">${nAlt} p/ alterar receita</span>`:''}`;
+  document.getElementById('rep-oper-display').textContent=document.getElementById('oper-inp').value.trim();
+  document.getElementById('rep-op-display').textContent=document.getElementById('op-inp').value.trim();
+  pinBufR=''; updDotsR();
+  document.getElementById('pre2').textContent='';
+  ir('s-pin-r');
+}
+
+// ---------- Saída com dados não salvos ----------
+const TELAS_REP=['s-rep','s-rev','s-pin-r'];
+function telaAtual(){ const el=document.querySelector('.sc.active'); return el?el.id:''; }
+function podeSairRep(){
+  if(!TELAS_REP.includes(telaAtual()) || repSalva || !repTemDados()) return true;
+  return confirm('Sair sem salvar? Os dados desta repetição serão perdidos.');
+}
+function sairRep(){ if(podeSairRep()) abrirRec(recIdx); }
+function navTab(tab, fn){ if(!podeSairRep()) return; setTab(tab); fn(); }
+window.addEventListener('beforeunload', e=>{
+  const novaComDados = telaAtual()==='s-nova' && ['n-cli','n-cod','n-serv'].some(id=>document.getElementById(id).value.trim());
+  const repComDados = TELAS_REP.includes(telaAtual()) && !repSalva && repTemDados();
+  if(novaComDados || repComDados){ e.preventDefault(); e.returnValue='Dados não salvos.'; return e.returnValue; }
+});
 
 // ---------- PIN repetição ----------
 function updDotsR(){
@@ -1189,22 +1281,18 @@ async function salvarRepeticao(pin){
   const oper=document.getElementById('oper-inp').value.trim();
   const op=document.getElementById('op-inp').value.trim();
   const dvs=getDesvios();
+  if(dvs.some(d=>!altOpts[d.k])){ ir('s-rev'); return; }
 
-  // separa desvios pontuais x alteração de receita (pendências)
-  const desvios=[], pendencias2=[];
-  dvs.forEach(d=>{
-    const tipoAlt = altOpts[d.idx]||'pontual';
-    desvios.push({ parametro:d.parametro, valorReceita:d.valorReceita, valorReal:d.valorReal, tipo:'DESVIO', tipoAlteracao:tipoAlt==='receita'?'ALTERAR_RECEITA':'PONTUAL', justificativa:d.justificativa });
-    if(tipoAlt==='receita'){
-      pendencias2.push({ parametro:d.parametro, valorAtual:d.valorReceita, valorProposto:d.valorReal, justificativa:d.justificativa });
-    }
-  });
+  const desvios=dvs.map(d=>({ parametro:d.parametro, valorReceita:d.valorReceita, valorReal:d.valorReal, tipo:d.tipo,
+    tipoAlteracao: altOpts[d.k]==='receita'?'ALTERAR_RECEITA':'PONTUAL', justificativa:d.justificativa }));
+  const pendencias2=dvs.filter(d=>altOpts[d.k]==='receita').map(d=>({ parametro:d.parametro, valorAtual:d.valorReceita, valorProposto:d.valorReal, justificativa:d.justificativa }));
 
   // Uma única chamada: o backend valida o PIN e identifica o aprovador
   salvando=true; showOverlay('Salvando repetição...');
   try{
     const res = await apiPost({action:'salvarRepeticao', pin, idReceita:recIdx, opProducao:op, operador:oper, temDesvio:dvs.length>0, desvios, pendencias:pendencias2});
     hideOverlay();
+    repSalva=true;
     pinBufR=''; updDotsR();
     document.getElementById('suc-title').textContent='Repetição registrada!';
     document.getElementById('suc-sub').textContent=`OP ${op} · ${dvs.length} desvio(s)`;
