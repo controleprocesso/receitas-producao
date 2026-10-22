@@ -234,6 +234,56 @@ textarea{resize:none;line-height:1.5;width:100%}
 .rpd-pill{font-size:10px;padding:2px 8px;border-radius:20px;font-weight:600}
 .rev-tol{font-size:10px;padding:1px 6px;border-radius:20px;background:var(--green-light);color:var(--green);white-space:nowrap;font-weight:600}
 select.fdsel{width:100%;font-size:14px;padding:11px 12px;border:0.5px solid var(--border2);border-radius:var(--rad);background:var(--card);color:var(--text);font-family:var(--font-sans);outline:none}
+.pf-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 8px}
+.pf-grid .fd{margin-bottom:8px}
+.bar-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.bar-lbl{width:96px;font-size:12px;color:var(--text2);text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex-shrink:0}
+.bar-trk{flex:1;background:var(--bg);border-radius:4px;height:22px;overflow:hidden;border:0.5px solid var(--border)}
+.bar-fil{height:100%;background:var(--blue);border-radius:4px;min-width:2px}
+.bar-val{font-size:13px;font-weight:700;color:var(--text);width:28px;text-align:right;flex-shrink:0}
+.pend-item{padding:10px 0;border-bottom:0.5px solid var(--border)}
+.pend-item:last-child{border-bottom:none}
+.pend-item .pend-row{padding:0;border:none}
+.pend-dec{display:flex;gap:6px;justify-content:flex-end;margin-top:8px}
+.pd-btn{padding:6px 12px;border-radius:var(--rad);font-size:12px;font-weight:600;border:0.5px solid var(--border2);background:var(--card);color:var(--text2);cursor:pointer;font-family:var(--font-sans);display:inline-flex;align-items:center;gap:4px}
+.pd-btn i{font-size:13px}
+.pd-btn.on-apr{background:var(--blue);border-color:var(--blue);color:#fff}
+.pd-btn.on-rej{background:var(--red-light);border-color:var(--red-mid);color:var(--red)}
+.pend-all{display:flex;align-items:center;justify-content:flex-end;gap:4px;font-size:11px;color:var(--text3);margin-bottom:6px}
+.pend-all button{background:transparent;border:none;color:var(--blue);font-size:11px;font-weight:600;cursor:pointer;font-family:var(--font-sans);padding:2px 4px}
+.pend-tipo{font-size:9px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--text3);margin-bottom:2px}
+.pend-apr:disabled{opacity:.4;pointer-events:none}
+.ver-hdr-block{padding:10px 14px;display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.ver-hdr-block.vigente{background:var(--blue)}
+.ver-hdr-block.anterior{background:var(--bg);border:0.5px solid var(--border);border-bottom:none}
+.ver-hdr-lbl{font-size:14px;font-weight:700}
+.ver-hdr-op{font-size:11px;margin-top:3px}
+.ver-hdr-alt{font-size:11px;margin-top:2px;line-height:1.4}
+.ver-hdr-right{display:flex;flex-direction:column;align-items:flex-end;gap:3px;flex-shrink:0;text-align:right}
+.ver-hdr-date,.ver-aprov{font-size:11px}
+.ver-hdr-block.vigente .ver-hdr-lbl{color:#fff}
+.ver-hdr-block.vigente .ver-hdr-op,.ver-hdr-block.vigente .ver-aprov{color:rgba(255,255,255,0.75)}
+.ver-hdr-block.vigente .ver-hdr-alt{color:rgba(255,255,255,0.92)}
+.ver-hdr-block.vigente .ver-hdr-date{color:var(--blue-mid)}
+.ver-hdr-block.anterior .ver-hdr-lbl,.ver-hdr-block.anterior .ver-hdr-alt{color:var(--text2)}
+.ver-hdr-block.anterior .ver-hdr-op,.ver-hdr-block.anterior .ver-hdr-date,.ver-hdr-block.anterior .ver-aprov{color:var(--text3)}
+.ver-body-block{border:0.5px solid var(--border);border-top:none;background:var(--card);margin-bottom:0}
+.ver-body-block.anterior{background:var(--bg)}
+.hist-wrap{border-radius:var(--rad-lg);overflow:hidden;margin-bottom:14px;border:0.5px solid var(--border)}
+.hist-wrap .ver-hdr-block.anterior{border:none;border-top:0.5px solid var(--border)}
+.hist-wrap .ver-body-block{border:none}
+.rep-item-hist{display:flex;align-items:flex-start;gap:8px;padding:9px 14px;border-top:0.5px solid var(--border)}
+.rep-num-h{font-size:12px;font-weight:600;color:var(--text)}
+.rep-meta-h{font-size:11px;color:var(--text3);margin-top:1px}
+.rep-pill-h{font-size:10px;padding:2px 7px;border-radius:20px;white-space:nowrap;margin-left:auto;flex-shrink:0;font-weight:600}
+.pill-ok{background:var(--green-light);color:var(--green)}
+.pill-dv{background:var(--red-light);color:var(--red)}
+.rep-dvs{margin-top:5px;display:flex;flex-direction:column;gap:3px}
+.rep-dv{font-size:11px;color:var(--text2);line-height:1.4}
+.rep-dv b{color:var(--red);font-weight:600}
+.rep-dv .tag{font-size:9px;font-weight:700;padding:1px 5px;border-radius:10px;margin-left:4px;text-transform:uppercase}
+.rep-dv .tag-p{background:var(--amber-light);color:var(--amber)}
+.rep-dv .tag-r{background:var(--blue-light);color:var(--blue)}
 </style>
 </head>
 <body>
@@ -485,9 +535,21 @@ select.fdsel{width:100%;font-size:14px;padding:11px 12px;border:0.5px solid var(
 
     <!-- HISTÓRICO -->
     <div id="s-hist" class="sc">
-      <div class="sl">Histórico por receita</div>
-      <div class="fcs" id="hist-filtros"></div>
-      <div id="hist-conteudo"></div>
+      <div id="hist-sel">
+        <div class="sw"><i class="ti ti-search"></i><input type="text" placeholder="Buscar por Cód. PA ou cliente..." id="hs" oninput="filtrarHistSel()"></div>
+        <div class="sl">Selecione uma receita para ver o histórico</div>
+        <div class="card" style="padding:0 14px" id="hist-sel-list"></div>
+      </div>
+      <div id="hist-det" style="display:none">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+          <button class="bb" style="margin-bottom:0" onclick="voltarHistSel()"><i class="ti ti-arrow-left"></i> Todas as receitas</button>
+          <button class="bb" style="margin-bottom:0;font-weight:600" onclick="verReceitaDoHist()">Ver receita <i class="ti ti-arrow-right"></i></button>
+        </div>
+        <div class="met" id="hist-met"></div>
+        <div class="fcs" id="hist-filtros"><div class="fc fca" onclick="setFH(this,'todos')">Todos</div><div class="fc" onclick="setFH(this,'ok')">Sem desvio</div><div class="fc" onclick="setFH(this,'desvio')">Com desvio</div></div>
+        <div id="hres"></div>
+      </div>
+      <div style="height:16px"></div>
     </div>
 
     <!-- PENDÊNCIAS (com bloqueio) -->
@@ -510,8 +572,18 @@ select.fdsel{width:100%;font-size:14px;padding:11px 12px;border:0.5px solid var(
       </div>
     </div>
     <div id="s-pend" class="sc">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+        <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;flex:1">
+          <div class="mt"><div class="ml">Pendentes</div><div class="mv" style="color:var(--amber)" id="pend-cnt">0</div></div>
+          <div class="mt"><div class="ml">Aprovadas</div><div class="mv" style="color:var(--green)" id="pend-aprov">0</div></div>
+          <div class="mt"><div class="ml">Rejeitadas</div><div class="mv" id="pend-rej-cnt">0</div></div>
+        </div>
+        <button onclick="sairLock()" title="Sair" style="background:transparent;border:none;cursor:pointer;color:var(--text3);padding:4px;margin-left:10px;flex-shrink:0"><i class="ti ti-lock" style="font-size:19px"></i></button>
+      </div>
+      <div id="pend-ok" style="display:none;align-items:center;gap:8px;background:var(--green-light);color:var(--green);border-radius:var(--rad);padding:10px 12px;font-size:12px;font-weight:600;margin-bottom:10px;line-height:1.4"><i class="ti ti-circle-check" style="font-size:17px;flex-shrink:0"></i><span id="pend-ok-txt"></span></div>
       <div class="sl">Aguardando aprovação</div>
       <div id="pend-list"></div>
+      <div style="height:16px"></div>
     </div>
 
     <!-- PAINEL (com bloqueio) -->
@@ -534,16 +606,42 @@ select.fdsel{width:100%;font-size:14px;padding:11px 12px;border:0.5px solid var(
       </div>
     </div>
     <div id="s-painel" class="sc">
-      <div class="sl">Painel — Laminação</div>
-      <div class="met" id="painel-met"></div>
-      <div class="sl">Receitas recentes</div>
-      <div id="painel-lista"></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+        <div><div style="font-size:14px;font-weight:700">Painel de supervisão</div><div style="font-size:11px;color:var(--text2);margin-top:1px">Laminação</div></div>
+        <button onclick="sairLock()" title="Sair" style="background:transparent;border:none;cursor:pointer;color:var(--text3);padding:2px"><i class="ti ti-lock" style="font-size:17px"></i></button>
+      </div>
+      <div class="fcs" id="painel-periodo">
+        <div class="fc fca" onclick="setPeriodo(this,'semana')">Esta semana</div>
+        <div class="fc" onclick="setPeriodo(this,'mes')">Este mês</div>
+        <div class="fc" onclick="setPeriodo(this,'ano')">Este ano</div>
+        <div class="fc" onclick="setPeriodo(this,'personalizado')"><i class="ti ti-calendar" style="font-size:12px;vertical-align:-1px"></i> Personalizado</div>
+      </div>
+      <div id="painel-custom" style="display:none;gap:8px;align-items:flex-end;margin-bottom:10px">
+        <div style="flex:1;min-width:0"><div class="fdl">De</div><input type="date" id="pf-ini" style="width:100%"></div>
+        <div style="flex:1;min-width:0"><div class="fdl">Até</div><input type="date" id="pf-fim" style="width:100%"></div>
+        <button onclick="aplicarPersonalizado()" style="background:var(--blue);color:#fff;border:none;border-radius:var(--rad);padding:10px 14px;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font-sans);flex-shrink:0">Aplicar</button>
+      </div>
+      <div class="pf-grid">
+        <div class="fd"><div class="fdl">Máquina</div><select class="fdsel" id="pf-maq" onchange="atualizarPainel()"><option value="">Todas</option></select></div>
+        <div class="fd"><div class="fdl">Tipo</div><select class="fdsel" id="pf-tipo" onchange="atualizarPainel()"><option value="">Todos</option><option>Base Solvente</option><option>Solvente Less</option><option>Monocomponente</option></select></div>
+        <div class="fd" style="grid-column:span 2"><div class="fdl">Operador</div><select class="fdsel" id="pf-oper" onchange="atualizarPainel()"><option value="">Todos</option></select></div>
+      </div>
+      <div id="painel-intervalo" style="font-size:11px;color:var(--text3);margin-bottom:8px"></div>
+      <div class="met">
+        <div class="mt"><div class="ml">Receitas ativas</div><div class="mv" id="pm-rec">—</div></div>
+        <div class="mt"><div class="ml">Receitas salvas no período</div><div class="mv" style="color:var(--blue)" id="pm-salvas">—</div></div>
+        <div class="mt"><div class="ml">Repetições no período</div><div class="mv" id="pm-rep">—</div></div>
+        <div class="mt"><div class="ml">Desvios no período</div><div class="mv" style="color:var(--amber)" id="pm-dv">—</div><div style="font-size:10px;color:var(--text3);margin-top:3px" id="pm-dv-sub"></div></div>
+      </div>
+      <div class="card"><div class="sl">Receitas ativas por nº de laminação</div><div id="painel-num"></div></div>
+      <div class="card"><div class="sl">Receitas ativas por cliente</div><div id="painel-chart"></div></div>
+      <div style="height:16px"></div>
     </div>
 
   </div>
   <div class="tab-bar">
     <button class="tab-item ta" id="tab-r" onclick="navTab('tab-r',()=>irLista())"><i class="ti ti-file-text"></i><span class="tbl">Receitas</span></button>
-    <button class="tab-item" id="tab-h" onclick="navTab('tab-h',()=>ir('s-hist'))"><i class="ti ti-history"></i><span class="tbl">Histórico</span></button>
+    <button class="tab-item" id="tab-h" onclick="navTab('tab-h',()=>irHistSel())"><i class="ti ti-history"></i><span class="tbl">Histórico</span></button>
     <button class="tab-item" id="tab-n" onclick="navTab('tab-n',()=>irNova())"><i class="ti ti-plus"></i><span class="tbl">Nova</span></button>
     <button class="tab-item" id="tab-pend" onclick="navTab('tab-pend',()=>irPendLock())"><i class="ti ti-clock"></i><span class="tbl">Pendências</span><span class="tab-badge" id="pend-badge" style="display:none">0</span></button>
     <button class="tab-item" id="tab-p" onclick="navTab('tab-p',()=>irPainelLock())"><i class="ti ti-chart-bar"></i><span class="tbl">Painel</span></button>
@@ -623,7 +721,7 @@ function ir(id){
   document.getElementById('main-content').scrollTop=0;
   // título
   const tpt=document.getElementById('tpt'), tps=document.getElementById('tps');
-  const map={'s-lista':['Receitas de Produto','Laminação'],'s-rec':['Detalhe da receita','Laminação'],'s-nova':['Nova receita','Laminação'],'s-rep':['Registrar repetição','Laminação'],'s-rev':['Revisão','Laminação'],'s-suc':['Concluído','Laminação'],'s-hist':['Histórico','Por receita · Laminação'],'s-pend':['Pendências','Aguardando aprovação'],'s-pend-lock':['Pendências','Acesso restrito'],'s-painel':['Painel','Laminação'],'s-painel-lock':['Painel','Acesso restrito'],'s-maquina-setup':['Máquina deste tablet','Laminação'],'s-pin-admin':['Acesso administrativo','Supervisor autorizado'],'s-pin-r':['Aprovação','Repetição']};
+  const map={'s-lista':['Receitas de Produto','Laminação'],'s-rec':['Detalhe da receita','Laminação'],'s-nova':['Nova receita','Laminação'],'s-rep':['Registrar repetição','Laminação'],'s-rev':['Revisão','Laminação'],'s-suc':['Concluído','Laminação'],'s-hist':['Histórico de repetição','Por receita · Laminação'],'s-pend':['Pendências','Aguardando aprovação'],'s-pend-lock':['Pendências','Acesso restrito'],'s-painel':['Painel','Laminação'],'s-painel-lock':['Painel','Acesso restrito'],'s-maquina-setup':['Máquina deste tablet','Laminação'],'s-pin-admin':['Acesso administrativo','Supervisor autorizado'],'s-pin-r':['Aprovação','Repetição']};
   if(map[id]){ tpt.textContent=map[id][0]; tps.textContent=map[id][1]; }
 }
 function setTab(id){ document.querySelectorAll('.tab-item').forEach(t=>t.classList.remove('ta')); document.getElementById(id).classList.add('ta'); }
@@ -1313,62 +1411,128 @@ async function salvarRepeticao(pin){
 
 <script>
 // ---------- Histórico ----------
-let histFiltroId = null;
-function ir_hist_load(){
-  // monta filtros por receita
-  const fc=document.getElementById('hist-filtros');
-  fc.innerHTML = `<div class="fc fca" onclick="setHistFiltro(null,this)">Todas</div>` +
-    receitasBase().slice(0,12).map(r=>`<div class="fc" onclick="setHistFiltro(${Number(r.ID)},this)">${escH(r.CLIENTE)} ${escH(r.NUMERO_LAMINACAO||'')}</div>`).join('');
-  renderHist();
+// ══════════ Histórico (sob demanda, por receita) ══════════
+let histDados = null, filtroH = 'todos';
+function ehTrue(v){ return v===true || String(v).toUpperCase()==='TRUE'; }
+function irHistSel(){
+  voltarHistSel();
+  document.getElementById('hs').value='';
+  filtrarHistSel();
+  ir('s-hist');
 }
-function setHistFiltro(id, el){
-  histFiltroId=id;
-  document.querySelectorAll('#hist-filtros .fc').forEach(f=>f.classList.remove('fca'));
-  if(el)el.classList.add('fca');
-  renderHist();
+function filtrarHistSel(){
+  const q=document.getElementById('hs').value.toLowerCase().trim(), qd=soDigitos(q);
+  let lista=receitasBase();
+  if(q) lista=lista.filter(r=>String(r.CLIENTE||'').toLowerCase().includes(q) || (qd && soDigitos(r.COD_PA).includes(qd)) || String(r.SERVICO||'').toLowerCase().includes(q));
+  const el=document.getElementById('hist-sel-list');
+  if(!receitasCarregadas){ el.innerHTML='<div class="loading-wrap"><div class="spinner"></div></div>'; return; }
+  el.innerHTML = lista.length ? ordenarReceitas(lista).map(r=>`
+    <div class="li${r.STATUS==='OBSOLETA'?' obs':''}" onclick="abrirHistorico(${Number(r.ID)})">
+      <div class="lic"><i class="ti ti-history"></i></div>
+      <div class="lb"><div class="lt">${escH(r.CLIENTE)} — ${escH(fmtCodPAExib(r.COD_PA))}</div><div class="ls">${escH(r.NUMERO_LAMINACAO||'—')} laminação · ${escH(r.SERVICO||'—')}</div></div>
+      ${r.STATUS==='OBSOLETA'?'<span class="bobs">Obsoleta</span>':badgeTipo(r.TIPO_LAMINACAO)}
+    </div>`).join('')
+    : '<div style="padding:20px 0;text-align:center;font-size:13px;color:var(--text3)">Nenhuma receita encontrada</div>';
 }
-async function renderHist(){
-  const cont=document.getElementById('hist-conteudo');
-  let lista = histFiltroId ? receitas.filter(r=>String(r.ID)===String(histFiltroId)) : receitasBase().slice(0,8);
-  if(!lista.length){ cont.innerHTML=`<div style="padding:24px 0;text-align:center;font-size:13px;color:var(--text3)">Nenhuma receita</div>`; return; }
-  cont.innerHTML='<div class="loading-wrap"><div class="spinner"></div></div>';
-  let html='';
-  for(const r of lista){
-    let det=r;
-    if(!r._detalhesCarregados){
-      try{
-        det = await apiGet('getReceitaDetalhe',`&id=${r.ID}`);
-        det.versoes=Array.isArray(det.versoes)?det.versoes:[];
-        det._detalhesCarregados=true;
-        const ix=receitas.findIndex(x=>String(x.ID)===String(r.ID)); if(ix>=0)receitas[ix]=det;
-      }catch(e){ continue; }
-    }
-    const versoes=det.versoes||[];
-    html += `<div class="hist-card">
-      <div class="hist-hdr">
-        <div><div class="hist-v">${det.CLIENTE} — ${fmtCodPAExib(det.COD_PA)}</div><div style="font-size:11px;color:var(--text3);margin-top:2px">${det.NUMERO_LAMINACAO||''} · ${det.MAQUINA||''}</div></div>
-        ${badgeTipo(det.TIPO_LAMINACAO)}
-      </div>
-      <div style="padding:10px 14px">
-        ${versoes.length ? versoes.map(v=>{
-          const reps=v.reps||[];
-          return `<div style="margin-bottom:8px">
-            <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
-              <span class="hist-vb ${(v.ATIVA===true||v.ATIVA==='TRUE')?'hist-vb-a':'hist-vb-o'}">Versão ${v.NUMERO_VERSAO}${(v.ATIVA===true||v.ATIVA==='TRUE')?' · ativa':''}</span>
-              <span style="font-size:11px;color:var(--text3)">${reps.length} repetição(ões)</span>
-            </div>
-            ${reps.map(rep=>`<div class="trr"><span class="trl">OP ${rep.OP_PRODUCAO} · ${rep.OPERADOR}</span><span class="trv">${rep.TEM_DESVIO===true||rep.TEM_DESVIO==='TRUE'?'⚠ desvio':'✓'}</span></div>`).join('')}
-          </div>`;
-        }).join('') : `<div style="font-size:12px;color:var(--text3)">Sem versões registradas</div>`}
-      </div>
-    </div>`;
+function voltarHistSel(){
+  document.getElementById('hist-sel').style.display='block';
+  document.getElementById('hist-det').style.display='none';
+  histDados=null;
+}
+async function abrirHistorico(id){
+  setTab('tab-h');
+  ir('s-hist');
+  document.getElementById('hist-sel').style.display='none';
+  document.getElementById('hist-det').style.display='block';
+  document.getElementById('hist-met').innerHTML='';
+  document.getElementById('hres').innerHTML='<div class="loading-wrap"><div class="spinner"></div><span style="font-size:13px;color:var(--text3)">Carregando histórico...</span></div>';
+  filtroH='todos';
+  document.querySelectorAll('#hist-filtros .fc').forEach((c,i)=>c.classList.toggle('fca',i===0));
+  try{
+    histDados = await apiGet('getHistoricoReceita', `&id=${encodeURIComponent(id)}`);
+    renderHistDet();
+  }catch(e){
+    document.getElementById('hres').innerHTML=`<div style="padding:20px 0;text-align:center;font-size:13px;color:var(--red)">Erro: ${escH(e.message)}</div>`;
   }
-  cont.innerHTML = html || `<div style="padding:24px 0;text-align:center;font-size:13px;color:var(--text3)">Nenhuma receita</div>`;
+}
+function verReceitaDoHist(){
+  const id=histDados&&histDados.receita&&histDados.receita.ID;
+  if(!id || !receitas.find(x=>String(x.ID)===String(id))) return;
+  adminDesbloqueado=false;
+  setTab('tab-r');
+  abrirRec(id);
+}
+function setFH(el,t){
+  document.querySelectorAll('#hist-filtros .fc').forEach(c=>c.classList.remove('fca'));
+  el.classList.add('fca'); filtroH=t; renderHistDet();
+}
+function renderHistDet(){
+  if(!histDados) return;
+  const r=histDados.receita, m=histDados.metricas||{};
+  document.getElementById('tpt').textContent=`${r.CLIENTE||''} · ${fmtCodPAExib(r.COD_PA)}`;
+  document.getElementById('tps').textContent=`Histórico · ${r.NUMERO_LAMINACAO||''} laminação · ${r.MAQUINA||''}`;
+  document.getElementById('hist-met').innerHTML=`
+    <div class="mt"><div class="ml">Repetições</div><div class="mv">${m.totalRepeticoes||0}</div></div>
+    <div class="mt"><div class="ml">Com desvio</div><div class="mv" style="color:var(--amber)">${m.comDesvio||0}</div></div>
+    <div class="mt"><div class="ml">Versões</div><div class="mv">${m.totalVersoes||0}</div></div>
+    <div class="mt"><div class="ml">Sem desvio</div><div class="mv" style="color:var(--green)">${m.taxaAdesao||0}%</div></div>`;
+  const filtra = reps => filtroH==='ok' ? reps.filter(x=>!ehTrue(x.TEM_DESVIO)) : filtroH==='desvio' ? reps.filter(x=>ehTrue(x.TEM_DESVIO)) : reps;
+  // Mais recente primeiro
+  let versoes=(histDados.versoes||[]).slice().reverse().map(v=>Object.assign({},v,{reps:filtra((v.reps||[]).slice().reverse())}));
+  if(filtroH!=='todos') versoes=versoes.filter(v=>v.reps.length);
+  if(!versoes.length){ document.getElementById('hres').innerHTML='<div class="card" style="text-align:center;font-size:13px;color:var(--text3);padding:20px">Nenhuma repetição encontrada</div>'; return; }
+  const total=(histDados.versoes||[]).reduce((s,v)=>s+(v.reps||[]).length,0);
+  const dvHtml = rep => {
+    const ds=rep.desvios||[];
+    if(!ds.length) return '';
+    return `<div class="rep-dvs">${ds.map(d=>{
+      const alt=String(d.TIPO_ALTERACAO||'').toUpperCase()==='ALTERAR_RECEITA';
+      return `<div class="rep-dv">${escH(d.PARAMETRO)}: ${escH(d.VALOR_RECEITA||'—')} → <b>${escH(d.VALOR_REAL||'—')}</b><span class="tag ${alt?'tag-r':'tag-p'}">${alt?'alterar receita':'pontual'}</span>${d.JUSTIFICATIVA?`<div style="color:var(--text3)">${escH(d.JUSTIFICATIVA)}</div>`:''}</div>`;
+    }).join('')}</div>`;
+  };
+  document.getElementById('hres').innerHTML = `<div class="hist-wrap">
+    <div style="background:var(--blue-light);padding:10px 14px;display:flex;justify-content:space-between;align-items:flex-start;gap:10px">
+      <div style="min-width:0">
+        <div style="font-size:13px;font-weight:700;color:var(--blue)">${escH(r.CLIENTE)} — ${escH(fmtCodPAExib(r.COD_PA))}</div>
+        ${r.SERVICO?`<div style="font-size:12px;font-weight:600;color:var(--text);margin-top:3px">${escH(r.SERVICO)}</div>`:''}
+        <div style="font-size:11px;color:var(--blue);opacity:.75;margin-top:2px">${escH([r.NUMERO_LAMINACAO?r.NUMERO_LAMINACAO+' laminação':'', r.TIPO_LAMINACAO, r.MAQUINA].filter(Boolean).join(' · '))}${r.STATUS==='OBSOLETA'?' · <b>OBSOLETA</b>':''}</div>
+      </div>
+      <span style="font-size:11px;color:var(--blue);font-weight:600;white-space:nowrap;flex-shrink:0">${total} rep.</span>
+    </div>
+    ${versoes.map(v=>{
+      const vig=ehTrue(v.ATIVA), cls=vig?'vigente':'anterior', num=parseInt(v.NUMERO_VERSAO)||1;
+      return `<div class="ver-hdr-block ${cls}">
+          <div style="min-width:0">
+            <div class="ver-hdr-lbl">v${escH(v.NUMERO_VERSAO)} · ${vig?'Receita vigente':'Receita anterior'}</div>
+            <div class="ver-hdr-op">${num<=1?`OP de criação: ${escH(r.OP_CRIACAO||'—')}`:`OP de origem: ${escH(v.OP_ORIGEM||'—')}`}</div>
+            ${(v.ALTERACOES||[]).map(a=>`<div class="ver-hdr-alt">• ${escH(a.PARAMETRO)}: ${escH(a.DE||'—')} → ${escH(a.PARA||'—')}</div>`).join('')}
+            ${v.REJEITADAS?`<div class="ver-hdr-alt" style="opacity:.75">${v.REJEITADAS} alteração(ões) rejeitada(s) na mesma decisão</div>`:''}
+          </div>
+          <div class="ver-hdr-right">
+            <span class="ver-hdr-date">${escH(fmtDataHist(v.DATA_CRIACAO))}</span>
+            <span class="ver-aprov">Aprov. 1: ${escH(v.APROVADOR_1||'—')}</span>
+            ${v.APROVADOR_2?`<span class="ver-aprov">Aprov. 2: ${escH(v.APROVADOR_2)}</span>`:''}
+          </div>
+        </div>
+        <div class="ver-body-block ${cls}">
+          ${!v.reps.length ? `<div style="padding:10px 14px;font-size:12px;color:var(--text3);border-top:0.5px solid var(--border)">Nenhuma repetição.</div>`
+            : v.reps.map(rep=>`<div class="rep-item-hist">
+                <div style="flex:1;min-width:0">
+                  <div class="rep-num-h">OP ${escH(rep.OP_PRODUCAO||'—')}</div>
+                  <div class="rep-meta-h">${escH(rep.OPERADOR||'—')} · ${escH(fmtDataHist(rep.DATA_HORA))} · Aprov: ${escH(rep.APROVADOR||'—')}</div>
+                  ${dvHtml(rep)}
+                </div>
+                <span class="rep-pill-h ${ehTrue(rep.TEM_DESVIO)?'pill-dv':'pill-ok'}">${ehTrue(rep.TEM_DESVIO)?'Com desvio':'Sem desvio'}</span>
+              </div>`).join('')}
+        </div>`;
+    }).join('')}
+  </div>`;
 }
 
-// ---------- Lock (pendências e painel) ----------
+// ══════════ Acesso restrito (pendências e painel) ══════════
 function irPendLock(){ lockBufs.pend=''; updLockDots('pend'); document.getElementById('plk-pend-err').textContent=''; ir('s-pend-lock'); }
 function irPainelLock(){ lockBufs.painel=''; updLockDots('painel'); document.getElementById('plk-painel-err').textContent=''; ir('s-painel-lock'); }
+function sairLock(){ setTab('tab-r'); irLista(); }
 function updLockDots(ctx){
   const pfx = ctx==='pend'?'plkd-pend':'plkd-p-painel';
   for(let i=0;i<4;i++){ const d=document.getElementById(pfx+'-'+i); if(d)d.className='pin-d'+(i<lockBufs[ctx].length?' f':''); }
@@ -1377,116 +1541,252 @@ async function ppLock(ctx, v){
   const err=document.getElementById('plk-'+ctx+'-err');
   if(v==='back'){ lockBufs[ctx]=lockBufs[ctx].slice(0,-1); updLockDots(ctx); return; }
   if(v==='ok'){
+    if(salvando) return;
     if(lockBufs[ctx].length<4){ err.textContent='Digite os 4 dígitos'; return; }
-    showOverlay('Validando...');
+    const pin=lockBufs[ctx]; lockBufs[ctx]=''; updLockDots(ctx);
+    salvando=true; showOverlay('Validando...');
     try{
-      const res=await apiPost({action:'validarPin', pin:lockBufs[ctx]});
-      hideOverlay();
-      if(!res.valido){ err.textContent='PIN incorreto.'; lockBufs[ctx]=''; updLockDots(ctx); return; }
-      err.textContent=''; lockBufs[ctx]='';
-      if(ctx==='pend'){ renderPend(); ir('s-pend'); }
-      else { renderPainel(); ir('s-painel'); }
-    }catch(e){ hideOverlay(); err.textContent='Erro: '+e.message; lockBufs[ctx]=''; updLockDots(ctx); }
+      const res=await apiPost({action:'validarPin', pin});
+      if(!res.valido){ hideOverlay(); err.textContent='PIN incorreto.'; return; }
+      err.textContent='';
+      if(ctx==='pend'){ await carregarPendencias(); hideOverlay(); renderPend(); ir('s-pend'); }
+      else { hideOverlay(); ir('s-painel'); atualizarPainel(); }
+    }catch(e){ hideOverlay(); err.textContent='Erro: '+e.message; }
+    finally{ salvando=false; }
     return;
   }
   if(lockBufs[ctx].length<4) lockBufs[ctx]+=v;
   updLockDots(ctx);
 }
 
-// ---------- Pendências ----------
+// ══════════ Pendências — agrupadas por repetição ══════════
+// O supervisor 2 decide todas as alterações de uma OP de uma vez, com um
+// único PIN; o backend cria uma única versão nova.
+let pendDecisao={}, grpPinBuf={}, pendAprovCnt=0, pendRejCnt=0, pendOkTimer=null;
+function grpKey(p){ return (p.ID_REPETICAO!==undefined && p.ID_REPETICAO!==null && String(p.ID_REPETICAO)!=='') ? 'r'+p.ID_REPETICAO : 'p'+p.ID; }
+function gruposPend(){
+  const m={}, ordem=[];
+  pendencias.forEach(p=>{ const k=grpKey(p); if(!m[k]){ m[k]=[]; ordem.push(k); } m[k].push(p); });
+  return ordem.map(k=>({k, itens:m[k]}));
+}
+function itensGrupo(k){ return pendencias.filter(p=>grpKey(p)===k); }
+function atualizaBadge(){
+  const b=document.getElementById('pend-badge'), n=pendencias.length;
+  b.textContent=n; b.style.display=n>0?'block':'none';
+  const c=document.getElementById('pend-cnt'); if(c) c.textContent=n;
+}
 function renderPend(){
-  const cont=document.getElementById('pend-list');
-  if(!pendencias.length){ cont.innerHTML=`<div style="padding:24px 0;text-align:center;font-size:13px;color:var(--text3)">Nenhuma pendência</div>`; return; }
-  cont.innerHTML = pendencias.map(p=>`
-    <div class="pend-card">
+  atualizaBadge();
+  const lista=document.getElementById('pend-list');
+  if(!pendencias.length){ lista.innerHTML='<div style="padding:24px 0;text-align:center;font-size:13px;color:var(--text3)">Nenhuma pendência.</div>'; return; }
+  const teclas=k=>['1','2','3','4','5','6','7','8','9','back','0','ok'].map(v=>
+    `<button class="pib" style="padding:10px 0;${v==='ok'?'background:var(--blue);color:#fff;border-color:var(--blue)':''}" onclick="ppGrp('${k}','${v}')">${v==='back'?'<i class="ti ti-backspace"></i>':v==='ok'?'<i class="ti ti-check"></i>':v}</button>`).join('');
+  lista.innerHTML = gruposPend().map(({k,itens})=>{
+    const p=itens[0], n=itens.length;
+    return `<div class="pend-card" id="pg-${k}">
       <div class="pend-hdr">
         <div class="pend-ic"><i class="ti ti-file-pencil"></i></div>
-        <div class="pend-bd"><div class="pend-title">${p.PARAMETRO}</div><div class="pend-sub">Pendência #${p.ID} · Rep. #${p.ID_REPETICAO}</div></div>
-        <span class="pend-badge">Pendente</span>
+        <div class="pend-bd">
+          <div class="pend-title">${escH(p.CLI||'Receita')}${p.COD_PA?' — '+escH(fmtCodPAExib(p.COD_PA)):''}</div>
+          <div class="pend-sub" style="line-height:1.4">${escH([p.NUMERO_LAMINACAO?p.NUMERO_LAMINACAO+' laminação':'', p.MAQUINA, p.OP_PRODUCAO?'OP '+p.OP_PRODUCAO:''].filter(Boolean).join(' · ')||'—')}</div>
+          <div class="pend-sub">Solicitado por <b>${escH(p.SOLICITANTE||'—')}</b>${p.DATA_REP?' · '+escH(fmtDataHist(p.DATA_REP)):''}</div>
+        </div>
+        <span class="pend-badge">${n} ${n===1?'alteração':'alterações'}</span>
       </div>
       <div class="pend-body">
-        <div class="pend-row"><div class="pend-lbl">Valor atual (receita)</div><div class="pend-vals"><div class="pend-de">${p.VALOR_ATUAL||'—'}</div></div></div>
-        <div class="pend-row"><div class="pend-lbl">Valor proposto</div><div class="pend-vals"><div class="pend-para">${p.VALOR_PROPOSTO||'—'}</div></div></div>
-        <div class="pend-row"><div class="pend-lbl">Justificativa</div><div class="pend-just">${p.JUSTIFICATIVA||'—'}</div></div>
-        <div class="pend-row"><div class="pend-lbl">Solicitante</div><div class="pend-vals"><div class="pend-de">${p.SOLICITANTE||'—'}</div></div></div>
+        ${n>1?`<div class="pend-all"><span>Marcar todas:</span><button type="button" onclick="marcarTodas('${k}','REJEITAR')">Rejeitar</button><button type="button" onclick="marcarTodas('${k}','APROVAR')">Aprovar</button></div>`:''}
+        ${itens.map(x=>{
+          const d=pendDecisao[String(x.ID)]||'';
+          return `<div class="pend-item">
+            <div class="pend-row">
+              <div class="pend-lbl">${escH(x.PARAMETRO)}</div>
+              <div class="pend-vals">
+                <span class="pend-de">De: ${escH(x.VALOR_ATUAL===''||x.VALOR_ATUAL==null?'—':x.VALOR_ATUAL)}</span>
+                <span class="pend-para">Para: ${escH(x.VALOR_PROPOSTO===''||x.VALOR_PROPOSTO==null?'—':x.VALOR_PROPOSTO)}</span>
+                ${x.JUSTIFICATIVA?`<div class="pend-just">${escH(x.JUSTIFICATIVA)}</div>`:''}
+              </div>
+            </div>
+            <div class="pend-dec">
+              <button type="button" class="pd-btn${d==='REJEITAR'?' on-rej':''}" id="pdr-${x.ID}" onclick="setDecisao('${x.ID}','REJEITAR')"><i class="ti ti-x"></i> Rejeitar</button>
+              <button type="button" class="pd-btn${d==='APROVAR'?' on-apr':''}" id="pda-${x.ID}" onclick="setDecisao('${x.ID}','APROVAR')"><i class="ti ti-check"></i> Aprovar</button>
+            </div>
+          </div>`;
+        }).join('')}
       </div>
       <div class="pend-footer">
-        <div class="pend-meta">Requer 2ª aprovação</div>
-        <button class="pend-apr" onclick="abrirPinPend(${p.ID})">Aprovar com PIN</button>
+        <div class="pend-meta" id="pgs-${k}"></div>
+        <button class="pend-apr" id="pgc-${k}" onclick="abrirGrpPin('${k}')" disabled>Confirmar</button>
       </div>
-      <div class="pend-pin-wrap" id="ppw-${p.ID}">
-        <div class="pin-w">
-          <div class="pin-s">Digite seu PIN para aprovar (deve ser diferente do 1º aprovador)</div>
-          <div class="pin-ds" id="ppd-${p.ID}"><div class="pin-d" id="ppd-${p.ID}-0"></div><div class="pin-d" id="ppd-${p.ID}-1"></div><div class="pin-d" id="ppd-${p.ID}-2"></div><div class="pin-d" id="ppd-${p.ID}-3"></div></div>
-          <div class="pin-g">
-            ${[1,2,3,4,5,6,7,8,9].map(n=>`<button class="pib" onclick="pinPend(${p.ID},'${n}')">${n}</button>`).join('')}
-            <button class="pib" onclick="pinPend(${p.ID},'back')"><i class="ti ti-backspace"></i></button>
-            <button class="pib" onclick="pinPend(${p.ID},'0')">0</button>
-            <button class="pib" onclick="pinPend(${p.ID},'ok')" style="background:var(--blue);color:#fff;border-color:var(--blue)"><i class="ti ti-check"></i></button>
-          </div>
-          <div class="pie" id="ppe-${p.ID}"></div>
-        </div>
+      <div class="pend-pin-wrap" id="pgw-${k}">
+        <div style="font-size:12px;color:var(--text2);margin-bottom:8px;line-height:1.5" id="pgt-${k}"></div>
+        <div class="pin-ds" style="margin-bottom:10px">${[0,1,2,3].map(i=>`<div class="pin-d" id="pgd-${k}-${i}"></div>`).join('')}</div>
+        <div class="pin-g" style="gap:6px">${teclas(k)}</div>
+        <div class="pie" id="pge-${k}" style="margin-top:6px"></div>
       </div>
-    </div>`).join('');
+    </div>`;
+  }).join('');
+  gruposPend().forEach(g=>updGrpResumo(g.k));
 }
-function abrirPinPend(id){
-  const w=document.getElementById('ppw-'+id);
-  document.querySelectorAll('.pend-pin-wrap').forEach(x=>{ if(x!==w)x.classList.remove('open'); });
-  w.classList.toggle('open');
-  pendPinBufs[id]='';
-  updPendDots(id);
+function setDecisao(id, dec){
+  id=String(id);
+  pendDecisao[id] = pendDecisao[id]===dec ? '' : dec;
+  const a=document.getElementById('pda-'+id), r=document.getElementById('pdr-'+id);
+  if(a) a.className='pd-btn'+(pendDecisao[id]==='APROVAR'?' on-apr':'');
+  if(r) r.className='pd-btn'+(pendDecisao[id]==='REJEITAR'?' on-rej':'');
+  const p=pendencias.find(x=>String(x.ID)===id);
+  if(p) updGrpResumo(grpKey(p));
 }
-function updPendDots(id){
-  const buf=pendPinBufs[id]||'';
-  for(let i=0;i<4;i++){ const d=document.getElementById(`ppd-${id}-${i}`); if(d)d.className='pin-d'+(i<buf.length?' f':''); }
+function marcarTodas(k, dec){ itensGrupo(k).forEach(p=>{ pendDecisao[String(p.ID)]=''; setDecisao(p.ID, dec); }); }
+function contGrupo(k){
+  const it=itensGrupo(k);
+  const nA=it.filter(p=>pendDecisao[String(p.ID)]==='APROVAR').length;
+  const nR=it.filter(p=>pendDecisao[String(p.ID)]==='REJEITAR').length;
+  return { it, nA, nR, nF: it.length-nA-nR };
 }
-async function pinPend(id, v){
-  const err=document.getElementById('ppe-'+id);
-  if(!pendPinBufs[id]) pendPinBufs[id]='';
-  if(v==='back'){ pendPinBufs[id]=pendPinBufs[id].slice(0,-1); updPendDots(id); return; }
-  if(v==='ok'){
-    if(pendPinBufs[id].length<4){ err.textContent='Digite os 4 dígitos'; return; }
-    if(salvando) return;
-    const pend=pendencias.find(p=>String(p.ID)===String(id));
-    const pin=pendPinBufs[id];
-    // O backend revalida o PIN e recusa se for o mesmo supervisor que solicitou
-    salvando=true; showOverlay('Aprovando...');
-    try{
-      await apiPost({action:'aprovarPendencia', idPendencia:id, pin, idReceita:pend?pend.ID_RECEITA:null});
-      hideOverlay();
-      pendencias = pendencias.filter(p=>String(p.ID)!==String(id));
-      carregarPendencias();
-      renderPend();
-      carregarReceitas();
-    }catch(e){ hideOverlay(); err.textContent=e.message; pendPinBufs[id]=''; updPendDots(id); }
-    finally{ salvando=false; }
+function updGrpResumo(k){
+  const {nA,nR,nF}=contGrupo(k);
+  const s=document.getElementById('pgs-'+k), b=document.getElementById('pgc-'+k), w=document.getElementById('pgw-'+k);
+  if(s) s.innerHTML = nF ? `<b style="color:var(--amber)">${nF} sem decisão</b>${nA||nR?` · ${nA} aprovar · ${nR} rejeitar`:''}` : `${nA} aprovar · ${nR} rejeitar`;
+  if(b) b.disabled = nF>0;
+  if(w && w.classList.contains('open')){
+    if(nF>0){ w.classList.remove('open'); grpPinBuf[k]=''; updGrpDots(k); }
+    else textoGrpPin(k);
+  }
+}
+function textoGrpPin(k){
+  const {it,nA,nR}=contGrupo(k), t=document.getElementById('pgt-'+k);
+  if(t) t.innerHTML = `Confirme com seu PIN: <b>${nA} aprovação(ões)</b> e <b>${nR} rejeição(ões)</b>. ${nA?'Será criada <b>uma</b> nova versão da receita.':'A receita não será alterada.'} Não pode ser <b>${escH(it[0]?.SOLICITANTE||'—')}</b>.`;
+}
+function abrirGrpPin(k){
+  if(contGrupo(k).nF>0) return;
+  document.querySelectorAll('.pend-pin-wrap').forEach(w=>w.classList.remove('open'));
+  grpPinBuf[k]=''; updGrpDots(k);
+  const e=document.getElementById('pge-'+k); if(e) e.textContent='';
+  textoGrpPin(k);
+  document.getElementById('pgw-'+k).classList.add('open');
+}
+function updGrpDots(k){ for(let i=0;i<4;i++){ const d=document.getElementById(`pgd-${k}-${i}`); if(d) d.classList.toggle('f', i<(grpPinBuf[k]||'').length); } }
+function ppGrp(k, v){
+  if(!grpPinBuf[k]) grpPinBuf[k]='';
+  const e=document.getElementById('pge-'+k);
+  if(v==='back') grpPinBuf[k]=grpPinBuf[k].slice(0,-1);
+  else if(v==='ok'){
+    if(grpPinBuf[k].length<4){ if(e) e.textContent='Digite os 4 dígitos'; return; }
+    const pin=grpPinBuf[k]; grpPinBuf[k]=''; updGrpDots(k);
+    decidirGrupoAPI(k, pin); return;
+  } else if(grpPinBuf[k].length<4) grpPinBuf[k]+=v;
+  updGrpDots(k);
+}
+function avisoPend(msg, tipo){
+  const b=document.getElementById('pend-ok');
+  document.getElementById('pend-ok-txt').textContent=msg;
+  const neutro = tipo==='rej';
+  b.style.background = neutro?'var(--bg)':'var(--green-light)';
+  b.style.color = neutro?'var(--text2)':'var(--green)';
+  b.style.border = neutro?'0.5px solid var(--border2)':'none';
+  b.style.display='flex';
+  clearTimeout(pendOkTimer); pendOkTimer=setTimeout(()=>{ b.style.display='none'; }, 8000);
+}
+// Envia todas as decisões da repetição numa única chamada e permanece na tela
+async function decidirGrupoAPI(k, pin){
+  if(salvando) return;
+  const it=itensGrupo(k); if(!it.length) return;
+  const decisoes=it.map(p=>({ idPendencia:p.ID, decisao:pendDecisao[String(p.ID)] }));
+  if(decisoes.some(d=>!d.decisao)) return;
+  const p0=it[0];
+  const ref=`${p0.CLI||'Receita'}${p0.COD_PA?' — '+fmtCodPAExib(p0.COD_PA):''}${p0.OP_PRODUCAO?' · OP '+p0.OP_PRODUCAO:''}`;
+  salvando=true; showOverlay('Registrando decisões...');
+  try{
+    const res=await apiPost({ action:'decidirPendenciasRepeticao', pin, decisoes });
+    hideOverlay(); salvando=false;
+    if(!res || !res.ok){
+      const msg=(res&&res.motivo)||'Não foi possível registrar as decisões.';
+      if(res && res.recarregar){ await carregarPendencias(); renderPend(); avisoPend(msg,'rej'); }
+      else { const e=document.getElementById('pge-'+k); if(e) e.textContent=msg; }
+      return;
+    }
+    const ids=new Set(it.map(p=>String(p.ID)));
+    pendencias=pendencias.filter(p=>!ids.has(String(p.ID)));
+    ids.forEach(id=>{ delete pendDecisao[id]; }); delete grpPinBuf[k];
+    pendAprovCnt+=res.aprovadas||0; pendRejCnt+=res.rejeitadas||0;
+    document.getElementById('pend-aprov').textContent=pendAprovCnt;
+    document.getElementById('pend-rej-cnt').textContent=pendRejCnt;
+    renderPend();
+    avisoPend(`${res.nome||'Supervisor'} registrou ${ref}: ${res.aprovadas||0} aprovada(s), ${res.rejeitadas||0} rejeitada(s). ${res.novaVersao?`Nova versão v${res.novaVersao} criada.`:'A receita não foi alterada.'}`, res.aprovadas?'':'rej');
+    if(res.aprovadas) carregarReceitas();
+  }catch(e){
+    hideOverlay(); salvando=false;
+    const x=document.getElementById('pge-'+k); if(x) x.textContent='Erro: '+e.message;
+  }
+}
+
+// ══════════ Painel ══════════
+let painelPeriodo='semana', painelIni='', painelFim='';
+function isoLocal(d){ return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
+function painelMaqOpts(){
+  const s=document.getElementById('pf-maq');
+  if(s.options.length<=1) s.innerHTML='<option value="">Todas</option>'+MAQUINAS_LAM.map(m=>`<option>${escH(m)}</option>`).join('');
+}
+function setPeriodo(el, p){
+  document.querySelectorAll('#painel-periodo .fc').forEach(c=>c.classList.remove('fca'));
+  el.classList.add('fca'); painelPeriodo=p;
+  document.getElementById('painel-custom').style.display = p==='personalizado'?'flex':'none';
+  if(p==='personalizado'){
+    const ini=document.getElementById('pf-ini'), fim=document.getElementById('pf-fim'), hoje=new Date();
+    if(!fim.value) fim.value=isoLocal(hoje);
+    if(!ini.value){ const d=new Date(hoje); d.setDate(d.getDate()-30); ini.value=isoLocal(d); }
+    document.getElementById('painel-intervalo').textContent='Escolha as datas e toque em Aplicar.';
     return;
   }
-  if(pendPinBufs[id].length<4) pendPinBufs[id]+=v;
-  updPendDots(id);
+  atualizarPainel();
+}
+function aplicarPersonalizado(){
+  const i=document.getElementById('pf-ini').value, f=document.getElementById('pf-fim').value, info=document.getElementById('painel-intervalo');
+  if(!i||!f){ info.innerHTML='<span style="color:var(--red)">Preencha as duas datas.</span>'; return; }
+  if(i>f){ info.innerHTML='<span style="color:var(--red)">A data inicial deve ser anterior à final.</span>'; return; }
+  painelIni=i; painelFim=f; atualizarPainel();
+}
+function barras(entries, rot){
+  if(!entries.length) return '<div style="padding:16px 0;text-align:center;font-size:13px;color:var(--text3)">Sem receitas ativas para este filtro</div>';
+  const max=Math.max(...entries.map(e=>e.total))||1;
+  return entries.map(e=>`<div class="bar-row"><div class="bar-lbl" title="${escH(rot(e))}">${escH(rot(e))}</div><div class="bar-trk"><div class="bar-fil" style="width:${Math.round(e.total/max*100)}%"></div></div><div class="bar-val">${e.total}</div></div>`).join('');
+}
+let painelReq=0;
+async function atualizarPainel(){
+  painelMaqOpts();
+  if(painelPeriodo==='personalizado' && (!painelIni||!painelFim)){ aplicarPersonalizado(); if(!painelIni) return; }
+  ['pm-rec','pm-salvas','pm-rep','pm-dv'].forEach(id=>{ document.getElementById(id).textContent='...'; });
+  document.getElementById('pm-dv-sub').textContent='';
+  document.getElementById('painel-chart').innerHTML='<div class="loading-wrap"><div class="spinner"></div></div>';
+  document.getElementById('painel-num').innerHTML='';
+  const maq=document.getElementById('pf-maq').value, oper=document.getElementById('pf-oper').value, tipo=document.getElementById('pf-tipo').value;
+  let qs=`&periodo=${painelPeriodo}`;
+  if(painelPeriodo==='personalizado') qs+=`&inicio=${painelIni}&fim=${painelFim}`;
+  if(maq) qs+=`&maquina=${encodeURIComponent(maq)}`;
+  if(tipo) qs+=`&tipo=${encodeURIComponent(tipo)}`;
+  if(oper) qs+=`&operador=${encodeURIComponent(oper)}`;
+  const req=++painelReq;   // ignora respostas de filtros antigos
+  try{
+    const d=await apiGet('getPainelResumo', qs);
+    if(req!==painelReq) return;
+    document.getElementById('pm-rec').textContent=d.receitasAtivas||0;
+    document.getElementById('pm-salvas').textContent=d.receitasPeriodo||0;
+    document.getElementById('pm-rep').textContent=d.repeticoesPeriodo||0;
+    document.getElementById('pm-dv').textContent=d.desviosPeriodo||0;
+    document.getElementById('pm-dv-sub').textContent=`em ${d.repsComDesvio||0} repetição(ões)`;
+    const so=document.getElementById('pf-oper');
+    so.innerHTML='<option value="">Todos</option>'+(d.operadores||[]).map(o=>`<option${o===oper?' selected':''}>${escH(o)}</option>`).join('');
+    const per=d.periodo||{};
+    document.getElementById('painel-intervalo').textContent=`Período: ${per.inicio||'—'} a ${per.fim||'—'}${maq?' · '+maq:''}${tipo?' · '+tipo:''}${oper?' · '+oper:''}`;
+    const nums=(d.porNumero||[]).slice().sort((a,b)=>String(a.NUMERO).localeCompare(String(b.NUMERO)));
+    document.getElementById('painel-num').innerHTML=barras(nums, e=>e.NUMERO==='—'?'Sem nº':e.NUMERO+' laminação');
+    document.getElementById('painel-chart').innerHTML=barras(d.porCliente||[], e=>e.CLIENTE);
+  }catch(e){
+    if(req!==painelReq) return;
+    document.getElementById('painel-chart').innerHTML=`<div style="padding:20px 0;text-align:center;font-size:13px;color:var(--red)">Erro: ${escH(e.message)}</div>`;
+  }
 }
 
-// ---------- Painel ----------
-async function renderPainel(){
-  const total=receitas.length;
-  const porTipo={'Base Solvente':0,'Solvente Less':0,'Monocomponente':0};
-  receitas.forEach(r=>{ if(porTipo[r.TIPO_LAMINACAO]!==undefined)porTipo[r.TIPO_LAMINACAO]++; });
-  document.getElementById('painel-met').innerHTML = `
-    <div class="mt"><div class="ml">Receitas ativas</div><div class="mv">${total}</div></div>
-    <div class="mt"><div class="ml">Pendências</div><div class="mv">${pendencias.length}</div></div>
-    <div class="mt"><div class="ml">Base Solvente</div><div class="mv">${porTipo['Base Solvente']}</div></div>
-    <div class="mt"><div class="ml">Solvente Less</div><div class="mv">${porTipo['Solvente Less']}</div></div>`;
-  document.getElementById('painel-lista').innerHTML = receitas.slice(0,8).map(r=>`
-    <div class="li" onclick="setTab('tab-r');abrirRec(${r.ID})">
-      <div class="lic"><i class="ti ti-layers-subtract"></i></div>
-      <div class="lb"><div class="lt">${r.CLIENTE} — ${fmtCodPAExib(r.COD_PA)}</div><div class="ls">${r.NUMERO_LAMINACAO||''} · ${r.MAQUINA||''}</div></div>
-      ${badgeTipo(r.TIPO_LAMINACAO)}
-    </div>`).join('');
-}
-
-// Hook histórico ao trocar de aba
-const _ir = ir;
-ir = function(id){ _ir(id); if(id==='s-hist') ir_hist_load(); };
 
 // ---------- Init ----------
 init();
@@ -1582,12 +1882,6 @@ async function executarAlterarStatus(id, novoStatus, pin, motivo){
     await carregarReceitas();
   }catch(e){ hideOverlay(); err.textContent='Erro: '+e.message; }
   finally{ salvando=false; }
-}
-
-// ---------- Atalho para o histórico desta receita ----------
-function abrirHistorico(id){
-  histFiltroId=id; setTab('tab-h'); ir('s-hist');
-  document.querySelectorAll('#hist-filtros .fc').forEach(f=>f.classList.remove('fca'));
 }
 
 // ---------- Impressão (somente a receita) ----------
