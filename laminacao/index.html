@@ -21,8 +21,20 @@
   --rad:10px;--rad-lg:14px;
   --font-sans:'SF Pro Display',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
 }
-body{font-family:var(--font-sans);background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
-.app{max-width:430px;margin:0 auto;background:var(--bg);min-height:100vh;position:relative;display:flex;flex-direction:column}
+html,body{height:100%;overflow:hidden}
+body{font-family:var(--font-sans);background:var(--bg);color:var(--text)}
+.app{max-width:430px;margin:0 auto;background:var(--bg);height:100vh;height:100dvh;position:relative;display:flex;flex-direction:column;overflow:hidden}
+.maq-bar{display:flex;align-items:center;gap:6px;background:var(--blue-light);color:var(--blue);font-size:12px;font-weight:600;padding:8px 14px;cursor:pointer;flex-shrink:0}
+.maq-bar i:first-child{font-size:14px}.maq-bar i:last-child{font-size:12px;margin-left:auto}
+.maq-setup-btn{width:100%;max-width:280px;padding:14px;border-radius:var(--rad);font-size:15px;font-weight:600;border:1.5px solid var(--border2);background:var(--card);color:var(--text);cursor:pointer;font-family:var(--font-sans);margin-bottom:10px;display:block}
+.maq-setup-btn.sel{border-color:var(--blue);background:var(--blue-light);color:var(--blue)}
+.maq-setup-tipos{font-size:11px;font-weight:500;color:var(--text3);margin-top:3px}
+.maq-setup-btn.sel .maq-setup-tipos{color:var(--blue)}
+.aviso-dup{display:flex;gap:8px;align-items:flex-start;background:var(--amber-light);color:var(--amber);border-radius:var(--rad);padding:10px 12px;font-size:12px;line-height:1.5;margin-bottom:10px}
+.aviso-dup i{font-size:16px;flex-shrink:0;margin-top:1px}
+.seg-btn:disabled{opacity:.35;cursor:not-allowed}
+.maq-fixa{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:14px;font-weight:600}
+.maq-fixa button{background:transparent;border:none;color:var(--blue);font-size:12px;font-weight:600;cursor:pointer;font-family:var(--font-sans)}
 .topbar{background:var(--card);border-bottom:0.5px solid var(--border);padding:14px 16px 10px;position:sticky;top:0;z-index:100;flex-shrink:0}
 .tpr{display:flex;justify-content:space-between;align-items:center}
 .tpt{font-size:16px;font-weight:600;color:var(--text)}
@@ -192,13 +204,26 @@ textarea{resize:none;line-height:1.5;width:100%}
       <div class="spp" id="tpp" style="display:none"><div class="spd"></div>Aprovada</div>
     </div>
   </div>
+  <div class="maq-bar" id="maq-bar" style="display:none" onclick="irTrocarMaquina()"><i class="ti ti-device-tablet"></i><span id="maq-bar-nome">—</span><i class="ti ti-chevron-right"></i></div>
   <div id="sbw"></div>
   <div class="overlay-loading" id="overlay-loading"><div class="overlay-spinner"></div><div class="overlay-msg" id="overlay-msg">Salvando...</div></div>
   <div class="content" id="main-content">
 
+    <!-- MÁQUINA DO TABLET -->
+    <div id="s-maquina-setup" class="sc">
+      <div class="lock-screen">
+        <div class="lock-ic" style="background:var(--blue-light)"><i class="ti ti-device-tablet" style="font-size:26px;color:var(--blue)"></i></div>
+        <div style="font-size:16px;font-weight:700;margin-bottom:6px">Selecione a máquina</div>
+        <div style="font-size:13px;color:var(--text2);margin-bottom:24px;line-height:1.5">Isso define quais receitas irão aparecer neste tablet.</div>
+        <div id="maq-setup-btns" style="width:100%;display:flex;flex-direction:column;align-items:center"></div>
+        <button class="bb" id="maq-setup-cancel" style="margin-top:6px;display:none" onclick="irLista()"><i class="ti ti-x"></i> Cancelar</button>
+      </div>
+    </div>
+
     <!-- LISTA -->
     <div id="s-lista" class="sc active">
       <div class="sw"><i class="ti ti-search"></i><input type="text" placeholder="Buscar por Cód. PA, cliente ou serviço..." id="si" oninput="filtrar()"></div>
+      <div class="fcs" id="lista-num"></div>
       <div class="sl">Receitas cadastradas</div>
       <div class="card" style="padding:0 14px" id="lw">
         <div class="loading-wrap"><div class="spinner"></div><span style="font-size:13px;color:var(--text3)">Carregando receitas...</span></div>
@@ -230,15 +255,20 @@ textarea{resize:none;line-height:1.5;width:100%}
           <div class="fd"><div class="fdl">Descrição do serviço</div><input type="text" id="n-serv"></div>
           <div class="fd"><div class="fdl">Operador</div><input type="text" id="n-oper"></div>
         </div>
+        <div class="card" id="card-maquina">
+          <div class="sl">Máquina</div>
+          <div class="fd"><select id="n-maq" onchange="selMaquina()"><option value="">Selecione a máquina</option></select></div>
+        </div>
         <div class="card">
           <div class="sl">Tipo de laminação</div>
           <div class="seg" id="seg-tipo">
-            <button class="seg-btn" onclick="selTipo('Base Solvente')">Base Solvente</button>
-            <button class="seg-btn" onclick="selTipo('Solvente Less')">Solvente Less</button>
-            <button class="seg-btn" onclick="selTipo('Monocomponente')">Monocomponente</button>
+            <button class="seg-btn" data-tipo="Base Solvente" onclick="selTipo('Base Solvente')">Base Solvente</button>
+            <button class="seg-btn" data-tipo="Solvente Less" onclick="selTipo('Solvente Less')">Solvente Less</button>
+            <button class="seg-btn" data-tipo="Monocomponente" onclick="selTipo('Monocomponente')">Monocomponente</button>
           </div>
+          <div id="tipo-hint" style="font-size:11px;color:var(--text3);margin-top:8px"></div>
         </div>
-        <div class="card" id="card-numero" style="display:none">
+        <div class="card" id="card-numero">
           <div class="sl">Número da laminação</div>
           <div class="num-seg" id="seg-numero">
             <button class="num-btn" onclick="selNumero('1ª')">1ª</button>
@@ -247,10 +277,7 @@ textarea{resize:none;line-height:1.5;width:100%}
             <button class="num-btn" onclick="selNumero('4ª')">4ª</button>
           </div>
         </div>
-        <div class="card" id="card-maquina" style="display:none">
-          <div class="sl">Máquina</div>
-          <div class="fd"><select id="n-maq" onchange="selMaquina()"><option value="">Selecione a máquina</option></select></div>
-        </div>
+        <div id="aviso-dup" class="aviso-dup" style="display:none"></div>
         <div class="nr"><button class="bnn" id="btn-ns1" onclick="nStep(2)" disabled>Próximo: informações <i class="ti ti-arrow-right"></i></button></div>
       </div>
 
@@ -441,15 +468,32 @@ function chaveMaquina(maq){ return (maq==='Supercombi 3000'||maq==='Supercombi 4
 function getCampos(tipo,maq){ const c=LAM_CAMPOS[tipo]; if(!c)return null; return c[chaveMaquina(maq)]||null; }
 
 // ---------- Estado ----------
-let receitas = [], recIdx = null, nsn = 1;
+let receitas = [], recIdx = null, nsn = 1, receitasCarregadas = false;
 let novaTipo = '', novaNumero = '', novaMaq = '';
 let pinBufN = '', pinBufR = '';
 const lockBufs = {pend:'', painel:''};
 let pendencias = [], pendPinBufs = {};
 let sbwHTML = '';
 const altOpts = {};
+let salvando = false;          // guarda contra duplo clique em gravações
+let filtroNum = '';            // '' = todas · '1ª'..'4ª'
+let maquinaAtual = lsGet('lam_maquina');
 
-// ---------- JSONP ----------
+// Ordem das máquinas na tela de seleção e tipos que cada uma faz (derivado de LAM_MAQUINAS)
+const MAQUINAS_LAM = ['Flexotech','Simplex 1','Simplex 2','Supercombi 3000','Supercombi 4000','Comexi'];
+const NUMEROS_LAM = ['1ª','2ª','3ª','4ª'];
+function tiposDaMaquina(maq){ return Object.keys(LAM_MAQUINAS).filter(t=>LAM_MAQUINAS[t].includes(maq)); }
+
+// ---------- Helpers ----------
+function lsGet(k){ try{ return localStorage.getItem(k)||''; }catch(e){ return ''; } }
+function lsSet(k,v){ try{ localStorage.setItem(k,v); }catch(e){} }
+function escH(v){ return String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function soDigitos(v){ return String(v==null?'':v).replace(/\D/g,''); }
+
+// ---------- API ----------
+// Leituras: JSONP (GET). Gravações: fetch POST com corpo JSON em text/plain
+// (sem preflight CORS). Retry só em ações idempotentes; as que criam
+// registros (salvarReceita/salvarRepeticao) nunca são repetidas sozinhas.
 function jsonp(url){
   return new Promise((resolve, reject) => {
     const cb = 'cb_' + Date.now() + '_' + Math.random().toString(36).slice(2);
@@ -464,12 +508,19 @@ function jsonp(url){
   });
 }
 function apiGet(action, extra=''){ return jsonp(`${API}?action=${action}${extra}`); }
-function apiPost(body){
-  const clean = JSON.parse(JSON.stringify(body));
-  let encoded;
-  try { encoded = encodeURIComponent(JSON.stringify(clean)); }
-  catch(e){ return Promise.reject(new Error('Erro ao processar dados: '+e.message)); }
-  return jsonp(`${API}?action=${body.action}&body=${encoded}`);
+const ACOES_IDEMPOTENTES = ['validarPin','alterarStatusReceita','aprovarPendencia','rejeitarPendencia','decidirPendenciasRepeticao'];
+function apiPost(body, _tentativa){
+  const t = _tentativa || 1;
+  return fetch(API, { method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'}, body:JSON.stringify(body) })
+    .then(r => { if(!r.ok) throw new Error('Erro de conexão'); return r.json(); })
+    .then(data => { if(data.status==='erro') throw new Error(data.mensagem); return data.data; })
+    .catch(err => {
+      if(t<3 && ACOES_IDEMPOTENTES.includes(body.action) && /conex|network|failed|fetch/i.test(err.message)){
+        return new Promise(res=>setTimeout(res,600*t)).then(()=>apiPost(body,t+1));
+      }
+      if(/failed to fetch|networkerror|load failed/i.test(err.message)) throw new Error('Erro de conexão. Verifique a rede e tente novamente.');
+      throw err;
+    });
 }
 
 // ---------- Navegação ----------
@@ -480,21 +531,50 @@ function ir(id){
   document.getElementById('main-content').scrollTop=0;
   // título
   const tpt=document.getElementById('tpt'), tps=document.getElementById('tps');
-  const map={'s-lista':['Receitas de Produto','Laminação'],'s-rec':['Detalhe da receita','Laminação'],'s-nova':['Nova receita','Laminação'],'s-rep':['Registrar repetição','Laminação'],'s-rev':['Revisão','Laminação'],'s-suc':['Concluído','Laminação'],'s-hist':['Histórico','Por receita · Laminação'],'s-pend':['Pendências','Aguardando aprovação'],'s-pend-lock':['Pendências','Acesso restrito'],'s-painel':['Painel','Laminação'],'s-painel-lock':['Painel','Acesso restrito']};
+  const map={'s-lista':['Receitas de Produto','Laminação'],'s-rec':['Detalhe da receita','Laminação'],'s-nova':['Nova receita','Laminação'],'s-rep':['Registrar repetição','Laminação'],'s-rev':['Revisão','Laminação'],'s-suc':['Concluído','Laminação'],'s-hist':['Histórico','Por receita · Laminação'],'s-pend':['Pendências','Aguardando aprovação'],'s-pend-lock':['Pendências','Acesso restrito'],'s-painel':['Painel','Laminação'],'s-painel-lock':['Painel','Acesso restrito'],'s-maquina-setup':['Máquina deste tablet','Laminação']};
   if(map[id]){ tpt.textContent=map[id][0]; tps.textContent=map[id][1]; }
 }
 function setTab(id){ document.querySelectorAll('.tab-item').forEach(t=>t.classList.remove('ta')); document.getElementById(id).classList.add('ta'); }
-function irLista(){ setTab('tab-r'); ir('s-lista'); }
+function irLista(){ setTab('tab-r'); renderLista(); ir('s-lista'); }
+
+// ---------- Máquina do tablet ----------
+function renderMaqBar(){
+  const bar=document.getElementById('maq-bar');
+  if(!maquinaAtual){ bar.style.display='none'; return; }
+  bar.style.display='flex';
+  document.getElementById('maq-bar-nome').textContent=maquinaAtual;
+}
+function filtrarPorMaquina(lista){ return maquinaAtual ? lista.filter(r=>r.MAQUINA===maquinaAtual) : lista; }
+function montarBotoesMaquina(comCancelar){
+  document.getElementById('maq-setup-btns').innerHTML = MAQUINAS_LAM.map(m=>{
+    const sel=m===maquinaAtual;
+    return `<button class="maq-setup-btn${sel?' sel':''}" onclick="selecionarMaquina('${escH(m)}')">${escH(m)}${sel?' <i class="ti ti-check" style="font-size:13px;vertical-align:-1px"></i>':''}<div class="maq-setup-tipos">${tiposDaMaquina(m).join(' · ')}</div></button>`;
+  }).join('');
+  document.getElementById('maq-setup-cancel').style.display=comCancelar?'inline-flex':'none';
+}
+function selecionarMaquina(m){
+  maquinaAtual=m; lsSet('lam_maquina',m); renderMaqBar();
+  const si=document.getElementById('si'); if(si) si.value='';
+  filtroNum=''; irLista();
+}
+function irTrocarMaquina(){ montarBotoesMaquina(true); ir('s-maquina-setup'); }
 
 // ---------- Carregamento ----------
 async function init(){
+  if(maquinaAtual && !MAQUINAS_LAM.includes(maquinaAtual)) maquinaAtual='';
+  renderMaqBar();
+  if(!maquinaAtual){ montarBotoesMaquina(false); ir('s-maquina-setup'); }
+  await carregarReceitas();
+  carregarPendencias();
+}
+async function carregarReceitas(){
   try{
-    receitas = await apiGet('getReceitasLista');
-    receitas = receitas.map(r=>({...r, _detalhesCarregados:false}));
-    rL(receitas);
-    carregarPendencias();
+    const lista = await apiGet('getReceitasLista');
+    receitas = (lista||[]).map(r=>({...r, _detalhesCarregados:false}));
+    receitasCarregadas = true;
+    renderLista();
   }catch(e){
-    document.getElementById('lw').innerHTML = `<div style="padding:20px 0;text-align:center;font-size:13px;color:var(--red)">Erro ao carregar: ${e.message}</div>`;
+    document.getElementById('lw').innerHTML = `<div style="padding:20px 0;text-align:center;font-size:13px;color:var(--red)">Erro ao carregar: ${escH(e.message)}</div>`;
   }
 }
 async function carregarPendencias(){
@@ -510,29 +590,50 @@ async function carregarPendencias(){
 function badgeTipo(tipo){
   const m={'Base Solvente':'lb-bs','Solvente Less':'lb-sl','Monocomponente':'lb-mc'};
   const abbr={'Base Solvente':'Base Solv.','Solvente Less':'Solv. Less','Monocomponente':'Mono'};
-  return `<span class="lam-badge ${m[tipo]||'lb-sl'}">${abbr[tipo]||tipo}</span>`;
+  return `<span class="lam-badge ${m[tipo]||'lb-sl'}">${escH(abbr[tipo]||tipo||'—')}</span>`;
 }
+// Receitas visíveis no tablet: da máquina selecionada e ativas
+// (obsoletas ganham tratamento próprio na Fase 3)
+function receitasBase(){ return filtrarPorMaquina(receitas).filter(r=>r.STATUS!=='OBSOLETA'); }
+// Mesmo produto fica junto: ordena por Cód. PA e depois pelo nº da laminação
+function ordenarReceitas(lista){
+  return lista.slice().sort((a,b)=>{
+    const pa=soDigitos(a.COD_PA).localeCompare(soDigitos(b.COD_PA)); if(pa) return pa;
+    return String(a.NUMERO_LAMINACAO||'').localeCompare(String(b.NUMERO_LAMINACAO||''));
+  });
+}
+function renderChipsNum(){
+  const base=receitasBase();
+  const cont=n=>base.filter(r=>r.NUMERO_LAMINACAO===n).length;
+  const chips=[{v:'',l:'Todas',c:base.length}].concat(NUMEROS_LAM.map(n=>({v:n,l:n,c:cont(n)})));
+  document.getElementById('lista-num').innerHTML = chips.map(ch=>
+    `<div class="fc${filtroNum===ch.v?' fca':''}" onclick="setFiltroNum('${ch.v}')">${ch.l} <span style="opacity:.7;font-weight:500">${ch.c}</span></div>`).join('');
+}
+function setFiltroNum(v){ filtroNum=v; renderLista(); }
+function renderLista(){ renderChipsNum(); filtrar(); }
 function rL(lista){
   const lw=document.getElementById('lw');
-  if(!lista.length){ lw.innerHTML=`<div style="padding:24px 0;text-align:center;font-size:13px;color:var(--text3)">Nenhuma receita encontrada</div>`; return; }
-  lw.innerHTML = lista.map(r=>`
-    <div class="li" onclick="abrirRec(${r.ID})">
+  if(!receitasCarregadas){ lw.innerHTML='<div class="loading-wrap"><div class="spinner"></div><span style="font-size:13px;color:var(--text3)">Carregando receitas...</span></div>'; return; }
+  if(!lista.length){ lw.innerHTML=`<div style="padding:24px 0;text-align:center;font-size:13px;color:var(--text3)">${maquinaAtual?'Nenhuma receita encontrada para '+escH(maquinaAtual):'Nenhuma receita encontrada'}</div>`; return; }
+  lw.innerHTML = ordenarReceitas(lista).map(r=>`
+    <div class="li" onclick="abrirRec(${Number(r.ID)})">
       <div class="lic"><i class="ti ti-layers-subtract"></i></div>
       <div class="lb">
-        <div class="lt">${r.CLIENTE||''} — ${fmtCodPAExib(r.COD_PA)}</div>
-        <div class="ls">${r.NUMERO_LAMINACAO||''} · ${r.MAQUINA||''} · ${r.SERVICO||''}</div>
+        <div class="lt">${escH(r.CLIENTE)} — ${escH(fmtCodPAExib(r.COD_PA))}</div>
+        <div class="ls">${escH(r.NUMERO_LAMINACAO||'—')} laminação · ${escH(r.SERVICO||'—')}</div>
       </div>
       ${badgeTipo(r.TIPO_LAMINACAO)}
     </div>`).join('');
 }
 function filtrar(){
   const q=document.getElementById('si').value.toLowerCase().trim();
-  if(!q){ rL(receitas); return; }
-  const f=receitas.filter(r=>
+  const qd=soDigitos(q);
+  let f=receitasBase();
+  if(filtroNum) f=f.filter(r=>r.NUMERO_LAMINACAO===filtroNum);
+  if(q) f=f.filter(r=>
     String(r.CLIENTE||'').toLowerCase().includes(q) ||
-    String(r.COD_PA||'').toLowerCase().includes(q) ||
+    (qd && soDigitos(r.COD_PA).includes(qd)) ||
     String(r.SERVICO||'').toLowerCase().includes(q) ||
-    String(r.MAQUINA||'').toLowerCase().includes(q) ||
     String(r.TIPO_LAMINACAO||'').toLowerCase().includes(q)
   );
   rL(f);
@@ -565,7 +666,7 @@ async function abrirRec(id){
     document.getElementById('rec-info').innerHTML='';
     document.getElementById('rec-params').innerHTML='';
     try{
-      const det = await apiGet('getReceitaDetalhe', `&id=${id}`);
+      const det = await apiGet('getReceitaDetalhe', `&id=${encodeURIComponent(id)}`);
       det.informacoes = Array.isArray(det.informacoes)?det.informacoes:[];
       det.parametros = Array.isArray(det.parametros)?det.parametros:[];
       det.versoes = Array.isArray(det.versoes)?det.versoes:[];
@@ -574,7 +675,7 @@ async function abrirRec(id){
       if(ix>=0) receitas[ix]=det;
       r = det;
     }catch(e){
-      document.getElementById('rec-id').innerHTML = `<div style="padding:20px 0;text-align:center;font-size:13px;color:var(--red)">Erro ao carregar: ${e.message}</div>`;
+      document.getElementById('rec-id').innerHTML = `<div style="padding:20px 0;text-align:center;font-size:13px;color:var(--red)">Erro ao carregar: ${escH(e.message)}</div>`;
       return;
     }
   }
@@ -589,58 +690,66 @@ function renderRec(r){
         ${badgeTipo(r.TIPO_LAMINACAO)}
       </div>
       <div class="hg">
-        <div><div class="fl">Cliente</div><div class="fv">${r.CLIENTE||'—'}</div></div>
-        <div><div class="fl">Cód. PA</div><div class="fv">${fmtCodPAExib(r.COD_PA)}</div></div>
-        <div><div class="fl">OP de criação</div><div class="fv">${r.OP_CRIACAO||'—'}</div></div>
-        <div><div class="fl">Nº laminação</div><div class="fv fvac">${r.NUMERO_LAMINACAO||'—'}</div></div>
-        <div><div class="fl">Máquina</div><div class="fv">${r.MAQUINA||'—'}</div></div>
-        <div><div class="fl">Operador</div><div class="fv">${r.OPERADOR||'—'}</div></div>
+        <div><div class="fl">Cliente</div><div class="fv">${escH(r.CLIENTE||'—')}</div></div>
+        <div><div class="fl">Cód. PA</div><div class="fv">${escH(fmtCodPAExib(r.COD_PA))}</div></div>
+        <div><div class="fl">OP de criação</div><div class="fv">${escH(r.OP_CRIACAO||'—')}</div></div>
+        <div><div class="fl">Nº laminação</div><div class="fv fvac">${escH(r.NUMERO_LAMINACAO||'—')}</div></div>
+        <div><div class="fl">Máquina</div><div class="fv">${escH(r.MAQUINA||'—')}</div></div>
+        <div><div class="fl">Operador</div><div class="fv">${escH(r.OPERADOR||'—')}</div></div>
       </div>
-      <div style="margin-top:10px"><div class="fl">Serviço</div><div class="fv">${r.SERVICO||'—'}</div></div>
-      <div style="margin-top:10px"><div class="fl">Aprovador</div><div class="fv">${r.APROVADOR||'—'}</div></div>
+      <div style="margin-top:10px"><div class="fl">Serviço</div><div class="fv">${escH(r.SERVICO||'—')}</div></div>
+      <div style="margin-top:10px"><div class="fl">Aprovador</div><div class="fv">${escH(r.APROVADOR||'—')}</div></div>
     </div>`;
   // Informações
   const infos = r.informacoes||[];
   document.getElementById('rec-info').innerHTML = `<div class="sl">Informações do adesivo</div>` +
-    (infos.length ? `<div class="pb">${infos.map(i=>`<div class="pbox"><div class="pl">${i.CAMPO}</div><div class="pv">${i.VALOR||'—'}</div></div>`).join('')}</div>` : `<div style="font-size:12px;color:var(--text3)">Sem informações</div>`);
+    (infos.length ? `<div class="pb">${infos.map(i=>`<div class="pbox"><div class="pl">${escH(i.CAMPO)}</div><div class="pv">${escH(i.VALOR===''||i.VALOR==null?'—':i.VALOR)}</div></div>`).join('')}</div>` : `<div style="font-size:12px;color:var(--text3)">Sem informações</div>`);
   // Parâmetros
   const params = r.parametros||[];
   document.getElementById('rec-params').innerHTML = `<div class="sl">Parâmetros da máquina</div>` +
-    (params.length ? `<div class="pb">${params.map(p=>`<div class="pbox"><div class="pl">${p.CAMPO}</div><div class="pv">${p.VALOR||'—'}</div></div>`).join('')}</div>` : `<div style="font-size:12px;color:var(--text3)">Sem parâmetros</div>`);
+    (params.length ? `<div class="pb">${params.map(p=>`<div class="pbox"><div class="pl">${escH(p.CAMPO)}</div><div class="pv">${escH(p.VALOR===''||p.VALOR==null?'—':p.VALOR)}</div></div>`).join('')}</div>` : `<div style="font-size:12px;color:var(--text3)">Sem parâmetros</div>`);
   // Observações
   const obsEl=document.getElementById('rec-obs');
   if(r.OBSERVACOES && String(r.OBSERVACOES).trim()){
     obsEl.style.display='block';
-    obsEl.innerHTML=`<div class="sl">Observações técnicas</div><div style="font-size:13px;color:var(--text2);line-height:1.5">${r.OBSERVACOES}</div>`;
+    obsEl.innerHTML=`<div class="sl">Observações técnicas</div><div style="font-size:13px;color:var(--text2);line-height:1.5;white-space:pre-line">${escH(r.OBSERVACOES)}</div>`;
   } else obsEl.style.display='none';
 }
 
 // ---------- Nova receita ----------
+// Ordem: máquina (já vem a do tablet) → tipo (só os que a máquina faz) → nº da laminação
 function irNova(){
-  novaTipo=''; novaNumero=''; novaMaq=''; nsn=1; pinBufN='';
+  novaTipo=''; novaNumero=''; nsn=1; pinBufN='';
+  novaMaq = MAQUINAS_LAM.includes(maquinaAtual) ? maquinaAtual : '';
   ['n-cli','n-cod','n-op','n-serv','n-oper','n-obs'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
-  document.querySelectorAll('#seg-tipo .seg-btn').forEach(b=>b.classList.remove('sel'));
   document.querySelectorAll('#seg-numero .num-btn').forEach(b=>b.classList.remove('sel'));
-  document.getElementById('card-numero').style.display='none';
-  document.getElementById('card-maquina').style.display='none';
-  document.getElementById('n-maq').innerHTML='<option value="">Selecione a máquina</option>';
+  ['info-campos','param-campos'].forEach(id=>{const c=document.getElementById(id); c.innerHTML=''; delete c.dataset.key;});
+  const sel=document.getElementById('n-maq');
+  sel.innerHTML='<option value="">Selecione a máquina</option>'+MAQUINAS_LAM.map(m=>`<option>${escH(m)}</option>`).join('');
+  sel.value=novaMaq;
   updDotsN();
   document.getElementById('pne').textContent='';
   ['ns1','ns2','ns3','ns4'].forEach((id,i)=>document.getElementById(id).style.display=i===0?'block':'none');
+  atualizarTipos();
   uNs1();
   ir('s-nova');
 }
+// Habilita só os tipos que a máquina escolhida faz
+function atualizarTipos(){
+  const pode = novaMaq ? tiposDaMaquina(novaMaq) : [];
+  if(novaTipo && !pode.includes(novaTipo)) novaTipo='';
+  document.querySelectorAll('#seg-tipo .seg-btn').forEach(b=>{
+    const t=b.dataset.tipo;
+    b.disabled = !pode.includes(t);
+    b.classList.toggle('sel', t===novaTipo);
+  });
+  document.getElementById('tipo-hint').textContent = !novaMaq ? 'Selecione a máquina primeiro.'
+    : (pode.length===1 ? `${novaMaq} faz apenas ${pode[0]}.` : '');
+}
 function selTipo(tipo){
-  novaTipo=tipo; novaMaq=''; 
-  document.querySelectorAll('#seg-tipo .seg-btn').forEach(b=>b.classList.toggle('sel', b.textContent===tipo));
-  // Monocomponente não tem número? Tem sim (1ª-4ª) — mostra para todos
-  document.getElementById('card-numero').style.display='block';
-  // Preencher máquinas filtradas
-  const maqs = LAM_MAQUINAS[tipo]||[];
-  const sel=document.getElementById('n-maq');
-  sel.innerHTML='<option value="">Selecione a máquina</option>'+maqs.map(m=>`<option>${m}</option>`).join('');
-  document.getElementById('card-maquina').style.display='block';
-  sel.value='';
+  if(!novaMaq || !tiposDaMaquina(novaMaq).includes(tipo)) return;
+  novaTipo=tipo;
+  atualizarTipos();
   uNs1();
 }
 function selNumero(num){
@@ -650,7 +759,14 @@ function selNumero(num){
 }
 function selMaquina(){
   novaMaq=document.getElementById('n-maq').value;
+  atualizarTipos();
   uNs1();
+}
+// Aviso (não bloqueia): já existe receita ativa com o mesmo PA, mesma laminação e mesma máquina
+function receitaDuplicada(){
+  const cod=soDigitos(document.getElementById('n-cod').value);
+  if(!cod || !novaNumero || !novaMaq) return null;
+  return receitas.find(r=>r.STATUS!=='OBSOLETA' && soDigitos(r.COD_PA)===cod && r.NUMERO_LAMINACAO===novaNumero && r.MAQUINA===novaMaq) || null;
 }
 function uNs1(){
   const cli=document.getElementById('n-cli').value.trim();
@@ -659,6 +775,11 @@ function uNs1(){
   const oper=document.getElementById('n-oper').value.trim();
   const ok = cli&&cod&&serv&&oper&&novaTipo&&novaNumero&&novaMaq;
   document.getElementById('btn-ns1').disabled=!ok;
+  const dup=receitaDuplicada(), av=document.getElementById('aviso-dup');
+  if(dup){
+    av.style.display='flex';
+    av.innerHTML=`<i class="ti ti-alert-triangle"></i><div>Já existe receita ativa de <b>${escH(fmtCodPAExib(dup.COD_PA))}</b>, ${escH(novaNumero)} laminação, na ${escH(novaMaq)} (${escH(dup.CLIENTE)}${dup.TIPO_LAMINACAO?' · '+escH(dup.TIPO_LAMINACAO):''}). Confira se não é a mesma antes de cadastrar.</div>`;
+  } else av.style.display='none';
 }
 ['n-cli','n-cod','n-op','n-serv','n-oper'].forEach(id=>{
   document.addEventListener('input',e=>{ if(e.target&&e.target.id===id) uNs1(); });
@@ -717,19 +838,19 @@ function bRv(){
       ${badgeTipo(novaTipo)}
     </div>
     <div class="hg">
-      <div><div class="fl">Cliente</div><div class="fv">${cli}</div></div>
-      <div><div class="fl">Cód. PA</div><div class="fv">${fmtCodPAExib(cod)}</div></div>
-      <div><div class="fl">OP criação</div><div class="fv">${op||'—'}</div></div>
+      <div><div class="fl">Cliente</div><div class="fv">${escH(cli)}</div></div>
+      <div><div class="fl">Cód. PA</div><div class="fv">${escH(fmtCodPAExib(cod))}</div></div>
+      <div><div class="fl">OP criação</div><div class="fv">${escH(op||'—')}</div></div>
       <div><div class="fl">Nº laminação</div><div class="fv fvac">${novaNumero}</div></div>
       <div><div class="fl">Máquina</div><div class="fv">${novaMaq}</div></div>
-      <div><div class="fl">Operador</div><div class="fv">${oper}</div></div>
+      <div><div class="fl">Operador</div><div class="fv">${escH(oper)}</div></div>
     </div>
-    <div style="margin-top:8px"><div class="fl">Serviço</div><div class="fv">${serv}</div></div>
+    <div style="margin-top:8px"><div class="fl">Serviço</div><div class="fv">${escH(serv)}</div></div>
     <div class="sl" style="margin-top:16px">Informações do adesivo</div>
-    <div class="pb">${infoVals.map(v=>`<div class="pbox"><div class="pl">${v.campo}</div><div class="pv">${v.valor||'—'}</div></div>`).join('')}</div>
+    <div class="pb">${infoVals.map(v=>`<div class="pbox"><div class="pl">${escH(v.campo)}</div><div class="pv">${escH(v.valor||'—')}</div></div>`).join('')}</div>
     <div class="sl" style="margin-top:16px">Parâmetros da máquina</div>
-    <div class="pb">${paramVals.map(v=>`<div class="pbox"><div class="pl">${v.campo}</div><div class="pv">${v.valor||'—'}</div></div>`).join('')}</div>
-    ${obs?`<div class="sl" style="margin-top:16px">Observações</div><div style="font-size:13px;color:var(--text2);line-height:1.5">${obs}</div>`:''}
+    <div class="pb">${paramVals.map(v=>`<div class="pbox"><div class="pl">${escH(v.campo)}</div><div class="pv">${escH(v.valor||'—')}</div></div>`).join('')}</div>
+    ${obs?`<div class="sl" style="margin-top:16px">Observações</div><div style="font-size:13px;color:var(--text2);line-height:1.5;white-space:pre-line">${escH(obs)}</div>`:''}
   `;
 }
 
@@ -751,16 +872,10 @@ function pinN(v){
 }
 
 async function salvarNovaReceita(pin){
+  if(salvando) return;
   const campos = getCampos(novaTipo, novaMaq);
-  showOverlay('Validando PIN...');
-  let aprovador='';
-  try{
-    const res = await apiPost({action:'validarPin', pin});
-    if(!res.valido){ hideOverlay(); document.getElementById('pne').textContent='PIN incorreto. Tente novamente.'; pinBufN=''; updDotsN(); return; }
-    aprovador = res.nome;
-  }catch(e){ hideOverlay(); document.getElementById('pne').textContent='Erro: '+e.message; pinBufN=''; updDotsN(); return; }
-
-  showOverlay('Salvando receita...');
+  const err=document.getElementById('pne');
+  if(!campos){ err.textContent='Combinação de máquina e tipo inválida.'; return; }
   const receita = {
     cliente:document.getElementById('n-cli').value.trim(),
     codPA:document.getElementById('n-cod').value.trim(),
@@ -772,26 +887,29 @@ async function salvarNovaReceita(pin){
     operador:document.getElementById('n-oper').value.trim(),
     observacoes:document.getElementById('n-obs').value.trim()
   };
+  // Valores gravados como digitados (sem trocar vírgula por ponto: há campos de texto)
   const informacoes = campos.info.map((c,i)=>({campo:c, valor:(document.getElementById('inf-'+i)?.value||'').trim()}));
-  const parametros = campos.params.map((c,i)=>({campo:c, valor:normDec((document.getElementById('par-'+i)?.value||'').trim())}));
+  const parametros = campos.params.map((c,i)=>({campo:c, valor:(document.getElementById('par-'+i)?.value||'').trim()}));
 
+  // Uma única chamada: o backend valida o PIN e identifica o aprovador
+  salvando=true; showOverlay('Salvando receita...');
   try{
-    const res = await apiPost({action:'salvarReceita', receita, informacoes, parametros, aprovador});
+    const res = await apiPost({action:'salvarReceita', pin, receita, informacoes, parametros});
     hideOverlay();
     pinBufN=''; updDotsN();
-    // Tela de sucesso
     document.getElementById('suc-title').textContent='Receita salva!';
     document.getElementById('suc-sub').textContent=`${receita.cliente} — ${novaNumero} laminação`;
     document.getElementById('suc-box').innerHTML=`
-      <div class="trr"><span class="trl">Tipo</span><span class="trv">${novaTipo}</span></div>
-      <div class="trr"><span class="trl">Máquina</span><span class="trv">${novaMaq}</span></div>
-      <div class="trr"><span class="trl">Aprovador</span><span class="trv">${aprovador}</span></div>`;
+      <div class="trr"><span class="trl">Tipo</span><span class="trv">${escH(novaTipo)}</span></div>
+      <div class="trr"><span class="trl">Máquina</span><span class="trv">${escH(novaMaq)}</span></div>
+      <div class="trr"><span class="trl">Aprovador</span><span class="trv">${escH(res.aprovador||'—')}</span></div>`;
     ir('s-suc');
-    // Recarregar lista
-    receitas = await apiGet('getReceitasLista');
-    receitas = receitas.map(r=>({...r,_detalhesCarregados:false}));
-    rL(receitas);
-  }catch(e){ hideOverlay(); document.getElementById('pne').textContent='Erro ao salvar: '+e.message; }
+    await carregarReceitas();
+  }catch(e){
+    hideOverlay();
+    err.textContent = e.message==='PIN incorreto.' ? 'PIN incorreto. Tente novamente.' : 'Erro ao salvar: '+e.message;
+    pinBufN=''; updDotsN();
+  }finally{ salvando=false; }
 }
 
 // ---------- Overlay ----------
@@ -809,14 +927,14 @@ function irRep(){
   document.getElementById('rep-dt').textContent = new Date().toLocaleString('pt-BR');
   // Identificação
   document.getElementById('rep-id-grid').innerHTML = `
-    <div><div class="fl">Cliente</div><div class="fv">${r.CLIENTE||'—'}</div></div>
-    <div><div class="fl">Cód. PA</div><div class="fv">${fmtCodPAExib(r.COD_PA)}</div></div>
-    <div><div class="fl">Nº laminação</div><div class="fv fvac">${r.NUMERO_LAMINACAO||'—'}</div></div>
-    <div><div class="fl">Máquina</div><div class="fv">${r.MAQUINA||'—'}</div></div>`;
+    <div><div class="fl">Cliente</div><div class="fv">${escH(r.CLIENTE||'—')}</div></div>
+    <div><div class="fl">Cód. PA</div><div class="fv">${escH(fmtCodPAExib(r.COD_PA))}</div></div>
+    <div><div class="fl">Nº laminação</div><div class="fv fvac">${escH(r.NUMERO_LAMINACAO||'—')}</div></div>
+    <div><div class="fl">Máquina</div><div class="fv">${escH(r.MAQUINA||'—')}</div></div>`;
   // Informações (read-only, mostra referência)
   const infos = r.informacoes||[];
   document.getElementById('rep-info').innerHTML = infos.length
-    ? `<div class="pb">${infos.map(i=>`<div class="pbox"><div class="pl">${i.CAMPO}</div><div class="pv">${i.VALOR||'—'}</div></div>`).join('')}</div>`
+    ? `<div class="pb">${infos.map(i=>`<div class="pbox"><div class="pl">${escH(i.CAMPO)}</div><div class="pv">${escH(i.VALOR===''||i.VALOR==null?'—':i.VALOR)}</div></div>`).join('')}</div>`
     : `<div style="font-size:12px;color:var(--text3)">Sem informações</div>`;
   // Parâmetros — campos editáveis com detecção de desvio
   const params = r.parametros||[];
@@ -976,16 +1094,8 @@ function pinR(v){
 }
 
 async function salvarRepeticao(pin){
-  showOverlay('Validando PIN...');
-  let aprovador='';
-  try{
-    const res = await apiPost({action:'validarPin', pin});
-    if(!res.valido){ hideOverlay(); document.getElementById('pre2').textContent='PIN incorreto. Tente novamente.'; pinBufR=''; updDotsR(); return; }
-    aprovador=res.nome;
-  }catch(e){ hideOverlay(); document.getElementById('pre2').textContent='Erro: '+e.message; pinBufR=''; updDotsR(); return; }
-
-  showOverlay('Salvando repetição...');
-  const r = receitas.find(x=>String(x.ID)===String(recIdx));
+  if(salvando) return;
+  const err=document.getElementById('pre2');
   const oper=document.getElementById('oper-inp').value.trim();
   const op=document.getElementById('op-inp').value.trim();
   const dvs=getDesvios();
@@ -1000,20 +1110,26 @@ async function salvarRepeticao(pin){
     }
   });
 
+  // Uma única chamada: o backend valida o PIN e identifica o aprovador
+  salvando=true; showOverlay('Salvando repetição...');
   try{
-    const res = await apiPost({action:'salvarRepeticao', idReceita:recIdx, opProducao:op, operador:oper, aprovador, temDesvio:dvs.length>0, desvios, pendencias:pendencias2});
+    const res = await apiPost({action:'salvarRepeticao', pin, idReceita:recIdx, opProducao:op, operador:oper, temDesvio:dvs.length>0, desvios, pendencias:pendencias2});
     hideOverlay();
     pinBufR=''; updDotsR();
     document.getElementById('suc-title').textContent='Repetição registrada!';
     document.getElementById('suc-sub').textContent=`OP ${op} · ${dvs.length} desvio(s)`;
     document.getElementById('suc-box').innerHTML=`
-      <div class="trr"><span class="trl">Operador</span><span class="trv">${oper}</span></div>
-      <div class="trr"><span class="trl">Aprovador</span><span class="trv">${aprovador}</span></div>
+      <div class="trr"><span class="trl">Operador</span><span class="trv">${escH(oper)}</span></div>
+      <div class="trr"><span class="trl">Aprovador</span><span class="trv">${escH(res.aprovador||'—')}</span></div>
       <div class="trr"><span class="trl">Desvios</span><span class="trv">${dvs.length}</span></div>
       ${pendencias2.length?`<div class="trr"><span class="trl">Alterações p/ aprovação</span><span class="trv">${pendencias2.length}</span></div>`:''}`;
     ir('s-suc');
     carregarPendencias();
-  }catch(e){ hideOverlay(); document.getElementById('pre2').textContent='Erro ao salvar: '+e.message; }
+  }catch(e){
+    hideOverlay();
+    err.textContent = e.message==='PIN incorreto.' ? 'PIN incorreto. Tente novamente.' : 'Erro ao salvar: '+e.message;
+    pinBufR=''; updDotsR();
+  }finally{ salvando=false; }
 }
 </script>
 
@@ -1024,7 +1140,7 @@ function ir_hist_load(){
   // monta filtros por receita
   const fc=document.getElementById('hist-filtros');
   fc.innerHTML = `<div class="fc fca" onclick="setHistFiltro(null,this)">Todas</div>` +
-    receitas.slice(0,12).map(r=>`<div class="fc" onclick="setHistFiltro(${r.ID},this)">${r.CLIENTE} ${r.NUMERO_LAMINACAO||''}</div>`).join('');
+    receitasBase().slice(0,12).map(r=>`<div class="fc" onclick="setHistFiltro(${Number(r.ID)},this)">${escH(r.CLIENTE)} ${escH(r.NUMERO_LAMINACAO||'')}</div>`).join('');
   renderHist();
 }
 function setHistFiltro(id, el){
@@ -1035,7 +1151,7 @@ function setHistFiltro(id, el){
 }
 async function renderHist(){
   const cont=document.getElementById('hist-conteudo');
-  let lista = histFiltroId ? receitas.filter(r=>String(r.ID)===String(histFiltroId)) : receitas.slice(0,8);
+  let lista = histFiltroId ? receitas.filter(r=>String(r.ID)===String(histFiltroId)) : receitasBase().slice(0,8);
   if(!lista.length){ cont.innerHTML=`<div style="padding:24px 0;text-align:center;font-size:13px;color:var(--text3)">Nenhuma receita</div>`; return; }
   cont.innerHTML='<div class="loading-wrap"><div class="spinner"></div></div>';
   let html='';
@@ -1152,19 +1268,20 @@ async function pinPend(id, v){
   if(v==='back'){ pendPinBufs[id]=pendPinBufs[id].slice(0,-1); updPendDots(id); return; }
   if(v==='ok'){
     if(pendPinBufs[id].length<4){ err.textContent='Digite os 4 dígitos'; return; }
+    if(salvando) return;
     const pend=pendencias.find(p=>String(p.ID)===String(id));
-    showOverlay('Validando PIN...');
+    const pin=pendPinBufs[id];
+    // O backend revalida o PIN e recusa se for o mesmo supervisor que solicitou
+    salvando=true; showOverlay('Aprovando...');
     try{
-      const res=await apiPost({action:'validarPin', pin:pendPinBufs[id]});
-      if(!res.valido){ hideOverlay(); err.textContent='PIN incorreto.'; pendPinBufs[id]=''; updPendDots(id); return; }
-      if(pend && res.nome===pend.SOLICITANTE){ hideOverlay(); err.textContent='Deve ser diferente do 1º aprovador.'; pendPinBufs[id]=''; updPendDots(id); return; }
-      showOverlay('Aprovando...');
-      await apiPost({action:'aprovarPendencia', idPendencia:id, aprovador2:res.nome, idReceita:pend?pend.ID_RECEITA:null});
+      await apiPost({action:'aprovarPendencia', idPendencia:id, pin, idReceita:pend?pend.ID_RECEITA:null});
       hideOverlay();
       pendencias = pendencias.filter(p=>String(p.ID)!==String(id));
       carregarPendencias();
       renderPend();
-    }catch(e){ hideOverlay(); err.textContent='Erro: '+e.message; pendPinBufs[id]=''; updPendDots(id); }
+      carregarReceitas();
+    }catch(e){ hideOverlay(); err.textContent=e.message; pendPinBufs[id]=''; updPendDots(id); }
+    finally{ salvando=false; }
     return;
   }
   if(pendPinBufs[id].length<4) pendPinBufs[id]+=v;
