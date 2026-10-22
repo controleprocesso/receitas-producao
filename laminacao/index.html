@@ -194,6 +194,39 @@ textarea{resize:none;line-height:1.5;width:100%}
 .tbl{font-size:10px;color:var(--text3);font-weight:500}
 .tab-item.ta .tbl{color:var(--blue);font-weight:600}
 .tab-badge{position:absolute;top:0;right:8px;background:var(--red-mid);color:#fff;font-size:9px;font-weight:700;border-radius:10px;padding:1px 5px;line-height:1.3}
+.bs{width:100%;background:transparent;color:var(--text2);border:0.5px solid var(--border2);border-radius:var(--rad);padding:12px;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;font-family:var(--font-sans);margin-bottom:8px}
+.bcard{width:100%;background:var(--card);border:0.5px solid var(--border2);border-radius:var(--rad);padding:13px 14px;cursor:pointer;display:flex;align-items:center;gap:12px;font-family:var(--font-sans);margin-bottom:8px;text-align:left}
+.bcard .bci{width:36px;height:36px;border-radius:var(--rad);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.bcard .bct{font-size:14px;font-weight:600;color:var(--text)}
+.bcard .bcs{font-size:11px;color:var(--text3);margin-top:1px}
+.bcard .bca{margin-left:auto;color:var(--text3);flex-shrink:0}
+.bcard-obs{background:#EEF0F2;border-color:#DDE1E5;cursor:default}
+.bcard-reativar{background:var(--blue-light);border-color:var(--blue-mid)}
+.bcard-reativar .bct{color:var(--blue)}
+.bobs{font-size:10px;padding:2px 8px;border-radius:20px;white-space:nowrap;flex-shrink:0;background:#EEF0F2;color:#7A8694;font-weight:600;display:inline-flex;align-items:center;gap:3px}
+.li.obs{opacity:0.55}
+#print-area{display:none}
+@media print{
+  html,body{height:auto;overflow:visible}
+  body *{visibility:hidden}
+  #print-area,#print-area *{visibility:visible}
+  #print-area{display:block;position:absolute;left:0;top:0;width:100%;color:#111;font-family:Arial,Helvetica,sans-serif}
+  @page{size:A4;margin:10mm}
+  .pa-h{font-size:20px;font-weight:700;margin-bottom:2px}
+  .pa-sub{font-size:11px;color:#444;margin-bottom:6px}
+  .pa-alerta{border:1px solid #B00;color:#B00;border-radius:4px;padding:5px 8px;font-size:10px;margin:6px 0}
+  .pa-sec{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.3px;border-bottom:1.5px solid #111;padding-bottom:3px;margin:12px 0 6px}
+  .pa-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:5px 14px}
+  .pa-f .l{font-size:8px;text-transform:uppercase;color:#666;letter-spacing:.2px}
+  .pa-f .v{font-size:10.5px;font-weight:700}
+  table.pa-t{width:100%;border-collapse:collapse;font-size:10px}
+  table.pa-t th,table.pa-t td{border:0.5px solid #888;padding:4px 6px;text-align:left;vertical-align:top}
+  table.pa-t th{font-size:8.5px;text-transform:uppercase;background:#EEE!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;font-weight:700}
+  table.pa-t td.v{font-weight:700;width:18%}
+  table.pa-t tr{page-break-inside:avoid}
+  .pa-obs{margin:0;padding-left:16px;font-size:10px;line-height:1.5}
+  .pa-rod{margin-top:14px;font-size:8.5px;color:#666}
+}
 </style>
 </head>
 <body>
@@ -237,7 +270,41 @@ textarea{resize:none;line-height:1.5;width:100%}
       <div class="card" id="rec-info"></div>
       <div class="card" id="rec-params"></div>
       <div class="card" id="rec-obs" style="display:none"></div>
-      <button class="bp" onclick="irRep()"><i class="ti ti-clipboard-check"></i> Registrar repetição</button>
+      <div id="rec-obs-banner" class="bcard bcard-obs" style="display:none;align-items:flex-start">
+        <div class="bci" style="background:#DDE1E5"><i class="ti ti-archive" style="font-size:18px;color:#7A8694"></i></div>
+        <div><div class="bct" style="color:#5B6570">Receita obsoleta</div><div class="bcs">Não disponível para produção. Visível apenas para administradores.</div><div id="rec-obs-info" style="margin-top:6px;font-size:12px;color:#5B6570;line-height:1.5"></div></div>
+      </div>
+      <div id="rec-acoes">
+        <button class="bp" id="btn-registrar-rep" onclick="irRep()"><i class="ti ti-clipboard-check"></i> Registrar repetição</button>
+        <button class="bs" onclick="abrirHistorico(recIdx)"><i class="ti ti-history"></i> Ver histórico desta receita</button>
+        <button class="bs" onclick="imprimirReceita()"><i class="ti ti-printer"></i> Imprimir receita</button>
+        <button id="rec-reativar" class="bcard bcard-reativar" style="display:none" onclick="reativarReceita()"><div class="bci" style="background:#fff"><i class="ti ti-refresh" style="font-size:18px;color:var(--blue)"></i></div><div><div class="bct">Reativar receita</div><div class="bcs">Torna a receita disponível para produção novamente</div></div><i class="ti ti-chevron-right bca" style="font-size:18px"></i></button>
+        <button id="rec-admin-card" class="bcard" onclick="abrirPinAdmin(recIdx)"><div class="bci" style="background:var(--bg)"><i class="ti ti-settings" style="font-size:18px;color:var(--text2)"></i></div><div><div class="bct">Admin</div><div class="bcs">Obsoletar esta receita</div></div><i class="ti ti-chevron-right bca" style="font-size:18px"></i></button>
+      </div>
+      <div style="height:16px"></div>
+    </div>
+
+    <!-- PIN ADMIN (obsoletar / reativar / abrir obsoleta) -->
+    <div id="s-pin-admin" class="sc">
+      <div class="card">
+        <div class="pin-w">
+          <div class="pin-t">Acesso administrativo</div>
+          <div class="pin-s" id="admin-sub">Digite o PIN de supervisor autorizado.</div>
+          <div class="pin-cx"><div class="pcl">Receita</div><div class="pcv" id="admin-ctx">—</div></div>
+          <div id="admin-motivo-wrap" style="display:none;width:100%;text-align:left;margin-bottom:14px"><div class="fdl" id="admin-motivo-lbl">Motivo</div><textarea id="admin-motivo" rows="3" maxlength="300"></textarea></div>
+          <div class="pin-ds"><div class="pin-d" id="pad0"></div><div class="pin-d" id="pad1"></div><div class="pin-d" id="pad2"></div><div class="pin-d" id="pad3"></div></div>
+          <div class="pin-g">
+            <button class="pib" onclick="ppAdmin('1')">1</button><button class="pib" onclick="ppAdmin('2')">2</button><button class="pib" onclick="ppAdmin('3')">3</button>
+            <button class="pib" onclick="ppAdmin('4')">4</button><button class="pib" onclick="ppAdmin('5')">5</button><button class="pib" onclick="ppAdmin('6')">6</button>
+            <button class="pib" onclick="ppAdmin('7')">7</button><button class="pib" onclick="ppAdmin('8')">8</button><button class="pib" onclick="ppAdmin('9')">9</button>
+            <button class="pib" onclick="ppAdmin('back')" style="font-size:16px"><i class="ti ti-backspace"></i></button>
+            <button class="pib" onclick="ppAdmin('0')">0</button>
+            <button class="pib" onclick="ppAdmin('ok')" style="background:var(--blue);color:#fff;border-color:var(--blue)"><i class="ti ti-check"></i></button>
+          </div>
+          <div class="pie" id="pade"></div>
+        </div>
+      </div>
+      <button class="bs" id="admin-voltar" onclick="voltarDoAdmin()"><i class="ti ti-arrow-left"></i> Voltar</button>
       <div style="height:16px"></div>
     </div>
 
@@ -478,6 +545,7 @@ const altOpts = {};
 let salvando = false;          // guarda contra duplo clique em gravações
 let filtroNum = '';            // '' = todas · '1ª'..'4ª'
 let maquinaAtual = lsGet('lam_maquina');
+let adminDesbloqueado = false; // libera abrir receita obsoleta após PIN de admin (até voltar à lista)
 
 // Ordem das máquinas na tela de seleção e tipos que cada uma faz (derivado de LAM_MAQUINAS)
 const MAQUINAS_LAM = ['Flexotech','Simplex 1','Simplex 2','Supercombi 3000','Supercombi 4000','Comexi'];
@@ -531,11 +599,11 @@ function ir(id){
   document.getElementById('main-content').scrollTop=0;
   // título
   const tpt=document.getElementById('tpt'), tps=document.getElementById('tps');
-  const map={'s-lista':['Receitas de Produto','Laminação'],'s-rec':['Detalhe da receita','Laminação'],'s-nova':['Nova receita','Laminação'],'s-rep':['Registrar repetição','Laminação'],'s-rev':['Revisão','Laminação'],'s-suc':['Concluído','Laminação'],'s-hist':['Histórico','Por receita · Laminação'],'s-pend':['Pendências','Aguardando aprovação'],'s-pend-lock':['Pendências','Acesso restrito'],'s-painel':['Painel','Laminação'],'s-painel-lock':['Painel','Acesso restrito'],'s-maquina-setup':['Máquina deste tablet','Laminação']};
+  const map={'s-lista':['Receitas de Produto','Laminação'],'s-rec':['Detalhe da receita','Laminação'],'s-nova':['Nova receita','Laminação'],'s-rep':['Registrar repetição','Laminação'],'s-rev':['Revisão','Laminação'],'s-suc':['Concluído','Laminação'],'s-hist':['Histórico','Por receita · Laminação'],'s-pend':['Pendências','Aguardando aprovação'],'s-pend-lock':['Pendências','Acesso restrito'],'s-painel':['Painel','Laminação'],'s-painel-lock':['Painel','Acesso restrito'],'s-maquina-setup':['Máquina deste tablet','Laminação'],'s-pin-admin':['Acesso administrativo','Supervisor autorizado']};
   if(map[id]){ tpt.textContent=map[id][0]; tps.textContent=map[id][1]; }
 }
 function setTab(id){ document.querySelectorAll('.tab-item').forEach(t=>t.classList.remove('ta')); document.getElementById(id).classList.add('ta'); }
-function irLista(){ setTab('tab-r'); renderLista(); ir('s-lista'); }
+function irLista(){ adminDesbloqueado=false; setTab('tab-r'); renderLista(); ir('s-lista'); }
 
 // ---------- Máquina do tablet ----------
 function renderMaqBar(){
@@ -592,12 +660,12 @@ function badgeTipo(tipo){
   const abbr={'Base Solvente':'Base Solv.','Solvente Less':'Solv. Less','Monocomponente':'Mono'};
   return `<span class="lam-badge ${m[tipo]||'lb-sl'}">${escH(abbr[tipo]||tipo||'—')}</span>`;
 }
-// Receitas visíveis no tablet: da máquina selecionada e ativas
-// (obsoletas ganham tratamento próprio na Fase 3)
-function receitasBase(){ return filtrarPorMaquina(receitas).filter(r=>r.STATUS!=='OBSOLETA'); }
+// Receitas visíveis no tablet: as da máquina selecionada (obsoletas aparecem esmaecidas, no fim)
+function receitasBase(){ return filtrarPorMaquina(receitas); }
 // Mesmo produto fica junto: ordena por Cód. PA e depois pelo nº da laminação
 function ordenarReceitas(lista){
   return lista.slice().sort((a,b)=>{
+    const ob=(a.STATUS==='OBSOLETA')-(b.STATUS==='OBSOLETA'); if(ob) return ob;
     const pa=soDigitos(a.COD_PA).localeCompare(soDigitos(b.COD_PA)); if(pa) return pa;
     return String(a.NUMERO_LAMINACAO||'').localeCompare(String(b.NUMERO_LAMINACAO||''));
   });
@@ -615,15 +683,17 @@ function rL(lista){
   const lw=document.getElementById('lw');
   if(!receitasCarregadas){ lw.innerHTML='<div class="loading-wrap"><div class="spinner"></div><span style="font-size:13px;color:var(--text3)">Carregando receitas...</span></div>'; return; }
   if(!lista.length){ lw.innerHTML=`<div style="padding:24px 0;text-align:center;font-size:13px;color:var(--text3)">${maquinaAtual?'Nenhuma receita encontrada para '+escH(maquinaAtual):'Nenhuma receita encontrada'}</div>`; return; }
-  lw.innerHTML = ordenarReceitas(lista).map(r=>`
-    <div class="li" onclick="abrirRec(${Number(r.ID)})">
+  lw.innerHTML = ordenarReceitas(lista).map(r=>{
+    const obs=r.STATUS==='OBSOLETA';
+    return `
+    <div class="li${obs?' obs':''}" onclick="abrirRec(${Number(r.ID)})">
       <div class="lic"><i class="ti ti-layers-subtract"></i></div>
       <div class="lb">
         <div class="lt">${escH(r.CLIENTE)} — ${escH(fmtCodPAExib(r.COD_PA))}</div>
         <div class="ls">${escH(r.NUMERO_LAMINACAO||'—')} laminação · ${escH(r.SERVICO||'—')}</div>
       </div>
-      ${badgeTipo(r.TIPO_LAMINACAO)}
-    </div>`).join('');
+      ${obs?'<span class="bobs"><i class="ti ti-archive" style="font-size:11px"></i> Obsoleta</span>':badgeTipo(r.TIPO_LAMINACAO)}
+    </div>`;}).join('');
 }
 function filtrar(){
   const q=document.getElementById('si').value.toLowerCase().trim();
@@ -660,7 +730,11 @@ async function abrirRec(id){
   recIdx = id;
   let r = receitas.find(x=>String(x.ID)===String(id));
   if(!r) return;
+  // Receita obsoleta só abre com PIN de administrador
+  if(r.STATUS==='OBSOLETA' && !adminDesbloqueado){ abrirPinAdmin(id); return; }
   ir('s-rec');
+  document.getElementById('rec-acoes').style.display='none';
+  document.getElementById('rec-obs-banner').style.display='none';
   if(!r._detalhesCarregados){
     document.getElementById('rec-id').innerHTML = `<div class="loading-wrap"><div class="spinner"></div><span style="font-size:13px;color:var(--text3)">Carregando receita...</span></div>`;
     document.getElementById('rec-info').innerHTML='';
@@ -670,6 +744,7 @@ async function abrirRec(id){
       det.informacoes = Array.isArray(det.informacoes)?det.informacoes:[];
       det.parametros = Array.isArray(det.parametros)?det.parametros:[];
       det.versoes = Array.isArray(det.versoes)?det.versoes:[];
+      det.historicoStatus = Array.isArray(det.historicoStatus)?det.historicoStatus:[];
       det._detalhesCarregados = true;
       const ix = receitas.findIndex(x=>String(x.ID)===String(id));
       if(ix>=0) receitas[ix]=det;
@@ -714,6 +789,21 @@ function renderRec(r){
     obsEl.style.display='block';
     obsEl.innerHTML=`<div class="sl">Observações técnicas</div><div style="font-size:13px;color:var(--text2);line-height:1.5;white-space:pre-line">${escH(r.OBSERVACOES)}</div>`;
   } else obsEl.style.display='none';
+  // Status: obsoleta mostra o motivo e só permite reativar / consultar
+  const isObs = r.STATUS==='OBSOLETA';
+  document.getElementById('rec-acoes').style.display='';
+  document.getElementById('rec-obs-banner').style.display = isObs?'flex':'none';
+  if(isObs){
+    const ult=(r.historicoStatus||[]).filter(x=>x.STATUS==='OBSOLETA').slice(-1)[0];
+    document.getElementById('rec-obs-info').innerHTML = ult
+      ? `<div><b>Motivo:</b> ${escH(ult.MOTIVO)}</div><div>Obsoletada por <b>${escH(ult.AUTOR||'—')}</b> em ${escH(fmtDataHist(ult.DATA_HORA))}</div>`
+      : '<div>Obsoletada antes do registro de motivo.</div>';
+  }
+  document.getElementById('btn-registrar-rep').style.display = isObs?'none':'';
+  document.getElementById('rec-reativar').style.display = isObs?'flex':'none';
+  document.getElementById('rec-admin-card').style.display = isObs?'none':'flex';
+  document.getElementById('tpt').textContent = `${r.CLIENTE||''} · ${fmtCodPAExib(r.COD_PA)}`;
+  document.getElementById('tps').textContent = `${r.NUMERO_LAMINACAO||''} laminação · ${r.MAQUINA||''}`;
 }
 
 // ---------- Nova receita ----------
@@ -921,7 +1011,7 @@ function hideOverlay(){ document.getElementById('overlay-loading').classList.rem
 // ---------- Registro de repetição ----------
 function irRep(){
   const r = receitas.find(x=>String(x.ID)===String(recIdx));
-  if(!r) return;
+  if(!r || r.STATUS==='OBSOLETA') return;
   document.getElementById('oper-inp').value='';
   document.getElementById('op-inp').value='';
   document.getElementById('rep-dt').textContent = new Date().toLocaleString('pt-BR');
@@ -1313,5 +1403,139 @@ ir = function(id){ _ir(id); if(id==='s-hist') ir_hist_load(); };
 // ---------- Init ----------
 init();
 </script>
+<script>
+// ══════════ Fase 3 — Admin (obsoletar / reativar), impressão, atalho do histórico ══════════
+
+function fmtDataHist(s){
+  const m=String(s||'').match(/(\d{1,2})\/(\d{1,2})\/(\d{4})\D+(\d{1,2}):(\d{2})/);
+  if(!m) return s||'—';
+  const p=x=>String(x).padStart(2,'0');
+  return `${p(m[1])}/${p(m[2])}/${m[3]} às ${p(m[4])}:${m[5]}`;
+}
+function mostrarSucesso(titulo, sub, linhas){
+  document.getElementById('suc-title').textContent=titulo;
+  document.getElementById('suc-sub').textContent=sub||'';
+  document.getElementById('suc-box').innerHTML=linhas.map(l=>`<div class="trr"><span class="trl">${escH(l.l)}</span><span class="trv">${escH(l.v)}</span></div>`).join('');
+  ir('s-suc');
+}
+
+// ---------- PIN de administrador ----------
+// adminAcao: 'ver' (abrir obsoleta) · 'obsoletar' · 'reativar'
+let pinBufAdmin='', adminCtxId=null, adminAcao=null;
+function updDotsAdmin(){ for(let i=0;i<4;i++) document.getElementById('pad'+i).classList.toggle('f', i<pinBufAdmin.length); }
+function prepTelaAdmin(id, acao){
+  adminCtxId=id; adminAcao=acao; pinBufAdmin=''; updDotsAdmin();
+  document.getElementById('pade').textContent='';
+  const r=receitas.find(x=>String(x.ID)===String(id));
+  document.getElementById('admin-ctx').textContent = r ? `${r.CLIENTE} · ${fmtCodPAExib(r.COD_PA)} · ${r.NUMERO_LAMINACAO||''} laminação` : '—';
+  document.getElementById('admin-sub').textContent = {
+    ver:'Receita obsoleta. Digite o PIN de supervisor autorizado para acessá-la.',
+    obsoletar:'Informe o motivo e o PIN de supervisor autorizado para obsoletar esta receita.',
+    reativar:'Informe o motivo e o PIN de supervisor autorizado para reativar esta receita.'
+  }[acao];
+  const pede = acao!=='ver';
+  const w=document.getElementById('admin-motivo-wrap'), t=document.getElementById('admin-motivo');
+  w.style.display = pede?'block':'none'; t.value='';
+  document.getElementById('admin-motivo-lbl').innerHTML = (acao==='obsoletar'?'Motivo da obsolescência':'Motivo da reativação')+' <span style="color:var(--red-mid)">*</span>';
+  document.getElementById('admin-voltar').innerHTML = acao==='ver'
+    ? '<i class="ti ti-arrow-left"></i> Voltar à lista' : '<i class="ti ti-arrow-left"></i> Voltar à receita';
+  ir('s-pin-admin');
+}
+// Tocar numa obsoleta → 'ver'; card Admin numa ativa → 'obsoletar'
+function abrirPinAdmin(id){
+  const r=receitas.find(x=>String(x.ID)===String(id));
+  prepTelaAdmin(id, r && r.STATUS==='OBSOLETA' ? 'ver' : 'obsoletar');
+}
+function reativarReceita(){ prepTelaAdmin(recIdx, 'reativar'); }
+function voltarDoAdmin(){ if(adminAcao==='ver') irLista(); else abrirRec(adminCtxId); }
+
+function ppAdmin(v){
+  const err=document.getElementById('pade');
+  if(v==='back'){ pinBufAdmin=pinBufAdmin.slice(0,-1); updDotsAdmin(); return; }
+  if(v==='ok'){
+    if(salvando) return;
+    if(pinBufAdmin.length<4){ err.textContent='Digite os 4 dígitos'; return; }
+    const pin=pinBufAdmin; pinBufAdmin=''; updDotsAdmin();
+    if(adminAcao==='ver') return desbloquearObsoleta(adminCtxId, pin);
+    const mot=document.getElementById('admin-motivo').value.trim();
+    if(mot.length<5){ err.textContent='Informe o motivo (mínimo de 5 caracteres).'; return; }
+    return executarAlterarStatus(adminCtxId, adminAcao==='obsoletar'?'OBSOLETA':'ATIVA', pin, mot);
+  }
+  if(pinBufAdmin.length<4) pinBufAdmin+=v;
+  updDotsAdmin();
+}
+// Só libera a visualização; a reativação revalida PIN e permissão no backend
+async function desbloquearObsoleta(id, pin){
+  const err=document.getElementById('pade');
+  salvando=true; showOverlay('Validando PIN...');
+  try{
+    const res=await apiPost({action:'validarPin', pin});
+    hideOverlay();
+    if(!res.valido){ err.textContent='PIN incorreto.'; return; }
+    if(!res.admin){ err.textContent='Supervisor não autorizado.'; return; }
+    adminDesbloqueado=true;
+    salvando=false;
+    abrirRec(id);
+  }catch(e){ hideOverlay(); err.textContent='Erro: '+e.message; }
+  finally{ salvando=false; }
+}
+async function executarAlterarStatus(id, novoStatus, pin, motivo){
+  const err=document.getElementById('pade');
+  salvando=true; showOverlay(novoStatus==='OBSOLETA'?'Obsoletando...':'Reativando...');
+  try{
+    const res=await apiPost({action:'alterarStatusReceita', pin, idReceita:id, novoStatus, motivoStatus:motivo});
+    hideOverlay();
+    if(!res.ok){ err.textContent=res.motivo||'Não autorizado.'; return; }
+    adminDesbloqueado=false;
+    const r=receitas.find(x=>String(x.ID)===String(id));
+    mostrarSucesso(novoStatus==='OBSOLETA'?'Receita obsoletada':'Receita reativada',
+      novoStatus==='OBSOLETA'?'A receita não aparece mais para produção.':'A receita está disponível para produção novamente.',
+      [{l:'Receita',v:r?`${r.CLIENTE} · ${fmtCodPAExib(r.COD_PA)}`:'—'},{l:'Responsável',v:res.nome||'—'},{l:'Status',v:novoStatus==='OBSOLETA'?'Obsoleta':'Ativa'},{l:'Motivo',v:motivo}]);
+    await carregarReceitas();
+  }catch(e){ hideOverlay(); err.textContent='Erro: '+e.message; }
+  finally{ salvando=false; }
+}
+
+// ---------- Atalho para o histórico desta receita ----------
+function abrirHistorico(id){
+  histFiltroId=id; setTab('tab-h'); ir('s-hist');
+  document.querySelectorAll('#hist-filtros .fc').forEach(f=>f.classList.remove('fca'));
+}
+
+// ---------- Impressão (somente a receita) ----------
+function imprimirReceita(){
+  const r=receitas.find(x=>String(x.ID)===String(recIdx));
+  if(!r || !r._detalhesCarregados) return;
+  const val=v=>(v===undefined||v===null||String(v).trim()==='')?'—':escH(v);
+  const campo=(l,v,span)=>`<div class="pa-f"${span?` style="grid-column:span ${span}"`:''}><div class="l">${l}</div><div class="v">${v}</div></div>`;
+  const vs=Array.isArray(r.versoes)?r.versoes:[];
+  const vAtiva=vs.find(v=>v.ATIVA===true||v.ATIVA==='TRUE')||vs[vs.length-1];
+  const obsInfo=r.STATUS==='OBSOLETA'?(r.historicoStatus||[]).filter(x=>x.STATUS==='OBSOLETA').slice(-1)[0]:null;
+  // Tabela em 2 colunas de pares (campo | valor) para caber numa folha A4
+  const tabela=(lista,titulo)=>{
+    if(!lista.length) return `<div class="pa-sec">${titulo}</div><div style="font-size:10px">—</div>`;
+    const linhas=[];
+    for(let i=0;i<lista.length;i+=2){
+      const a=lista[i], b=lista[i+1];
+      linhas.push(`<tr><td>${escH(a.CAMPO)}</td><td class="v">${val(a.VALOR)}</td>${b?`<td>${escH(b.CAMPO)}</td><td class="v">${val(b.VALOR)}</td>`:'<td></td><td></td>'}</tr>`);
+    }
+    return `<div class="pa-sec">${titulo}</div><table class="pa-t"><thead><tr><th>Campo</th><th>Valor</th><th>Campo</th><th>Valor</th></tr></thead><tbody>${linhas.join('')}</tbody></table>`;
+  };
+  const obsTxt=String(r.OBSERVACOES||'').split('\n').map(l=>l.trim()).filter(Boolean);
+  document.getElementById('print-area').innerHTML=`
+    <div class="pa-h">${escH(r.CLIENTE)} — ${escH(fmtCodPAExib(r.COD_PA))}</div>
+    <div class="pa-sub">${[r.SERVICO,(r.NUMERO_LAMINACAO||'')+' laminação',r.TIPO_LAMINACAO,r.MAQUINA].filter(x=>x&&String(x).trim()).map(escH).join(' · ')}</div>
+    ${r.STATUS==='OBSOLETA'?`<div class="pa-alerta"><b>RECEITA OBSOLETA</b> — não usar para produção.${obsInfo?` Motivo: ${escH(obsInfo.MOTIVO)} · Por ${escH(obsInfo.AUTOR||'—')} em ${escH(fmtDataHist(obsInfo.DATA_HORA))}`:''}</div>`:''}
+    <div class="pa-sec">Identificação</div>
+    <div class="pa-grid">${campo('Cliente',val(r.CLIENTE))}${campo('Cód. PA',escH(fmtCodPAExib(r.COD_PA)))}${campo('Máquina',val(r.MAQUINA))}${campo('Nº laminação',val(r.NUMERO_LAMINACAO))}${campo('Tipo',val(r.TIPO_LAMINACAO))}${campo('OP criação',val(r.OP_CRIACAO))}${campo('Operador',val(r.OPERADOR))}${campo('Aprovador',val(r.APROVADOR))}${campo('Data criação',r.DATA_CRIACAO?escH(fmtDataHist(r.DATA_CRIACAO)):'—')}${campo('Status',r.STATUS==='OBSOLETA'?'OBSOLETA':'ATIVA')}${vAtiva?campo('Versão vigente',`v${escH(vAtiva.NUMERO_VERSAO)}${vAtiva.DATA_CRIACAO?' · '+escH(fmtDataHist(vAtiva.DATA_CRIACAO)):''}`,2):''}${campo('Serviço',val(r.SERVICO),4)}</div>
+    ${tabela(r.informacoes||[],'Informações do adesivo')}
+    ${tabela(r.parametros||[],'Parâmetros da máquina')}
+    ${obsTxt.length?`<div class="pa-sec">Observações técnicas</div><ul class="pa-obs">${obsTxt.map(l=>`<li>${escH(l)}</li>`).join('')}</ul>`:''}
+    <div class="pa-rod">Impresso em ${escH(new Date().toLocaleString('pt-BR'))} · Finepack · Receitas de Laminação</div>
+  `;
+  setTimeout(()=>{ window.print(); },200);
+}
+</script>
+<div id="print-area"></div>
 </body>
 </html>
