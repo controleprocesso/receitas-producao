@@ -1022,7 +1022,7 @@ function montarInfoCampos(){
   // Adesivo: lista fixa conforme o tipo de laminação (obrigatório)
   cont.innerHTML = campos.info.map((c,i)=> ehCampoAdesivo(c)
     ? `<div class="fd"><div class="fdl">${escH(c)} <span style="color:var(--red-mid)">*</span></div><select class="fdsel" id="inf-${i}" onchange="uNs2()"><option value="">Selecione o adesivo</option>${(ADESIVOS[novaTipo]||[]).map(o=>`<option value="${escH(o)}">${escH(o)}</option>`).join('')}</select></div>`
-    : `<div class="fd"><div class="fdl">${escH(c)}</div><input type="text" id="inf-${i}" inputmode="decimal"></div>`).join('');
+    : `<div class="fd"><div class="fdl">${escH(c)}</div><input type="text" id="inf-${i}" inputmode="${modoTeclado(c)}" autocomplete="off"></div>`).join('');
 }
 function montarParamCampos(){
   const campos = getCampos(novaTipo, novaMaq);
@@ -1146,6 +1146,11 @@ const ADESIVOS = {
   'Solvente Less':  ['Coim 5485 / 5500'],
   'Monocomponente': ['Coim SF2930']
 };
+// Campos que aceitam letras: abrem o teclado completo no tablet
+const CAMPOS_TEXTO = ['gravacao do cilindro', 'filme desbobinador 1', 'filme desbobinador 2', 'proporcao'];
+function semAcento(v){ return String(v==null?'':v).normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim().toLowerCase().replace(/\s+/g,' '); }
+function ehCampoTexto(campo){ const c=semAcento(campo); return CAMPOS_TEXTO.some(t=>c===t || c.startsWith(t+' (')); }
+function modoTeclado(campo){ return ehCampoTexto(campo) ? 'text' : 'decimal'; }
 function ehCampoAdesivo(campo){ const c=normTxt(campo); return c==='adesivo' || c==='adesivo/catalisador'; }
 // Opções para um campo de adesivo; inclui o valor atual se for antigo (fora da lista)
 function opcoesAdesivo(tipo, atual){
@@ -1207,7 +1212,7 @@ function irRep(){
     const tol=toleranciaDe(it.campo);
     const entrada = ehCampoAdesivo(it.campo)
       ? `<select class="param-sel" id="rinp-${it.k}" onchange="chkP('${it.k}')"><option value="">Selecione</option>${opcoesAdesivo(r.TIPO_LAMINACAO, it.ref).map(o=>`<option value="${escH(o)}">${escH(o)}</option>`).join('')}</select>`
-      : `<input class="param-inp" type="text" inputmode="decimal" id="rinp-${it.k}" oninput="chkP('${it.k}')">`;
+      : `<input class="param-inp" type="text" inputmode="${modoTeclado(it.campo)}" autocapitalize="characters" autocomplete="off" id="rinp-${it.k}" oninput="chkP('${it.k}')">`;
     return `<div class="param-row" id="rprow-${it.k}">
       <div class="param-top">
         <div class="param-lbl">${escH(it.campo)}<div style="font-size:10px;color:var(--text3);margin-top:2px">Receita: ${escH(it.ref||'—')}${tol?` <span style="color:var(--green)">· tolerância ${fmtTol(tol)}</span>`:''}</div></div>
