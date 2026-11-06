@@ -511,18 +511,19 @@ textarea{resize:none;line-height:1.5;width:100%}
         <div class="card">
           <div class="sl">Parâmetros da máquina</div>
           <div class="pb">
-            <div><label style="font-size:12px;color:var(--text2);display:block;margin-bottom:4px;font-weight:500">Tensão Freio Desbob. (PSI)</label><input type="text" inputmode="numeric" placeholder="" style="width:100%"></div>
-            <div><label style="font-size:12px;color:var(--text2);display:block;margin-bottom:4px;font-weight:500">Pressão Compactador (PSI)</label><input type="text" inputmode="numeric" placeholder="" style="width:100%"></div>
-            <div><label style="font-size:12px;color:var(--text2);display:block;margin-bottom:4px;font-weight:500">Avanço CR (N)</label><input type="text" inputmode="numeric" placeholder="" style="width:100%"></div>
-            <div><label style="font-size:12px;color:var(--text2);display:block;margin-bottom:4px;font-weight:500">Velocidade (m/min)</label><input type="text" inputmode="numeric" placeholder="" style="width:100%"></div>
-            <div><label style="font-size:12px;color:var(--text2);display:block;margin-bottom:4px;font-weight:500">Taxa de Redução (%)</label><input type="text" inputmode="numeric" placeholder="" style="width:100%"></div>
+            <div><label style="font-size:12px;color:var(--text2);display:block;margin-bottom:4px;font-weight:500">Tensão Freio Desbob. (PSI)</label><input type="text" id="npinp-p0" inputmode="numeric" placeholder="" style="width:100%"></div>
+            <div><label style="font-size:12px;color:var(--text2);display:block;margin-bottom:4px;font-weight:500">Pressão Compactador (PSI)</label><input type="text" id="npinp-p1" inputmode="numeric" placeholder="" style="width:100%"></div>
+            <div><label style="font-size:12px;color:var(--text2);display:block;margin-bottom:4px;font-weight:500">Avanço CR (N)</label><input type="text" id="npinp-p2" inputmode="numeric" placeholder="" style="width:100%"></div>
+            <div><label style="font-size:12px;color:var(--text2);display:block;margin-bottom:4px;font-weight:500">Velocidade (m/min)</label><input type="text" id="npinp-p3" inputmode="numeric" placeholder="" style="width:100%"></div>
+            <div><label style="font-size:12px;color:var(--text2);display:block;margin-bottom:4px;font-weight:500">Taxa de Redução (%)</label><input type="text" id="npinp-p4" inputmode="numeric" placeholder="" style="width:100%"></div>
 
-            <div><label style="font-size:12px;color:var(--text2);display:block;margin-bottom:4px;font-weight:500">Tensão Rebobinador</label><input type="text" inputmode="numeric" placeholder="" style="width:100%"></div>
-            <div><label style="font-size:12px;color:var(--text2);display:block;margin-bottom:4px;font-weight:500">Avanço</label><input type="text" inputmode="numeric" placeholder="" style="width:100%"></div>
-            <div><label style="font-size:12px;color:var(--text2);display:block;margin-bottom:4px;font-weight:500">Posição Compactador</label><select style="width:100%"><option value="">Selecione</option><option>FENDA</option><option>CONTATO</option></select></div>
-            <div><label style="font-size:12px;color:var(--text2);display:block;margin-bottom:4px;font-weight:500">Temp. Ambiente (°C)</label><input type="text" inputmode="numeric" placeholder="" style="width:100%"></div>
-            <div><label style="font-size:12px;color:var(--text2);display:block;margin-bottom:4px;font-weight:500">Largura do Filme (mm)</label><input type="text" inputmode="numeric" placeholder="" style="width:100%"></div>
-            <div><label style="font-size:12px;color:var(--text2);display:block;margin-bottom:4px;font-weight:500">Pressão Cil. Borracha</label><input type="text" inputmode="numeric" placeholder="" style="width:100%"></div>
+            <div><label style="font-size:12px;color:var(--text2);display:block;margin-bottom:4px;font-weight:500">Tensão Rebobinador</label><input type="text" id="npinp-p5" inputmode="numeric" placeholder="" style="width:100%"></div>
+            <div><label style="font-size:12px;color:var(--text2);display:block;margin-bottom:4px;font-weight:500">Avanço</label><input type="text" id="npinp-p6" inputmode="numeric" placeholder="" style="width:100%"></div>
+            <div><label style="font-size:12px;color:var(--text2);display:block;margin-bottom:4px;font-weight:500">Posição Compactador</label><select id="npinp-p7" style="width:100%"><option value="">Selecione</option><option>FENDA</option><option>CONTATO</option></select></div>
+            <div><label style="font-size:12px;color:var(--text2);display:block;margin-bottom:4px;font-weight:500">Temp. Ambiente (°C)</label><input type="text" id="npinp-p8" inputmode="numeric" placeholder="" style="width:100%"></div>
+            <div><label style="font-size:12px;color:var(--text2);display:block;margin-bottom:4px;font-weight:500">Temp. Embobinamento (°C)</label><input type="text" id="npinp-p11" inputmode="numeric" placeholder="" style="width:100%"></div>
+            <div><label style="font-size:12px;color:var(--text2);display:block;margin-bottom:4px;font-weight:500">Largura do Filme (mm)</label><input type="text" id="npinp-p9" inputmode="numeric" placeholder="" style="width:100%"></div>
+            <div><label style="font-size:12px;color:var(--text2);display:block;margin-bottom:4px;font-weight:500">Pressão Cil. Borracha</label><input type="text" id="npinp-p10" inputmode="numeric" placeholder="" style="width:100%"></div>
           </div>
         </div>
         <div class="card">
@@ -910,6 +911,7 @@ const paramsDef=[
   {id:'p6',lbl:'Avanço',un:'N',ref:'80',tipo:'normal'},
   {id:'p7',lbl:'Posição Compactador',un:'',ref:'FENDA',tipo:'sel',opts:['FENDA','CONTATO']},
   {id:'p8',lbl:'Temp. Ambiente',un:'°C',ref:'27',tipo:'info'},
+  {id:'p11',lbl:'Temp. Embobinamento',un:'°C',ref:'',tipo:'info'}, // informativo: não compara, não gera desvio
   {id:'p9',lbl:'Largura do Filme',un:'mm',ref:'850',tipo:'normal'},
   {id:'p10',lbl:'Pressão Cil. Borracha',un:'',ref:'200',tipo:'normal'},
 ];
@@ -1104,7 +1106,7 @@ async function abrirRec(id) {
   recTintasEl.style.display = 'block';
   recTintasEl.innerHTML=`<div class="sl">Tintas por estação</div>${tintas.filter(t=>t.NOME_COR).map(t=>`<div class="tr2"><div class="nc">${t.ESTACAO}</div><div><div style="font-size:13px;font-weight:600;color:var(--text)">${t.NOME_COR}</div><div style="font-size:11px;color:var(--text3);margin-top:1px">${t.COD_TINTA}${t.ID_CAMISA?' · Camisa: '+t.ID_CAMISA:''}</div><div class="chips"><div class="chip">Visc. <b>${t.VISCOSIDADE} s</b></div><div class="chip">Sec. <b>${formatarSecagem(t.SECAGEM_MIN,t.SECAGEM_SEG)}</b></div></div></div></div>`).join('')}`;
 
-  document.getElementById('rec-params-box').innerHTML=`<div class="pbox"><div class="pl">Tensão Freio Desbob.</div><div class="pv">${p.TENSAO_FREIO||'—'} <span class="pu">N</span></div></div><div class="pbox"><div class="pl">Pressão Compactador</div><div class="pv">${p.PRESSAO_COMPACTADOR||'—'} <span class="pu">Bar</span></div></div><div class="pbox"><div class="pl">Avanço CR</div><div class="pv">${p.AVANCO_CR||'—'} <span class="pu">N</span></div></div><div class="pbox"><div class="pl">Velocidade</div><div class="pv">${p.VELOCIDADE||'—'} <span class="pu">m/min</span></div></div><div class="pbox"><div class="pl">Taxa de Redução</div><div class="pv">${p.TAXA_REDUCAO||'—'} <span class="pu">%</span></div></div><div class="pbox"><div class="pl">Tensão Rebobinador</div><div class="pv">${p.TENSAO_REBOBINADOR||'—'} <span class="pu">N</span></div></div><div class="pbox"><div class="pl">Avanço</div><div class="pv">${p.AVANCO||'—'} <span class="pu">N</span></div></div><div class="pbox"><div class="pl">Posição Compactador</div><div class="pv" style="font-size:13px">${p.POSICAO_COMPACTADOR||'—'}</div></div><div class="pbox"><div class="pl">Temp. Ambiente</div><div class="pv">${p.TEMP_AMBIENTE||'—'} <span class="pu">°C</span></div></div><div class="pbox"><div class="pl">Largura do Filme</div><div class="pv">${p.LARGURA_FILME||'—'} <span class="pu">mm</span></div></div><div class="pbox"><div class="pl">Pressão Cil. Borracha</div><div class="pv">${p.PRESSAO_CIL_BORRACHA||'—'}</div></div>${p.MATERIAL?`<div class="pbox" style="grid-column:span 2"><div class="pl">Material</div><div class="pv" style="font-size:13px">${p.MATERIAL}</div></div>`:''}`;
+  document.getElementById('rec-params-box').innerHTML=`<div class="pbox"><div class="pl">Tensão Freio Desbob.</div><div class="pv">${p.TENSAO_FREIO||'—'} <span class="pu">N</span></div></div><div class="pbox"><div class="pl">Pressão Compactador</div><div class="pv">${p.PRESSAO_COMPACTADOR||'—'} <span class="pu">Bar</span></div></div><div class="pbox"><div class="pl">Avanço CR</div><div class="pv">${p.AVANCO_CR||'—'} <span class="pu">N</span></div></div><div class="pbox"><div class="pl">Velocidade</div><div class="pv">${p.VELOCIDADE||'—'} <span class="pu">m/min</span></div></div><div class="pbox"><div class="pl">Taxa de Redução</div><div class="pv">${p.TAXA_REDUCAO||'—'} <span class="pu">%</span></div></div><div class="pbox"><div class="pl">Tensão Rebobinador</div><div class="pv">${p.TENSAO_REBOBINADOR||'—'} <span class="pu">N</span></div></div><div class="pbox"><div class="pl">Avanço</div><div class="pv">${p.AVANCO||'—'} <span class="pu">N</span></div></div><div class="pbox"><div class="pl">Posição Compactador</div><div class="pv" style="font-size:13px">${p.POSICAO_COMPACTADOR||'—'}</div></div><div class="pbox"><div class="pl">Temp. Ambiente</div><div class="pv">${p.TEMP_AMBIENTE||'—'} <span class="pu">°C</span></div></div><div class="pbox"><div class="pl">Temp. Embobinamento</div><div class="pv">${p.TEMP_EMBOBINAMENTO||'—'} <span class="pu">°C</span></div></div><div class="pbox"><div class="pl">Largura do Filme</div><div class="pv">${p.LARGURA_FILME||'—'} <span class="pu">mm</span></div></div><div class="pbox"><div class="pl">Pressão Cil. Borracha</div><div class="pv">${p.PRESSAO_CIL_BORRACHA||'—'}</div></div>${p.MATERIAL?`<div class="pbox" style="grid-column:span 2"><div class="pl">Material</div><div class="pv" style="font-size:13px">${p.MATERIAL}</div></div>`:''}`;
 
   // Estufas (construídas a partir das tintas)
   const preHotTinta=tintas.find(t=>t.PRE_HOT===true||t.PRE_HOT==='TRUE');
@@ -1264,7 +1266,7 @@ function renderRepTintas(tintas, todasTintas) {
 
 
 function getParamRef(pid, p) {
-  const map={p0:p.TENSAO_FREIO,p1:p.PRESSAO_COMPACTADOR,p2:p.AVANCO_CR,p3:p.VELOCIDADE,p4:p.TAXA_REDUCAO,p5:p.TENSAO_REBOBINADOR,p6:p.AVANCO,p7:p.POSICAO_COMPACTADOR,p8:p.TEMP_AMBIENTE,p9:p.LARGURA_FILME,p10:p.PRESSAO_CIL_BORRACHA};
+  const map={p0:p.TENSAO_FREIO,p1:p.PRESSAO_COMPACTADOR,p2:p.AVANCO_CR,p3:p.VELOCIDADE,p4:p.TAXA_REDUCAO,p5:p.TENSAO_REBOBINADOR,p6:p.AVANCO,p7:p.POSICAO_COMPACTADOR,p8:p.TEMP_AMBIENTE,p9:p.LARGURA_FILME,p10:p.PRESSAO_CIL_BORRACHA,p11:p.TEMP_EMBOBINAMENTO};
   return map[pid]!==undefined&&map[pid]!==''?String(map[pid]):null;
 }
 
@@ -1395,7 +1397,7 @@ function irRevisar(){
   const pRef=r.parametros||{};
   document.getElementById('rev-params').innerHTML=paramsDef.map(p=>{
     const v=document.getElementById('pinp-'+p.id)?.value.trim()||'—';
-    const refVal=getParamRef(p.id,pRef)||p.ref;
+    const refVal=getParamRef(p.id,pRef)||p.ref||'—';
     const isDv=p.tipo!=='info'&&v!=='—'&&v!==String(refVal);
     const j=document.getElementById('jparam-'+p.id)?.value||'';
     return `<div class="rev-row"><div class="rev-row-top"><div class="rev-lbl">${p.lbl}${p.un?` (${p.un})`:''}</div><div class="rev-right"><span class="rev-ref">Receita: ${refVal}${p.un?' '+p.un:''}</span><span class="rev-real${isDv?' dv':''}">${v}${p.un&&v!=='—'?' '+p.un:''}${isDv?' <span class="rev-dv-pill">Desvio</span>':''}</span></div></div>${isDv?`<div class="rev-just"><div class="rev-just-lbl">Justificativa</div>${j}</div><div class="alt-opts"><button class="alt-btn" id="ao-${p.id}-pont" onclick="selecionarAlteracao('${p.id}','pont')"><i class="ti ti-refresh"></i>Alteração pontual</button><button class="alt-btn" id="ao-${p.id}-rec" onclick="selecionarAlteracao('${p.id}','rec')"><i class="ti ti-file-pencil"></i>Alterar na Receita</button></div>`:''}</div>`;
@@ -1494,8 +1496,8 @@ async function salvarNovaReceita(aprovador) {
       }
     }
   }
-  const pbInputs=document.querySelectorAll('#ns3 .pb input:not(#n-material), #ns3 .pb select');
-  const parametros={tensaoFreio:normalizarDecimal(pbInputs[0]?.value||''),pressaoCompactador:normalizarDecimal(pbInputs[1]?.value||''),avancoCR:normalizarDecimal(pbInputs[2]?.value||''),velocidade:normalizarDecimal(pbInputs[3]?.value||''),taxaReducao:normalizarDecimal(pbInputs[4]?.value||''),tensaoRebobinador:normalizarDecimal(pbInputs[5]?.value||''),avanco:normalizarDecimal(pbInputs[6]?.value||''),posicaoCompactador:pbInputs[7]?.value||'',tempAmbiente:normalizarDecimal(pbInputs[8]?.value||''),larguraFilme:normalizarDecimal(pbInputs[9]?.value||''),pressaoCilBorracha:normalizarDecimal(pbInputs[10]?.value||''),material:document.getElementById('n-material')?.value||''};
+  const npv=id=>document.getElementById('npinp-'+id)?.value||'';
+  const parametros={tensaoFreio:normalizarDecimal(npv('p0')),pressaoCompactador:normalizarDecimal(npv('p1')),avancoCR:normalizarDecimal(npv('p2')),velocidade:normalizarDecimal(npv('p3')),taxaReducao:normalizarDecimal(npv('p4')),tensaoRebobinador:normalizarDecimal(npv('p5')),avanco:normalizarDecimal(npv('p6')),posicaoCompactador:npv('p7'),tempAmbiente:normalizarDecimal(npv('p8')),tempEmbobinamento:normalizarDecimal(npv('p11')),larguraFilme:normalizarDecimal(npv('p9')),pressaoCilBorracha:normalizarDecimal(npv('p10')),material:document.getElementById('n-material')?.value||''};
   try {
     const obsVal=document.getElementById('n-obs')?.value||'';
     await apiPost({action:'salvarReceita',receita:{cliente:cli,codPA:cod,opCriacao:document.getElementById('n-op').value,servico:document.getElementById('n-serv').value,processo:'Rotogravura',maquina:document.getElementById('n-maq').value,operador:document.getElementById('n-oper').value,observacoes:obsVal,conjugacao:conjVal,itensConjugacao:conjItens},tintas,parametros,aprovador});
@@ -1918,6 +1920,7 @@ function montarImpressao(r,hist){
     ['Taxa de Redução',p.TAXA_REDUCAO,'%'],['Velocidade',p.VELOCIDADE,'m/min'],
     ['Pressão Compactador',p.PRESSAO_COMPACTADOR,'Bar'],['Pressão Cil. Borracha',p.PRESSAO_CIL_BORRACHA,''],
     ['Posição Compactador',p.POSICAO_COMPACTADOR,''],['Temp. Ambiente',p.TEMP_AMBIENTE,'°C'],
+    ['Temp. Embobinamento',p.TEMP_EMBOBINAMENTO,'°C'],
     ['Largura do Filme',p.LARGURA_FILME,'mm'],['Material',p.MATERIAL,'']
   ];
   params.forEach(([lbl,val,un])=>{
@@ -2155,17 +2158,6 @@ function navegarStep(n){
       restaurarValoresComplementos();
     },100);
   }
-  if(n===3){
-    const pn=document.getElementById('params-nova');
-    if(pn&&!pn.innerHTML){
-      pn.innerHTML=paramsDef.map(p=>{
-        const inp=p.tipo==='sel'
-          ?`<select style="width:100%;font-size:12px;padding:7px 9px;border:0.5px solid var(--border2);border-radius:var(--rad);background:var(--card);color:var(--text)"><option value="">—</option>${p.opts.map(o=>`<option>${o}</option>`).join('')}</select>`
-          :`<input type="text" inputmode="decimal" style="width:100%;font-size:12px;padding:7px 9px;border:0.5px solid var(--border2);border-radius:var(--rad);background:var(--card);color:var(--text);${p.tipo==='info'?'border-color:var(--blue-mid);background:var(--blue-light);color:var(--blue)':''}">`;
-        return `<div style="margin-bottom:8px"><div style="font-size:11px;color:var(--text3);margin-bottom:4px;font-weight:500">${p.lbl}${p.un?' ('+p.un+')':''}</div>${inp}</div>`;
-      }).join('');
-    }
-  }
   if(n===4)renderRevisaoNovaReceita();
   const cx=document.getElementById('pnc');if(cx){const c=document.getElementById('n-cli').value||'—',d=document.getElementById('n-cod').value||'—';cx.textContent=c!=='—'?`${c} · ${d}`:'—';}
 }
@@ -2187,20 +2179,7 @@ function renderRevisaoNovaReceita(){
     const secs=document.getElementById('secs-'+n)?.value||'0';
     return{n,cod:ins[0]?.value||'',nome:ins[1]?.value||'—',camisa:document.getElementById('camisa-'+n)?.value||'',visc:ins[2]?.value||'—',rolo:document.getElementById('rolo-'+n)?.value||'',faca:document.getElementById('faca-'+n)?.value||'',secm,secs,estufa:document.getElementById('estufa-'+n)?.value||''};
   });
-  const pbInputs=document.querySelectorAll('#ns3 .pb input:not(#n-material), #ns3 .pb select');
-  const pm=[
-    {l:'Tensão Freio Desbob.',v:pbInputs[0]?.value||'—',u:'N'},
-    {l:'Pressão Compactador',v:pbInputs[1]?.value||'—',u:'Bar'},
-    {l:'Avanço CR',v:pbInputs[2]?.value||'—',u:'N'},
-    {l:'Velocidade',v:pbInputs[3]?.value||'—',u:'m/min'},
-    {l:'Taxa de Redução',v:pbInputs[4]?.value||'—',u:'%'},
-    {l:'Tensão Rebobinador',v:pbInputs[5]?.value||'—',u:'N'},
-    {l:'Avanço',v:pbInputs[6]?.value||'—',u:'N'},
-    {l:'Posição Compactador',v:pbInputs[7]?.value||'—',u:''},
-    {l:'Temp. Ambiente',v:pbInputs[8]?.value||'—',u:'°C'},
-    {l:'Largura do Filme',v:pbInputs[9]?.value||'—',u:'mm'},
-    {l:'Pressão Cil. Borracha',v:pbInputs[10]?.value||'—',u:''},
-  ];
+  const pm=paramsDef.map(p=>({l:p.lbl,v:document.getElementById('npinp-'+p.id)?.value||'—',u:p.un}));
   const materialVal=document.getElementById('n-material')?.value||'';
   const conjOnB=document.getElementById('n-conj')?.value==='SIM';
   const conjItensB=document.getElementById('n-conj-itens')?.value||'';
