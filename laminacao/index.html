@@ -284,6 +284,8 @@ select.fdsel{width:100%;font-size:14px;padding:11px 12px;border:0.5px solid var(
 .rep-dv .tag{font-size:9px;font-weight:700;padding:1px 5px;border-radius:10px;margin-left:4px;text-transform:uppercase}
 .rep-dv .tag-p{background:var(--amber-light);color:var(--amber)}
 .rep-dv .tag-r{background:var(--blue-light);color:var(--blue)}
+.novo-hint{color:var(--blue)}
+.rev-novo{font-size:10px;padding:1px 6px;border-radius:20px;background:var(--blue-light);color:var(--blue);white-space:nowrap;font-weight:600}
 </style>
 </head>
 <body>
@@ -373,7 +375,7 @@ select.fdsel{width:100%;font-size:14px;padding:11px 12px;border:0.5px solid var(
           <div class="sl">Identificação do produto</div>
           <div class="fd"><div class="fdl">Cliente</div><input type="text" id="n-cli"></div>
           <div class="fr">
-            <div class="fd"><div class="fdl">Cód. PA</div><input type="text" id="n-cod" placeholder="141.405.0011" oninput="fmtCodPA(this)" maxlength="12"></div>
+            <div class="fd"><div class="fdl">Cód. PA</div><input type="text" id="n-cod" inputmode="numeric" autocomplete="off" placeholder="141.405.0011" oninput="fmtCodPA(this)" maxlength="12"></div>
             <div class="fd"><div class="fdl">OP de criação</div><input type="text" id="n-op"></div>
           </div>
           <div class="fd"><div class="fdl">Descrição do serviço</div><input type="text" id="n-serv"></div>
@@ -652,9 +654,18 @@ select.fdsel{width:100%;font-size:14px;padding:11px 12px;border:0.5px solid var(
 const API = 'https://script.google.com/macros/s/AKfycbxkaVKjJrwKQKp8EBihLjalkhgipVVJqzPRUd0S3aviukVXe_vnTFyqN2zxW4Uynssy/exec';
 
 const LAM_MAQUINAS = {"Base Solvente": ["Flexotech", "Supercombi 3000", "Supercombi 4000", "Comexi"], "Solvente Less": ["Simplex 1", "Simplex 2", "Supercombi 3000", "Supercombi 4000", "Comexi"], "Monocomponente": ["Supercombi 3000", "Supercombi 4000", "Comexi"]};
-const LAM_CAMPOS = {"Base Solvente": {"Supercombi 3000/4000": {"info": ["Adesivo", "Proporção", "Gramatura Aplicada (g/m²)", "Potência do Tratamento 1 (W)", "Potência do Tratamento 2 (W)"], "params": ["Gravação do Cilindro", "Viscosidade do Adesivo", "Pressão da Faca", "Pressão do Rolo Aplicador Esquerdo", "Pressão do Rolo Aplicador Direito", "Pressão do NIP Esquerdo", "Pressão do NIP Direito", "Tensão do Freio Desbobinador 1", "Tensão da Ponte", "Tensão do Freio Desbobinador 2", "Tensão do Rebobinador", "Tensão Decrescente (%)", "Temperatura do Rolo de NIP", "Pressão do Compactador Direito", "Pressão do Compactador Esquerdo", "Temperatura do Soprador 1 SP1", "Temperatura do Soprador 2 SP1", "Velocidade de Produção", "Filme Desbobinador 1", "Filme Desbobinador 2", "Largura Filme Desb. 1", "Largura Filme Desb. 2"]}, "Comexi": {"info": ["Adesivo", "Proporção", "Gramatura Aplicada (g/m²)", "Potência do Tratamento 1 (W)", "Potência do Tratamento 2 (W)"], "params": ["Gravação do Cilindro", "Viscosidade do Adesivo", "Pressão da Faca", "Pressão do Rolo Aplicador Esquerdo", "Pressão do Rolo Aplicador Direito", "Pressão do NIP Esquerdo", "Pressão do NIP Direito", "Tensão do Freio Desbobinador 1", "Tensão da Ponte", "Tensão do Freio Desbobinador 2", "Tensão do Rebobinador", "Tensão Decrescente (%)", "Temperatura do Rolo de NIP", "Pressão do Compactador Direito", "Pressão do Compactador Esquerdo", "Temperatura do Soprador 1 SP1", "Temperatura do Soprador 2 SP1", "Exaustor 1", "Exaustor 2", "Ventilação", "Velocidade de Produção", "Filme Desbobinador 1", "Filme Desbobinador 2", "Largura Filme Desb. 1", "Largura Filme Desb. 2"]}, "Flexotech": {"info": ["Adesivo", "Proporção", "Gramatura Aplicada (g/m²)", "Potência do Tratamento 1 (W)", "Potência do Tratamento 2 (W)"], "params": ["Gravação do Cilindro", "Viscosidade do Adesivo", "Pressão da Faca", "Pressão da Camisa 1 Lado Esquerdo", "Pressão da Camisa 1 Lado Direito", "Pressão do NIP Esquerdo", "Pressão do NIP Direito", "Tensão do Freio Desbobinador 1", "Tensão da Ponte", "Pressão do Compactador Direito", "Pressão do Compactador Esquerdo", "Velocidade de Produção", "Tensão Inicial do Rebobinador", "Tensão Final do Rebobinador", "% Draw do Aplicador", "% Draw do Impressor", "Queimador Superior 3", "Queimador Superior 4", "Insuflador do Queimador 3", "Exaustor do Queimador 3", "Insuflador do Queimador 4", "Exaustor do Queimador 4"]}}, "Solvente Less": {"Simplex 1": {"info": ["Adesivo/Catalisador", "Proporção", "Gramatura Aplicada (g/m²)", "Potência do Tratamento 1 (W)", "Potência do Tratamento 2 (W)"], "params": ["Pressão da Camisa", "Pressão do Rolo Aplicador", "Temperatura do Aplicador", "Temperatura do Separador", "Pressão do NIP Esquerdo", "Pressão do NIP Direito", "Tensão do Freio Desbobinador 1", "Tensão da Ponte", "Tensão do Freio Desbobinador 2", "Tensão do Rebobinador", "Tensão Decrescente (%)", "Temperatura do Rolo NIP", "Pressão do Compactador Direito", "Pressão do Compactador Esquerdo", "Velocidade de Produção (m/min)", "Filme Desbobinador 1", "Filme Desbobinador 2", "Largura Filme Desb. 1 (mm)", "Largura Filme Desb. 2 (mm)"]}, "Supercombi 3000/4000": {"info": ["Adesivo/Catalisador", "Proporção", "Gramatura Aplicada (g/m²)", "Potência do Tratamento 1 (W)", "Potência do Tratamento 2 (W)"], "params": ["Pressão da Camisa", "Pressão do Rolo Aplicador", "Temperatura do Aplicador", "Temperatura do Separador", "Pressão do NIP Esquerdo", "Pressão do NIP Direito", "Tensão do Freio Desbobinador 1", "Tensão da Ponte", "Tensão do Freio Desbobinador 2", "Tensão do Rebobinador", "Tensão Decrescente (%)", "Temperatura do Rolo NIP", "Pressão do Compactador Direito", "Pressão do Compactador Esquerdo", "Velocidade de Produção (m/min)", "Filme Desbobinador 1", "Filme Desbobinador 2", "Largura Filme Desb. 1 (mm)", "Largura Filme Desb. 2 (mm)"]}, "Comexi": {"info": ["Adesivo/Catalisador", "Proporção", "Gramatura Aplicada (g/m²)", "Potência do Tratamento 1 (W)", "Potência do Tratamento 2 (W)"], "params": ["Pressão da Camisa", "Pressão do Rolo Aplicador", "Temperatura do Aplicador", "Temperatura do Separador", "Pressão do NIP Esquerdo", "Pressão do NIP Direito", "Tensão do Freio Desbobinador 1", "Tensão da Ponte", "Tensão do Freio Desbobinador 2", "Tensão do Rebobinador", "Tensão Decrescente (%)", "Temperatura do Rolo NIP", "Pressão do Compactador Direito", "Pressão do Compactador Esquerdo", "Velocidade de Produção (m/min)", "Filme Desbobinador 1", "Filme Desbobinador 2", "Largura Filme Desb. 1 (mm)", "Largura Filme Desb. 2 (mm)"]}, "Simplex 2": {"info": ["Adesivo/Catalisador", "Proporção", "Gramatura Aplicada (g/m²)", "Potência do Tratamento 1 (W)", "Potência do Tratamento 2 (W)"], "params": ["Pressão da Camisa", "Pressão do Rolo Aplicador", "Temperatura do Aplicador", "Temperatura do Separador", "Pressão do NIP Esquerdo", "Pressão do NIP Direito", "Tensão do Freio Desbobinador 1", "Percentual ao Esticar 1", "Inércia de Desaceleração 1", "Tensão da Ponte", "Tensão do Freio Desbobinador 2", "Percentual ao Esticar 2", "Inércia de Desaceleração 2", "Tensão do Rebobinador", "Percentual ao Esticar Rebob.", "Inércia Aceleração", "Tensão Decrescente (%)", "Temperatura do Rolo NIP", "Pressão do Compactador Direito", "Pressão do Compactador Esquerdo", "Velocidade de Produção", "Filme Desbobinador 1", "Filme Desbobinador 2", "Largura Filme Desb. 1", "Largura Filme Desb. 2"]}}, "Monocomponente": {"Supercombi 3000/4000": {"info": ["Adesivo", "Gramatura Aplicada (g/m²)", "Potência do Tratamento 1 (W)", "Potência do Tratamento 2 (W)"], "params": ["Pressão da Camisa", "Pressão do Rolo Aplicador", "Temperatura do Aplicador", "Temperatura do Separador", "Pressão do NIP Esquerdo", "Pressão do NIP Direito", "Tensão do Freio Desbobinador 1", "Tensão da Ponte", "Tensão do Freio Desbobinador 2", "Tensão do Rebobinador", "Tensão Decrescente (%)", "Temperatura do Rolo NIP", "Pressão do Compactador Direito", "Pressão do Compactador Esquerdo", "Velocidade de Produção", "Filme Desbobinador 1", "Filme Desbobinador 2", "Largura Filme Desb. 1", "Largura Filme Desb. 2"]}, "Comexi": {"info": ["Adesivo", "Gramatura Aplicada (g/m²)", "Potência do Tratamento 1 (W)", "Potência do Tratamento 2 (W)"], "params": ["Pressão da Camisa", "Pressão do Rolo Aplicador", "Temperatura do Aplicador", "Temperatura do Separador", "Pressão do NIP Esquerdo", "Pressão do NIP Direito", "Tensão do Freio Desbobinador 1", "Tensão da Ponte", "Tensão do Freio Desbobinador 2", "Tensão do Rebobinador", "Tensão Decrescente (%)", "Temperatura do Rolo NIP", "Pressão do Compactador Direito", "Pressão do Compactador Esquerdo", "Velocidade de Produção", "Filme Desbobinador 1", "Filme Desbobinador 2", "Largura Filme Desb. 1", "Largura Filme Desb. 2"]}}};
+const LAM_CAMPOS = {"Base Solvente":{"Supercombi 3000/4000":{"info":["Adesivo","Proporção","Gramatura Aplicada (g/m²)","Gravação do Cilindro","Número da Camisa","Largura da Camisa","Potência do Tratamento 1 (W)","Potência do Tratamento 2 (W)"],"params":["Viscosidade do Adesivo","Pressão da Faca","Pressão do Rolo Aplicador Esquerdo","Pressão do Rolo Aplicador Direito","Pressão do NIP Esquerdo","Pressão do NIP Direito","Tensão do Freio Desbobinador 1","Tensão da Ponte","Tensão do Freio Desbobinador 2","Tensão do Rebobinador","Tensão Decrescente (%)","Temperatura do Rolo de NIP","Pressão do Compactador Direito","Pressão do Compactador Esquerdo","Temperatura Estufa 1","Temperatura Estufa 2","Velocidade de Produção","Filme Desbobinador 1","Filme Desbobinador 2","Largura Filme Desb. 1","Largura Filme Desb. 2"]},"Comexi":{"info":["Adesivo","Proporção","Gramatura Aplicada (g/m²)","Gravação do Cilindro","Número da Camisa","Largura da Camisa","Potência do Tratamento 1 (W)","Potência do Tratamento 2 (W)"],"params":["Viscosidade do Adesivo","Pressão da Faca","Pressão do Rolo Aplicador Esquerdo","Pressão do Rolo Aplicador Direito","Pressão do NIP Esquerdo","Pressão do NIP Direito","Tensão do Freio Desbobinador 1","Tensão da Ponte","Tensão do Freio Desbobinador 2","Tensão do Rebobinador","Tensão Decrescente (%)","Temperatura do Rolo de NIP","Pressão do Compactador Direito","Pressão do Compactador Esquerdo","Temperatura Estufa 1","Temperatura Estufa 2","Exaustor 1","Exaustor 2","Ventilação","Velocidade de Produção","Filme Desbobinador 1","Filme Desbobinador 2","Largura Filme Desb. 1","Largura Filme Desb. 2"]},"Flexotech":{"info":["Adesivo","Proporção","Gramatura Aplicada (g/m²)","Gravação do Cilindro","Número da Camisa","Largura da Camisa","Potência do Tratamento 1 (W)","Potência do Tratamento 2 (W)"],"params":["Viscosidade do Adesivo","Pressão da Faca","Pressão da Camisa 1 Lado Esquerdo","Pressão da Camisa 1 Lado Direito","Pressão do NIP Esquerdo","Pressão do NIP Direito","Tensão do Freio Desbobinador 1","Tensão da Ponte","Pressão do Compactador Direito","Pressão do Compactador Esquerdo","Velocidade de Produção","Tensão Inicial do Rebobinador","Tensão Final do Rebobinador","% Draw do Aplicador","% Draw do Impressor","Queimador Superior 3","Queimador Superior 4","Insuflador do Queimador 3","Exaustor do Queimador 3","Insuflador do Queimador 4","Exaustor do Queimador 4"]}},"Solvente Less":{"Simplex 1":{"info":["Adesivo/Catalisador","Proporção","Gramatura Aplicada (g/m²)","Número da Camisa","Largura da Camisa","Potência do Tratamento 1 (W)","Potência do Tratamento 2 (W)"],"params":["Pressão da Camisa","Pressão do Rolo Aplicador","Temperatura do Aplicador","Temperatura do Separador","Pressão do NIP Esquerdo","Pressão do NIP Direito","Tensão do Freio Desbobinador 1","Tensão da Ponte","Tensão do Freio Desbobinador 2","Tensão do Rebobinador","Tensão Decrescente (%)","Temperatura do Rolo NIP","Pressão do Compactador Direito","Pressão do Compactador Esquerdo","Velocidade de Produção (m/min)","Filme Desbobinador 1","Filme Desbobinador 2","Largura Filme Desb. 1 (mm)","Largura Filme Desb. 2 (mm)"]},"Supercombi 3000/4000":{"info":["Adesivo/Catalisador","Proporção","Gramatura Aplicada (g/m²)","Número da Camisa","Largura da Camisa","Potência do Tratamento 1 (W)","Potência do Tratamento 2 (W)"],"params":["Pressão da Camisa","Pressão do Rolo Aplicador","Temperatura do Aplicador","Temperatura do Separador","Pressão do NIP Esquerdo","Pressão do NIP Direito","Tensão do Freio Desbobinador 1","Tensão da Ponte","Tensão do Freio Desbobinador 2","Tensão do Rebobinador","Tensão Decrescente (%)","Temperatura do Rolo NIP","Pressão do Compactador Direito","Pressão do Compactador Esquerdo","Velocidade de Produção (m/min)","Filme Desbobinador 1","Filme Desbobinador 2","Largura Filme Desb. 1 (mm)","Largura Filme Desb. 2 (mm)"]},"Comexi":{"info":["Adesivo/Catalisador","Proporção","Gramatura Aplicada (g/m²)","Número da Camisa","Largura da Camisa","Potência do Tratamento 1 (W)","Potência do Tratamento 2 (W)"],"params":["Pressão da Camisa","Pressão do Rolo Aplicador","Temperatura do Aplicador","Temperatura do Separador","Pressão do NIP Esquerdo","Pressão do NIP Direito","Tensão do Freio Desbobinador 1","Tensão da Ponte","Tensão do Freio Desbobinador 2","Tensão do Rebobinador","Tensão Decrescente (%)","Temperatura do Rolo NIP","Pressão do Compactador Direito","Pressão do Compactador Esquerdo","Velocidade de Produção (m/min)","Filme Desbobinador 1","Filme Desbobinador 2","Largura Filme Desb. 1 (mm)","Largura Filme Desb. 2 (mm)"]},"Simplex 2":{"info":["Adesivo/Catalisador","Proporção","Gramatura Aplicada (g/m²)","Número da Camisa","Largura da Camisa","Potência do Tratamento 1 (W)","Potência do Tratamento 2 (W)"],"params":["Pressão da Camisa","Pressão do Rolo Aplicador","Temperatura do Aplicador","Temperatura do Separador","Pressão do NIP Esquerdo","Pressão do NIP Direito","Tensão do Freio Desbobinador 1","Percentual ao Esticar 1","Inércia de Desaceleração 1","Tensão da Ponte","Tensão do Freio Desbobinador 2","Percentual ao Esticar 2","Inércia de Desaceleração 2","Tensão do Rebobinador","Percentual ao Esticar Rebob.","Inércia Aceleração","Tensão Decrescente (%)","Temperatura do Rolo NIP","Pressão do Compactador Direito","Pressão do Compactador Esquerdo","Velocidade de Produção","Filme Desbobinador 1","Filme Desbobinador 2","Largura Filme Desb. 1","Largura Filme Desb. 2"]}},"Monocomponente":{"Supercombi 3000/4000":{"info":["Adesivo","Gramatura Aplicada (g/m²)","Número da Camisa","Largura da Camisa","Potência do Tratamento 1 (W)","Potência do Tratamento 2 (W)"],"params":["Pressão da Camisa","Pressão do Rolo Aplicador","Temperatura do Aplicador","Temperatura do Separador","Pressão do NIP Esquerdo","Pressão do NIP Direito","Tensão do Freio Desbobinador 1","Tensão da Ponte","Tensão do Freio Desbobinador 2","Tensão do Rebobinador","Tensão Decrescente (%)","Temperatura do Rolo NIP","Pressão do Compactador Direito","Pressão do Compactador Esquerdo","Velocidade de Produção","Filme Desbobinador 1","Filme Desbobinador 2","Largura Filme Desb. 1","Largura Filme Desb. 2"]},"Comexi":{"info":["Adesivo","Gramatura Aplicada (g/m²)","Número da Camisa","Largura da Camisa","Potência do Tratamento 1 (W)","Potência do Tratamento 2 (W)"],"params":["Pressão da Camisa","Pressão do Rolo Aplicador","Temperatura do Aplicador","Temperatura do Separador","Pressão do NIP Esquerdo","Pressão do NIP Direito","Tensão do Freio Desbobinador 1","Tensão da Ponte","Tensão do Freio Desbobinador 2","Tensão do Rebobinador","Tensão Decrescente (%)","Temperatura do Rolo NIP","Pressão do Compactador Direito","Pressão do Compactador Esquerdo","Velocidade de Produção","Filme Desbobinador 1","Filme Desbobinador 2","Largura Filme Desb. 1","Largura Filme Desb. 2"]}}};
 function chaveMaquina(maq){ return (maq==='Supercombi 3000'||maq==='Supercombi 4000')?'Supercombi 3000/4000':maq; }
 function getCampos(tipo,maq){ const c=LAM_CAMPOS[tipo]; if(!c)return null; return c[chaveMaquina(maq)]||null; }
+// Exibe informações e parâmetros na ordem da configuração da máquina/tipo
+// (campos incluídos depois na planilha entram no lugar certo; desconhecidos vão para o fim)
+function ordenarCamposReceita(r){
+  const cfg=getCampos(r.TIPO_LAMINACAO, r.MAQUINA); if(!cfg) return;
+  const ordem=cfg.info.concat(cfg.params).map(x=>String(x).trim().toLowerCase());
+  const pos=c=>{ const i=ordem.indexOf(String(c||'').trim().toLowerCase()); return i<0?9999:i; };
+  const ord=lista=>lista.map((x,i)=>({x,i})).sort((a,b)=>(pos(a.x.CAMPO)-pos(b.x.CAMPO))||(a.i-b.i)).map(o=>o.x);
+  r.informacoes=ord(r.informacoes||[]); r.parametros=ord(r.parametros||[]);
+}
 
 // ---------- Estado ----------
 let receitas = [], recIdx = null, nsn = 1, receitasCarregadas = false;
@@ -865,6 +876,7 @@ async function abrirRec(id){
       const det = await apiGet('getReceitaDetalhe', `&id=${encodeURIComponent(id)}`);
       det.informacoes = Array.isArray(det.informacoes)?det.informacoes:[];
       det.parametros = Array.isArray(det.parametros)?det.parametros:[];
+      ordenarCamposReceita(det);
       det.versoes = Array.isArray(det.versoes)?det.versoes:[];
       det.historicoStatus = Array.isArray(det.historicoStatus)?det.historicoStatus:[];
       det._detalhesCarregados = true;
@@ -1031,8 +1043,8 @@ function montarParamCampos(){
   if(cont.dataset.key === novaTipo+'|'+novaMaq) return;
   cont.dataset.key = novaTipo+'|'+novaMaq;
   cont.innerHTML = campos.params.map((c,i)=>`
-    <div class="param-row"><div class="param-top"><div class="param-lbl">${c}</div>
-    <input class="param-inp" type="text" inputmode="text" id="par-${i}"></div></div>`).join('');
+    <div class="param-row"><div class="param-top"><div class="param-lbl">${escH(c)}</div>
+    <input class="param-inp" type="text" inputmode="${modoTeclado(c)}" autocapitalize="characters" autocomplete="off" id="par-${i}"></div></div>`).join('');
 }
 </script>
 
@@ -1142,7 +1154,7 @@ function hideOverlay(){ document.getElementById('overlay-loading').classList.rem
 // ---------- Adesivos e tolerâncias ----------
 // Opções do campo de adesivo por tipo de laminação
 const ADESIVOS = {
-  'Base Solvente':  ['Fuller SB 101 / R 201', 'Henkel 3752 / 6850', 'Toyo TM250HV / CATRT86L'],
+  'Base Solvente':  ['Fuller SB 101 / R 201', 'Henkel 3752 / 6850', 'Henkel Retort LA 2798 / LA 7371', 'Toyo Retort TM250HV / CATRT86L'],
   'Solvente Less':  ['Coim 5485 / 5500'],
   'Monocomponente': ['Coim SF2930']
 };
@@ -1171,13 +1183,13 @@ function fmtTol(t){ return '±'+String(t).replace('.',','); }
 /**
  * Compara o valor real com o da receita.
  * 'vazio' (não preenchido) · 'ok' (igual) · 'tol' (dentro da tolerância) · 'desvio'
+ * 'novo' (campo vazio na receita e preenchido agora: vira proposta de inclusão)
  * Números: "2,5" = "2.50". Texto: ignora caixa e espaços extras.
- * Sem valor na receita não há referência: nunca é desvio.
  */
 function compararLam(campo, ref, val){
   const v=String(val==null?'':val).trim(), r=String(ref==null?'':ref).trim();
   if(!v) return 'vazio';
-  if(!r) return 'ok';
+  if(!r) return 'novo';
   const nv=numBR(v), nr=numBR(r);
   if(nv!==null && nr!==null){
     if(nv===nr) return 'ok';
@@ -1219,6 +1231,7 @@ function irRep(){
         ${entrada}
       </div>
       <div class="tol-hint" id="rtol-${it.k}" style="display:none"><i class="ti ti-check"></i> Dentro da tolerância</div>
+      <div class="tol-hint novo-hint" id="rnovo-${it.k}" style="display:none"><i class="ti ti-plus"></i> Campo vazio na receita — valor será proposto para inclusão</div>
       <div class="just-inp" id="rjust-${it.k}" style="display:none">
         <label><i class="ti ti-alert-triangle"></i> Desvio — justifique</label>
         <textarea id="rjt-${it.k}" rows="2" placeholder="Justifique o desvio..." oninput="uBtn()"></textarea>
@@ -1240,6 +1253,7 @@ function chkP(k){
   inp.classList.toggle('dv', est==='desvio');
   document.getElementById('rjust-'+k).style.display = est==='desvio'?'block':'none';
   document.getElementById('rtol-'+k).style.display = est==='tol'?'flex':'none';
+  document.getElementById('rnovo-'+k).style.display = est==='novo'?'flex':'none';
   uBtn();
 }
 // Obrigatório: todo campo que tem valor na receita
@@ -1269,6 +1283,13 @@ function repTemDados(){
   return !!(document.getElementById('oper-inp').value.trim() || document.getElementById('op-inp').value.trim() || repItens.some(it=>valRep(it.k)!==''));
 }
 
+// ---------- Valores novos (campo vazio na receita) ----------
+// Não são desvio: vão direto para Pendências como inclusão na receita
+function getNovos(){
+  return repItens.filter(it=>compararLam(it.campo, it.ref, valRep(it.k))==='novo')
+    .map(it=>({ k:it.k, tipo:it.tipo, parametro:it.campo, valorReal:valRep(it.k) }));
+}
+
 // ---------- Coletar desvios ----------
 function getDesvios(){
   return repItens.filter(it=>compararLam(it.campo, it.ref, valRep(it.k))==='desvio').map(it=>{
@@ -1289,6 +1310,9 @@ function irRevisar(){
   document.getElementById('rev-dv-count').textContent = `${dvs.length} campo(s) com desvio`;
   const linha = it => {
     const val=valRep(it.k), est=compararLam(it.campo, it.ref, val);
+    if(est==='novo'){
+      return `<div class="rev-row"><div class="rev-row-top"><div class="rev-lbl">${escH(it.campo)}<div style="font-size:10px;color:var(--text3);margin-top:2px">Receita: —</div></div><div class="rev-right"><div class="rev-real">${escH(val)} <span class="rev-novo">incluir na receita</span></div></div></div></div>`;
+    }
     if(est!=='desvio'){
       return `<div class="rev-row"><div class="rev-row-top"><div class="rev-lbl">${escH(it.campo)}</div><div class="rev-right"><div class="rev-real">${escH(val||'—')}${est==='tol'?' <span class="rev-tol">tolerância</span>':''}</div></div></div></div>`;
     }
@@ -1320,7 +1344,7 @@ function selAlt(k, tipo){
 }
 function updAltBanner(){
   const dvs=getDesvios();
-  const nAlt=dvs.filter(d=>altOpts[d.k]==='receita').length;
+  const nAlt=dvs.filter(d=>altOpts[d.k]==='receita').length + getNovos().length;
   const semEscolha=dvs.filter(d=>!altOpts[d.k]).length;
   document.getElementById('alt-banner').style.display = nAlt?'flex':'none';
   document.getElementById('alt-count').textContent = `${nAlt} alteração(ões) enviada(s) para pendência`;
@@ -1333,11 +1357,12 @@ function irPinR(){
   const r=repReceita(); if(!r) return;
   const dvs=getDesvios();
   if(dvs.some(d=>!altOpts[d.k])) return;
-  const nAlt=dvs.filter(d=>altOpts[d.k]==='receita').length;
+  const nAlt=dvs.filter(d=>altOpts[d.k]==='receita').length, nNovo=getNovos().length;
   document.getElementById('rpctx').textContent=`${r.CLIENTE} — ${fmtCodPAExib(r.COD_PA)} · ${r.NUMERO_LAMINACAO||''} laminação`;
-  document.getElementById('rpd').innerHTML = !dvs.length
+  document.getElementById('rpd').innerHTML = (!dvs.length
     ? '<span class="rpd-pill" style="background:var(--green-light);color:var(--green)">Sem desvios</span>'
-    : `<span class="rpd-pill" style="background:var(--red-light);color:var(--red)">${dvs.length} desvio(s)</span>${nAlt?`<span class="rpd-pill" style="background:var(--blue-light);color:var(--blue)">${nAlt} p/ alterar receita</span>`:''}`;
+    : `<span class="rpd-pill" style="background:var(--red-light);color:var(--red)">${dvs.length} desvio(s)</span>${nAlt?`<span class="rpd-pill" style="background:var(--blue-light);color:var(--blue)">${nAlt} p/ alterar receita</span>`:''}`)
+    + (nNovo?`<span class="rpd-pill" style="background:var(--blue-light);color:var(--blue)">${nNovo} p/ incluir na receita</span>`:'');
   document.getElementById('rep-oper-display').textContent=document.getElementById('oper-inp').value.trim();
   document.getElementById('rep-op-display').textContent=document.getElementById('op-inp').value.trim();
   pinBufR=''; updDotsR();
@@ -1388,7 +1413,8 @@ async function salvarRepeticao(pin){
 
   const desvios=dvs.map(d=>({ parametro:d.parametro, valorReceita:d.valorReceita, valorReal:d.valorReal, tipo:d.tipo,
     tipoAlteracao: altOpts[d.k]==='receita'?'ALTERAR_RECEITA':'PONTUAL', justificativa:d.justificativa }));
-  const pendencias2=dvs.filter(d=>altOpts[d.k]==='receita').map(d=>({ parametro:d.parametro, valorAtual:d.valorReceita, valorProposto:d.valorReal, justificativa:d.justificativa }));
+  const pendencias2=dvs.filter(d=>altOpts[d.k]==='receita').map(d=>({ parametro:d.parametro, valorAtual:d.valorReceita, valorProposto:d.valorReal, justificativa:d.justificativa }))
+    .concat(getNovos().map(n=>({ parametro:n.parametro, valorAtual:'', valorProposto:n.valorReal, justificativa:'Campo vazio na receita — valor registrado na OP '+op })));
 
   // Uma única chamada: o backend valida o PIN e identifica o aprovador
   salvando=true; showOverlay('Salvando repetição...');
