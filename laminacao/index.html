@@ -1536,7 +1536,7 @@ function renderHistDet(){
           <div style="min-width:0">
             <div class="ver-hdr-lbl">v${escH(v.NUMERO_VERSAO)} · ${vig?'Receita vigente':'Receita anterior'}</div>
             <div class="ver-hdr-op">${num<=1?`OP de criação: ${escH(r.OP_CRIACAO||'—')}`:`OP de origem: ${escH(v.OP_ORIGEM||'—')}`}</div>
-            ${(v.ALTERACOES||[]).map(a=>`<div class="ver-hdr-alt">• ${escH(a.PARAMETRO)}: ${escH(a.DE||'—')} → ${escH(a.PARA||'—')}</div>`).join('')}
+            ${(v.ALTERACOES||[]).map(a=>`<div class="ver-hdr-alt">• ${escH(a.PARAMETRO)}</div>`).join('')}
             ${v.REJEITADAS?`<div class="ver-hdr-alt" style="opacity:.75">${v.REJEITADAS} alteração(ões) rejeitada(s) na mesma decisão</div>`:''}
           </div>
           <div class="ver-hdr-right">
@@ -1942,7 +1942,8 @@ function imprimirReceita(){
     <div class="pa-sec">Identificação</div>
     <div class="pa-grid">${campo('Cliente',val(r.CLIENTE))}${campo('Cód. PA',escH(fmtCodPAExib(r.COD_PA)))}${campo('Máquina',val(r.MAQUINA))}${campo('Nº laminação',val(r.NUMERO_LAMINACAO))}${campo('Tipo',val(r.TIPO_LAMINACAO))}${campo('OP criação',val(r.OP_CRIACAO))}${campo('Operador',val(r.OPERADOR))}${campo('Aprovador',val(r.APROVADOR))}${campo('Data criação',r.DATA_CRIACAO?escH(fmtDataHist(r.DATA_CRIACAO)):'—')}${campo('Status',r.STATUS==='OBSOLETA'?'OBSOLETA':'ATIVA')}${vAtiva?campo('Versão vigente',`v${escH(vAtiva.NUMERO_VERSAO)}${vAtiva.DATA_CRIACAO?' · '+escH(fmtDataHist(vAtiva.DATA_CRIACAO)):''}`,2):''}${campo('Serviço',val(r.SERVICO),4)}</div>
     ${tabela(r.informacoes||[],'Informações do adesivo')}
-    ${tabela(r.parametros||[],'Parâmetros da máquina')}
+    <div class="pa-sec">Parâmetros da máquina</div>
+    ${(r.parametros||[]).length?`<div class="pa-grid">${(r.parametros||[]).map(p=>campo(escH(p.CAMPO),val(p.VALOR))).join('')}</div>`:'<div style="font-size:10px">—</div>'}
     ${obsTxt.length?`<div class="pa-sec">Observações técnicas</div><ul class="pa-obs">${obsTxt.map(l=>`<li>${escH(l)}</li>`).join('')}</ul>`:''}
     <div class="pa-rod">Impresso em ${escH(new Date().toLocaleString('pt-BR'))} · Finepack · Receitas de Laminação</div>
   `;
