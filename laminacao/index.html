@@ -547,7 +547,6 @@ select.fdsel{width:100%;font-size:14px;padding:11px 12px;border:0.5px solid var(
           <button class="bb" style="margin-bottom:0" onclick="voltarHistSel()"><i class="ti ti-arrow-left"></i> Todas as receitas</button>
           <button class="bb" style="margin-bottom:0;font-weight:600" onclick="verReceitaDoHist()">Ver receita <i class="ti ti-arrow-right"></i></button>
         </div>
-        <div class="met" id="hist-met"></div>
         <div class="fcs" id="hist-filtros"><div class="fc fca" onclick="setFH(this,'todos')">Todos</div><div class="fc" onclick="setFH(this,'ok')">Sem desvio</div><div class="fc" onclick="setFH(this,'desvio')">Com desvio</div></div>
         <div id="hres"></div>
       </div>
@@ -1031,9 +1030,11 @@ function montarInfoCampos(){
   const cont=document.getElementById('info-campos');
   if(cont.dataset.key === novaTipo+'|'+novaMaq) return; // já montado
   cont.dataset.key = novaTipo+'|'+novaMaq;
-  // Adesivo: lista fixa conforme o tipo de laminação (obrigatório)
+  // Adesivo: lista fixa conforme o tipo de laminação (obrigatório) · Gravação do Cilindro: lista fixa
   cont.innerHTML = campos.info.map((c,i)=> ehCampoAdesivo(c)
     ? `<div class="fd"><div class="fdl">${escH(c)} <span style="color:var(--red-mid)">*</span></div><select class="fdsel" id="inf-${i}" onchange="uNs2()"><option value="">Selecione o adesivo</option>${(ADESIVOS[novaTipo]||[]).map(o=>`<option value="${escH(o)}">${escH(o)}</option>`).join('')}</select></div>`
+    : ehCampoGravacao(c)
+    ? `<div class="fd"><div class="fdl">${escH(c)}</div><select class="fdsel" id="inf-${i}"><option value="">Selecione a gravação</option>${GRAVACOES.map(o=>`<option value="${escH(o)}">${escH(o)}</option>`).join('')}</select></div>`
     : `<div class="fd"><div class="fdl">${escH(c)}</div><input type="text" id="inf-${i}" inputmode="${modoTeclado(c)}" autocomplete="off"></div>`).join('');
 }
 function montarParamCampos(){
@@ -1164,9 +1165,18 @@ function semAcento(v){ return String(v==null?'':v).normalize('NFD').replace(/[\u
 function ehCampoTexto(campo){ const c=semAcento(campo); return CAMPOS_TEXTO.some(t=>c===t || c.startsWith(t+' (')); }
 function modoTeclado(campo){ return ehCampoTexto(campo) ? 'text' : 'decimal'; }
 function ehCampoAdesivo(campo){ const c=normTxt(campo); return c==='adesivo' || c==='adesivo/catalisador'; }
-// Opções para um campo de adesivo; inclui o valor atual se for antigo (fora da lista)
-function opcoesAdesivo(tipo, atual){
-  const ops=(ADESIVOS[tipo]||[]).slice();
+// Gravação do Cilindro (Base Solvente): opções fixas
+const GRAVACOES = ['35 x 35', '54/3', '5g Retort'];
+function ehCampoGravacao(campo){ return semAcento(campo)==='gravacao do cilindro'; }
+// Campos com lista de opções (adesivo e gravação); null = campo digitado
+function listaDoCampo(campo, tipo){
+  if(ehCampoAdesivo(campo)) return ADESIVOS[tipo]||[];
+  if(ehCampoGravacao(campo)) return GRAVACOES;
+  return null;
+}
+// Opções de um campo com lista; inclui o valor atual se for antigo (fora da lista)
+function opcoesCampo(campo, tipo, atual){
+  const ops=(listaDoCampo(campo, tipo)||[]).slice();
   const a=String(atual==null?'':atual).trim();
   if(a && !ops.some(o=>normTxt(o)===normTxt(a))) ops.unshift(a);
   return ops;
@@ -1222,8 +1232,8 @@ function irRep(){
     .concat((r.parametros||[]).map((x,i)=>({k:'p'+i, tipo:'PARAMETRO', campo:String(x.CAMPO||''), ref:String(x.VALOR==null?'':x.VALOR).trim()})));
   const linha = it => {
     const tol=toleranciaDe(it.campo);
-    const entrada = ehCampoAdesivo(it.campo)
-      ? `<select class="param-sel" id="rinp-${it.k}" onchange="chkP('${it.k}')"><option value="">Selecione</option>${opcoesAdesivo(r.TIPO_LAMINACAO, it.ref).map(o=>`<option value="${escH(o)}">${escH(o)}</option>`).join('')}</select>`
+    const entrada = listaDoCampo(it.campo, r.TIPO_LAMINACAO)
+      ? `<select class="param-sel" id="rinp-${it.k}" onchange="chkP('${it.k}')"><option value="">Selecione</option>${opcoesCampo(it.campo, r.TIPO_LAMINACAO, it.ref).map(o=>`<option value="${escH(o)}">${escH(o)}</option>`).join('')}</select>`
       : `<input class="param-inp" type="text" inputmode="${modoTeclado(it.campo)}" autocapitalize="characters" autocomplete="off" id="rinp-${it.k}" oninput="chkP('${it.k}')">`;
     return `<div class="param-row" id="rprow-${it.k}">
       <div class="param-top">
@@ -1475,7 +1485,6 @@ async function abrirHistorico(id){
   ir('s-hist');
   document.getElementById('hist-sel').style.display='none';
   document.getElementById('hist-det').style.display='block';
-  document.getElementById('hist-met').innerHTML='';
   document.getElementById('hres').innerHTML='<div class="loading-wrap"><div class="spinner"></div><span style="font-size:13px;color:var(--text3)">Carregando histórico...</span></div>';
   filtroH='todos';
   document.querySelectorAll('#hist-filtros .fc').forEach((c,i)=>c.classList.toggle('fca',i===0));
@@ -1499,14 +1508,9 @@ function setFH(el,t){
 }
 function renderHistDet(){
   if(!histDados) return;
-  const r=histDados.receita, m=histDados.metricas||{};
+  const r=histDados.receita;
   document.getElementById('tpt').textContent=`${r.CLIENTE||''} · ${fmtCodPAExib(r.COD_PA)}`;
   document.getElementById('tps').textContent=`Histórico · ${r.NUMERO_LAMINACAO||''} laminação · ${r.MAQUINA||''}`;
-  document.getElementById('hist-met').innerHTML=`
-    <div class="mt"><div class="ml">Repetições</div><div class="mv">${m.totalRepeticoes||0}</div></div>
-    <div class="mt"><div class="ml">Com desvio</div><div class="mv" style="color:var(--amber)">${m.comDesvio||0}</div></div>
-    <div class="mt"><div class="ml">Versões</div><div class="mv">${m.totalVersoes||0}</div></div>
-    <div class="mt"><div class="ml">Sem desvio</div><div class="mv" style="color:var(--green)">${m.taxaAdesao||0}%</div></div>`;
   const filtra = reps => filtroH==='ok' ? reps.filter(x=>!ehTrue(x.TEM_DESVIO)) : filtroH==='desvio' ? reps.filter(x=>ehTrue(x.TEM_DESVIO)) : reps;
   // Mais recente primeiro
   let versoes=(histDados.versoes||[]).slice().reverse().map(v=>Object.assign({},v,{reps:filtra((v.reps||[]).slice().reverse())}));
