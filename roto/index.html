@@ -230,6 +230,14 @@ textarea{resize:none;line-height:1.5;width:100%}
 .pend-meta{font-size:11px;color:var(--text3)}
 .pend-meta b{color:var(--text2)}
 .pend-actions{display:flex;gap:6px}
+.pend-item{padding:10px 0;border-bottom:0.5px solid var(--border)}.pend-item:first-child{padding-top:0}.pend-item:last-child{border-bottom:none;padding-bottom:0}
+.pend-item .pend-row{padding:0;border:none}
+.pend-dec{display:flex;gap:6px;justify-content:flex-end;margin-top:8px}
+.pd-btn{padding:6px 12px;border-radius:var(--rad);font-size:12px;font-weight:600;border:0.5px solid var(--border2);background:var(--card);color:var(--text2);cursor:pointer;font-family:var(--font);display:inline-flex;align-items:center;gap:4px}
+.pd-btn i{font-size:13px}.pd-btn.on-apr{background:var(--blue);border-color:var(--blue);color:#fff}.pd-btn.on-rej{background:var(--red-light);border-color:var(--red-mid);color:var(--red)}
+.pend-all{display:flex;align-items:center;justify-content:flex-end;gap:4px;font-size:11px;color:var(--text3);margin-bottom:10px}
+.pend-all button{background:transparent;border:none;color:var(--blue);font-size:11px;font-weight:600;cursor:pointer;font-family:var(--font);padding:2px 4px}
+.pend-apr:disabled{opacity:.45;cursor:default}
 .pend-rej{padding:7px 14px;border-radius:var(--rad);font-size:12px;font-weight:600;border:0.5px solid var(--border2);background:transparent;color:var(--text2);cursor:pointer;font-family:var(--font)}
 .pend-apr{padding:7px 14px;border-radius:var(--rad);font-size:12px;font-weight:600;border:none;background:var(--blue);color:#fff;cursor:pointer;font-family:var(--font)}
 .pend-pin-wrap{background:var(--bg);padding:12px 14px;display:none;border-top:0.5px solid var(--border)}
@@ -839,7 +847,7 @@ let receitas=[], recIdx=0, filtroH='todos', nsn=1, receitasCarregadas=false;
 let pinBufN='', pinBufR='';
 const lockBufs={pend:'',painel:''};
 const altOpts={};
-let pendencias=[], pendPinBufs={};
+let pendencias=[];
 let sbwHTML='';
 let repTintasAtivas=[];
 let repEstufaAtivas=[];
@@ -969,7 +977,7 @@ async function apiPost(body, tentativas) {
   // Retry só para ações idempotentes (repetir não duplica dados).
   // Escritas que criam registros novos (salvarReceita, salvarRepeticao) NÃO repetem,
   // para evitar duplicação caso a 1ª chamada tenha chegado mas a resposta se perdeu.
-  const idempotentes = ['validarPin','validarPinAdmin','alterarStatusReceita','aprovarPendencia','rejeitarPendencia'];
+  const idempotentes = ['validarPin','validarPinAdmin','alterarStatusReceita','decidirPendenciasRepeticao'];
   const maxTent = (tentativas!==undefined) ? tentativas : (idempotentes.includes(body.action) ? 3 : 1);
   const encoded = encodeURIComponent(JSON.stringify(body));
   const url = API + '?action=' + body.action + '&body=' + encoded;
@@ -1245,11 +1253,11 @@ function iniciarRepeticao() {
 
 function renderRepTintas(tintas, todasTintas) {
   repTintasAtivas = tintas;
-  // Estufa: todas as estações da máquina que tenham temperatura na receita OU tinta.
-  // Estações sem tinta mas com estufa ligada precisam ser conferidas na repetição.
-  const listaEstufa = (Array.isArray(todasTintas)?todasTintas:tintas)
-    .filter(t => t.NOME_COR || (t.TEMP_ESTUFA!==''&&t.TEMP_ESTUFA!==null&&t.TEMP_ESTUFA!==undefined))
-    .sort((a,b)=>parseInt(a.ESTACAO)-parseInt(b.ESTACAO));
+  // Estufa: as 9 estações da máquina. Estação sem registro na receita aparece como
+  // "(sem tinta)" com referência vazia: preencher uma temperatura nela é desvio e,
+  // se o operador pedir para incluir na receita, a aprovação cria a linha em TINTAS.
+  const base=Array.isArray(todasTintas)?todasTintas:tintas;
+  const listaEstufa=[1,2,3,4,5,6,7,8,9].map(n=>base.find(t=>parseInt(t.ESTACAO)===n)||{ESTACAO:n,NOME_COR:'',COD_TINTA:'',TEMP_ESTUFA:''});
   repEstufaAtivas = listaEstufa;
   document.getElementById('tintas-rep').innerHTML = tintas.map(t=>`
     <div class="vbloco">
@@ -1397,7 +1405,7 @@ function getDesvios(){
       const j=document.getElementById('jrep-'+prefix+'-'+t.ESTACAO);
       const ref=String(refFn(t)||'');
       if(i&&i.dataset.dv==='1'){
-        dvs.push({key:`${prefix}-${t.ESTACAO}`,lbl:`Est. ${t.ESTACAO} — ${lbl}`,val:`${i.value}${un?' '+un:''}`,ref:`${ref}${un?' '+un:''}`,just:j?.value||'',tipo:'COMPLEMENTO',tipoAlt:''});
+        dvs.push({key:`${prefix}-${t.ESTACAO}`,lbl:`Est. ${t.ESTACAO} — ${lbl}`,val:`${i.value}${un?' '+un:''}`,ref:ref?`${ref}${un?' '+un:''}`:'—',just:j?.value||'',tipo:'COMPLEMENTO',tipoAlt:''});
       }
     });
   });
@@ -1451,7 +1459,7 @@ function irRevisar(){
       if(!i||!i.value.trim())return;
       const j=document.getElementById('jrep-'+prefix+'-'+t.ESTACAO);
       const dv=i.dataset.dv==='1';
-      compRows.push({key:`${prefix}-${t.ESTACAO}`,lbl:`Est. ${t.ESTACAO} — ${lbl}`,val:`${i.value}${un?' '+un:''}`,ref:`${String(refFn(t)||'—')}${un?' '+un:''}`,just:j?.value||'',dv});
+      compRows.push({key:`${prefix}-${t.ESTACAO}`,lbl:`Est. ${t.ESTACAO} — ${lbl}`,val:`${i.value}${un?' '+un:''}`,ref:String(refFn(t)||'')?`${refFn(t)}${un?' '+un:''}`:'—',just:j?.value||'',dv});
     });
   });
   const revCompEl=document.getElementById('rev-complem');
@@ -1666,90 +1674,58 @@ function atualizarBadgePendencias(){
   b.textContent=cnt;b.style.display=cnt>0?'':'none';
 }
 
+// Pendências agrupadas por repetição (OP): o supervisor 2 decide todas de uma vez,
+// com um único PIN, e o backend cria uma única versão nova da receita.
+function grpKey(p){return(p.ID_REPETICAO!==undefined&&p.ID_REPETICAO!==null&&String(p.ID_REPETICAO)!=='')?'r'+normId(p.ID_REPETICAO):'p'+normId(p.ID)}
+function gruposPend(){const m={},ordem=[];pendencias.forEach(p=>{const k=grpKey(p);if(!m[k]){m[k]=[];ordem.push(k)}m[k].push(p)});return ordem.map(k=>({k,itens:m[k]}))}
+function itensGrupo(k){return pendencias.filter(p=>grpKey(p)===k)}
+let pendDecisao={},grpPinBuf={};
 function renderPendencias(){
   atualizarBadgePendencias();
-  if(pendencias.length===0){document.getElementById('pend-list').innerHTML='<div style="padding:24px 0;text-align:center;font-size:13px;color:var(--text3)">Nenhuma pendência no momento.</div>';return;}
-  document.getElementById('pend-list').innerHTML=pendencias.map(p=>`
-    <div class="pend-card" id="pc-${p.ID}">
-      <div class="pend-hdr"><div class="pend-ic"><i class="ti ti-file-pencil"></i></div><div class="pend-bd"><div class="pend-title">${p.CLIENTE?`${p.CLIENTE} — ${formatarCodPAExibicao(p.COD_PA)}`:'Receita'}</div><div class="pend-sub">${p.SERVICO?p.SERVICO+' · ':''}${p.MAQUINA||''}${p.OP_PRODUCAO?' · OP '+p.OP_PRODUCAO:''}</div><div class="pend-sub" style="margin-top:2px">Solicitado por <b>${p.SOLICITANTE}</b></div>${p.ITENS_CONJUGACAO?`<div style="margin-top:4px"><span style="display:inline-flex;align-items:center;gap:4px;background:var(--amber-light);color:var(--amber);font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;border:0.5px solid #E8D5A8"><i class="ti ti-layers-linked" style="font-size:10px"></i> ${p.ITENS_CONJUGACAO}</span></div>`:''}</div><span class="pend-badge">pendente</span></div>
-      <div class="pend-body"><div class="pend-row"><div class="pend-lbl">${p.PARAMETRO}</div><div class="pend-vals"><span class="pend-de">De: ${p.VALOR_ATUAL}</span><span class="pend-para">Para: ${p.VALOR_PROPOSTO}</span><div class="pend-just">${p.JUSTIFICATIVA}</div></div></div></div>
-      <div class="pend-footer"><div class="pend-meta">Solicitante: <b>${p.SOLICITANTE}</b></div><div class="pend-actions"><button class="pend-rej" onclick="abrirPinPendencia('${p.ID}','rejeitar')">Rejeitar</button><button class="pend-apr" onclick="abrirPinPendencia('${p.ID}','aprovar')">Aprovar</button></div></div>
-      <div class="pend-pin-wrap" id="ppw-${p.ID}">
-        <div style="font-size:12px;color:var(--text2);margin-bottom:8px;line-height:1.5" id="ppt-${p.ID}">Digite seu PIN. Aprovador não pode ser <b>${p.SOLICITANTE}</b>.</div>
-        <div style="display:flex;gap:8px;margin-bottom:10px"><div class="pin-d" id="ppd-${p.ID}-0"></div><div class="pin-d" id="ppd-${p.ID}-1"></div><div class="pin-d" id="ppd-${p.ID}-2"></div><div class="pin-d" id="ppd-${p.ID}-3"></div></div>
-        <div class="pin-g" style="gap:6px">
-          <button class="pib" style="padding:10px 0;font-size:16px" onclick="pinPendencia('${p.ID}','1')">1</button><button class="pib" style="padding:10px 0;font-size:16px" onclick="pinPendencia('${p.ID}','2')">2</button><button class="pib" style="padding:10px 0;font-size:16px" onclick="pinPendencia('${p.ID}','3')">3</button>
-          <button class="pib" style="padding:10px 0;font-size:16px" onclick="pinPendencia('${p.ID}','4')">4</button><button class="pib" style="padding:10px 0;font-size:16px" onclick="pinPendencia('${p.ID}','5')">5</button><button class="pib" style="padding:10px 0;font-size:16px" onclick="pinPendencia('${p.ID}','6')">6</button>
-          <button class="pib" style="padding:10px 0;font-size:16px" onclick="pinPendencia('${p.ID}','7')">7</button><button class="pib" style="padding:10px 0;font-size:16px" onclick="pinPendencia('${p.ID}','8')">8</button><button class="pib" style="padding:10px 0;font-size:16px" onclick="pinPendencia('${p.ID}','9')">9</button>
-          <button class="pib" style="padding:10px 0;font-size:14px" onclick="pinPendencia('${p.ID}','back')">⌫</button>
-          <button class="pib" style="padding:10px 0;font-size:16px" onclick="pinPendencia('${p.ID}','0')">0</button>
-          <button class="pib" style="padding:10px 0;font-size:12px;font-weight:700;background:var(--blue-light);color:var(--blue)" onclick="pinPendencia('${p.ID}','ok')">OK</button>
-        </div>
-        <div class="pie" id="ppe-${p.ID}" style="margin-top:6px"></div>
-      </div>
-    </div>`).join('');
+  const lista=document.getElementById('pend-list');
+  if(!pendencias.length){lista.innerHTML='<div style="padding:24px 0;text-align:center;font-size:13px;color:var(--text3)">Nenhuma pendência no momento.</div>';return}
+  const teclas=k=>['1','2','3','4','5','6','7','8','9','back','0','ok'].map(v=>`<button class="pib" style="padding:10px 0;font-size:${v==='ok'?'12px;font-weight:700;background:var(--blue-light);color:var(--blue)':v==='back'?'14px':'16px'}" onclick="ppGrp('${k}','${v}')">${v==='back'?'⌫':v==='ok'?'OK':v}</button>`).join('');
+  lista.innerHTML=gruposPend().map(({k,itens})=>{const p=itens[0],n=itens.length;
+    return`<div class="pend-card" id="pg-${k}"><div class="pend-hdr"><div class="pend-ic"><i class="ti ti-file-pencil"></i></div><div class="pend-bd"><div class="pend-title">${p.CLIENTE?`${escH(p.CLIENTE)} — ${formatarCodPAExibicao(p.COD_PA)}`:'Receita'}</div><div class="pend-sub" style="line-height:1.4">${escH([p.SERVICO,p.MAQUINA,p.OP_PRODUCAO?'OP '+p.OP_PRODUCAO:''].filter(Boolean).join(' · ')||'—')}</div><div class="pend-sub">Solicitado por <b>${escH(p.SOLICITANTE||'—')}</b>${p.DATA_REP?' · '+fmtDataHist(p.DATA_REP):''}</div>${conjChipHist(p.ITENS_CONJUGACAO)}</div><span class="pend-badge">${n} ${n===1?'alteração':'alterações'}</span></div>`
+    +`<div class="pend-body">${n>1?`<div class="pend-all"><span>Marcar todas:</span><button type="button" onclick="marcarTodas('${k}','REJEITAR')">Rejeitar</button><button type="button" onclick="marcarTodas('${k}','APROVAR')">Aprovar</button></div>`:''}`
+    +itens.map(x=>{const id=normId(x.ID),d=pendDecisao[id]||'';return`<div class="pend-item"><div class="pend-row"><div class="pend-lbl">${escH(x.PARAMETRO)}</div><div class="pend-vals"><span class="pend-de">De: ${escH(x.VALOR_ATUAL||'—')}</span><span class="pend-para">Para: ${escH(x.VALOR_PROPOSTO)}</span>${x.JUSTIFICATIVA?`<div class="pend-just">${escH(x.JUSTIFICATIVA)}</div>`:''}</div></div><div class="pend-dec"><button type="button" class="pd-btn${d==='REJEITAR'?' on-rej':''}" id="pdr-${id}" onclick="setDecisao('${id}','REJEITAR')"><i class="ti ti-x"></i> Rejeitar</button><button type="button" class="pd-btn${d==='APROVAR'?' on-apr':''}" id="pda-${id}" onclick="setDecisao('${id}','APROVAR')"><i class="ti ti-check"></i> Aprovar</button></div></div>`}).join('')+`</div>`
+    +`<div class="pend-footer"><div class="pend-meta" id="pgs-${k}"></div><div class="pend-actions"><button class="pend-apr" id="pgc-${k}" onclick="abrirGrpPin('${k}')" disabled>Confirmar</button></div></div>`
+    +`<div class="pend-pin-wrap" id="pgw-${k}"><div style="font-size:12px;color:var(--text2);margin-bottom:8px;line-height:1.5" id="pgt-${k}"></div><div style="display:flex;gap:8px;margin-bottom:10px">${[0,1,2,3].map(i=>`<div class="pin-d" id="pgd-${k}-${i}"></div>`).join('')}</div><div class="pin-g" style="gap:6px">${teclas(k)}</div><div class="pie" id="pge-${k}" style="margin-top:6px"></div></div></div>`}).join('');
+  gruposPend().forEach(g=>updGrpResumo(g.k));
 }
-
-const pendAcoes={}; // id -> 'aprovar' | 'rejeitar'
-
-function abrirPinPendencia(id,acao){
-  pendAcoes[id]=acao||'aprovar';
-  pendPinBufs[id]='';
-  document.querySelectorAll('.pend-pin-wrap').forEach(p=>p.classList.remove('open'));
-  const wrap=document.getElementById('ppw-'+id);
-  if(wrap)wrap.classList.add('open');
-  atualizarDotsPendencia(id);
-  const err=document.getElementById('ppe-'+id);if(err)err.textContent='';
-  const pend=pendencias.find(p=>mesmoId(p.ID,id));
-  const t=document.getElementById('ppt-'+id);
-  if(t){
-    const verbo=pendAcoes[id]==='rejeitar'?'Rejeitador':'Aprovador';
-    t.innerHTML=`Digite seu PIN para <b>${pendAcoes[id]==='rejeitar'?'rejeitar':'aprovar'}</b>. ${verbo} não pode ser <b>${pend?.SOLICITANTE||''}</b>.`;
-  }
-}
-
-async function pinPendencia(id,v){
-  if(salvando)return;
-  if(!pendPinBufs[id])pendPinBufs[id]='';
-  const err=document.getElementById('ppe-'+id);
-  const pend=pendencias.find(p=>mesmoId(p.ID,id));
-  if(v==='back'){pendPinBufs[id]=pendPinBufs[id].slice(0,-1);atualizarDotsPendencia(id);return;}
-  if(v==='ok'){
-    if(pendPinBufs[id].length<4){err.textContent='Digite os 4 dígitos';return;}
-    const pin=pendPinBufs[id];
-    const acao=pendAcoes[id]||'aprovar';
-    salvando=true;
-    mostrarLoading(acao==='rejeitar'?'Rejeitando...':'Aprovando...');
-    try{
-      // UMA única chamada: o backend valida o PIN e executa a ação
-      let nomeExecutor='';
-      if(acao==='rejeitar'){
-        const res=await apiPost({action:'rejeitarPendencia',idPendencia:id,pin});
-        nomeExecutor=res?.rejeitadaPor||'';
-      }else{
-        const res=await apiPost({action:'aprovarPendencia',idPendencia:id,idReceita:pend?.ID_RECEITA||recIdx,pin});
-        nomeExecutor=res?.aprovador2||'';
-      }
-      pendPinBufs[id]='';atualizarDotsPendencia(id);
-      // Recarrega pendências e permanece na tela
-      await carregarPendencias();
-      if(acao==='aprovar')carregarReceitas(); // atualiza receitas em segundo plano
-      renderPendencias();
-      ocultarLoading();salvando=false;
-      mostrarToastPendencia(acao==='rejeitar'?`Pendência rejeitada por ${nomeExecutor}`:`Pendência aprovada por ${nomeExecutor} — nova versão criada`,acao==='rejeitar');
-    }catch(e){
-      ocultarLoading();salvando=false;
-      const msg=e.message||'';
-      err.textContent=msg.includes('PIN inválido')?'PIN incorreto.'
-        :msg.includes('própria solicitação')||msg.includes('mesmo que solicitou')?'Você não pode '+(acao==='rejeitar'?'rejeitar':'aprovar')+' sua própria solicitação.'
-        :msg.includes('já foi')?msg
-        :'Erro: '+msg;
-      pendPinBufs[id]='';atualizarDotsPendencia(id);
-    }
-    return;
-  }
-  if(pendPinBufs[id].length<4)pendPinBufs[id]+=v;
-  atualizarDotsPendencia(id);
+function setDecisao(id,dec){id=normId(id);pendDecisao[id]=pendDecisao[id]===dec?'':dec;const a=document.getElementById('pda-'+id),r=document.getElementById('pdr-'+id);if(a)a.className='pd-btn'+(pendDecisao[id]==='APROVAR'?' on-apr':'');if(r)r.className='pd-btn'+(pendDecisao[id]==='REJEITAR'?' on-rej':'');const p=pendencias.find(x=>mesmoId(x.ID,id));if(p)updGrpResumo(grpKey(p))}
+function marcarTodas(k,dec){itensGrupo(k).forEach(p=>{pendDecisao[normId(p.ID)]='';setDecisao(p.ID,dec)})}
+function contGrupo(k){const it=itensGrupo(k),nA=it.filter(p=>pendDecisao[normId(p.ID)]==='APROVAR').length,nR=it.filter(p=>pendDecisao[normId(p.ID)]==='REJEITAR').length;return{it,nA,nR,nF:it.length-nA-nR}}
+function updGrpResumo(k){const{nA,nR,nF}=contGrupo(k);const s=document.getElementById('pgs-'+k),b=document.getElementById('pgc-'+k),w=document.getElementById('pgw-'+k);
+  if(s)s.innerHTML=nF?`<b style="color:var(--amber)">${nF} sem decisão</b>${nA||nR?` · ${nA} aprovar · ${nR} rejeitar`:''}`:`${nA} aprovar · ${nR} rejeitar`;
+  if(b)b.disabled=nF>0;
+  if(w&&w.classList.contains('open')){if(nF>0){w.classList.remove('open');grpPinBuf[k]='';updGrpDots(k)}else textoGrpPin(k)}}
+function textoGrpPin(k){const{it,nA,nR}=contGrupo(k);const t=document.getElementById('pgt-'+k);if(t)t.innerHTML=`Confirme com seu PIN: <b>${nA} aprovação(ões)</b> e <b>${nR} rejeição(ões)</b>. ${nA?'Será criada <b>uma</b> nova versão da receita.':'A receita não será alterada.'} Não pode ser <b>${escH(it[0]?.SOLICITANTE||'—')}</b>.`}
+function abrirGrpPin(k){if(contGrupo(k).nF>0)return;document.querySelectorAll('.pend-pin-wrap').forEach(w=>w.classList.remove('open'));grpPinBuf[k]='';updGrpDots(k);const e=document.getElementById('pge-'+k);if(e)e.textContent='';textoGrpPin(k);const w=document.getElementById('pgw-'+k);if(w){w.classList.add('open');setTimeout(()=>w.scrollIntoView({behavior:'smooth',block:'nearest'}),50)}}
+function updGrpDots(k){for(let i=0;i<4;i++){const d=document.getElementById(`pgd-${k}-${i}`);if(d)d.classList.toggle('f',i<(grpPinBuf[k]||'').length)}}
+function ppGrp(k,v){if(salvando)return;if(!grpPinBuf[k])grpPinBuf[k]='';const e=document.getElementById('pge-'+k);if(v==='back')grpPinBuf[k]=grpPinBuf[k].slice(0,-1);else if(v==='ok'){if(grpPinBuf[k].length<4){if(e)e.textContent='Digite os 4 dígitos';return}const pin=grpPinBuf[k];grpPinBuf[k]='';updGrpDots(k);decidirGrupoAPI(k,pin);return}else if(grpPinBuf[k].length<4)grpPinBuf[k]+=v;updGrpDots(k)}
+// Envia todas as decisões da repetição numa única chamada e permanece na tela.
+async function decidirGrupoAPI(k,pin){
+  if(salvando)return;const it=itensGrupo(k);if(!it.length)return;
+  const decisoes=it.map(p=>({idPendencia:normId(p.ID),decisao:pendDecisao[normId(p.ID)]}));
+  if(decisoes.some(d=>!d.decisao))return;
+  const p0=it[0],ref=`${p0.CLIENTE||'Receita'}${p0.COD_PA?' — '+formatarCodPAExibicao(p0.COD_PA):''}${p0.OP_PRODUCAO?' · OP '+p0.OP_PRODUCAO:''}`;
+  salvando=true;mostrarLoading('Registrando decisões...');
+  try{
+    const res=await apiPost({action:'decidirPendenciasRepeticao',pin,decisoes});
+    ocultarLoading();salvando=false;
+    if(!res||!res.ok){const msg=(res&&res.motivo)||'Não foi possível registrar as decisões.';
+      if(res&&res.recarregar){await carregarPendencias();renderPendencias();mostrarToastPendencia(msg,true)}
+      else{const e=document.getElementById('pge-'+k);if(e)e.textContent=msg}
+      return}
+    const ids=new Set(it.map(p=>normId(p.ID)));
+    pendencias=pendencias.filter(p=>!ids.has(normId(p.ID)));ids.forEach(id=>{delete pendDecisao[id]});delete grpPinBuf[k];
+    pendContadores.aprovadas=(pendContadores.aprovadas||0)+(res.aprovadas||0);pendContadores.rejeitadas=(pendContadores.rejeitadas||0)+(res.rejeitadas||0);
+    renderPendencias();
+    mostrarToastPendencia(`${res.nome||'Supervisor'} registrou ${ref}: ${res.aprovadas||0} aprovada(s), ${res.rejeitadas||0} rejeitada(s).${res.novaVersao?` Nova versão v${res.novaVersao} criada.`:(res.aprovadas?'':' A receita não foi alterada.')}${res.estacoesCriadas?` ${res.estacoesCriadas} estação(ões) de estufa incluída(s) na receita.`:''}`,!res.aprovadas);
+    if(res.aprovadas)carregarReceitas(); // receita mudou: atualiza em segundo plano
+    carregarPendencias().then(()=>{if(document.getElementById('s-pend').classList.contains('active'))renderPendencias()}); // contadores do servidor
+  }catch(e){ocultarLoading();salvando=false;const x=document.getElementById('pge-'+k);if(x)x.textContent='Erro: '+e.message}
 }
 
 // Aviso temporário dentro da própria tela de pendências (sem sair dela)
@@ -1767,10 +1743,8 @@ function mostrarToastPendencia(msg,ehRejeicao){
   el.textContent=msg;
   el.style.opacity='1';
   clearTimeout(window._pendToastT);
-  window._pendToastT=setTimeout(()=>{el.style.opacity='0';},3200);
+  window._pendToastT=setTimeout(()=>{el.style.opacity='0';},6000);
 }
-
-function atualizarDotsPendencia(id){for(let i=0;i<4;i++){const d=document.getElementById(`ppd-${id}-${i}`);if(d)d.classList.toggle('f',i<(pendPinBufs[id]||'').length);}}
 
 // ── HISTÓRICO ────────────────────────────────────────────
 
