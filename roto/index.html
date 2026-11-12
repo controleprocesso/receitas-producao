@@ -184,7 +184,11 @@ textarea{resize:none;line-height:1.5;width:100%}
 .ver-hdr-block{padding:10px 14px;display:flex;align-items:flex-start;justify-content:space-between}
 .ver-hdr-block.vigente{background:var(--blue);border-radius:var(--rad-lg) var(--rad-lg) 0 0}
 .ver-hdr-block.obsoleta{background:var(--bg);border:0.5px solid var(--border);border-bottom:none;border-radius:var(--rad-lg) var(--rad-lg) 0 0}
-.ver-hdr-lbl{font-size:12px;font-weight:600;display:flex;align-items:center;gap:6px}
+.ver-hdr-lbl{font-size:14px;font-weight:700;display:flex;align-items:center;gap:6px}
+.ver-hdr-op{font-size:11px;margin-top:3px}
+.ver-hdr-alt{font-size:11px;margin-top:2px;line-height:1.4}
+.ver-hdr-block.vigente .ver-hdr-alt{color:rgba(255,255,255,0.92)}.ver-hdr-block.obsoleta .ver-hdr-alt{color:var(--text2)}
+.ver-hdr-block.vigente .ver-hdr-op{color:rgba(255,255,255,0.75)}.ver-hdr-block.obsoleta .ver-hdr-op{color:var(--text3)}
 .ver-hdr-block.vigente .ver-hdr-lbl{color:#fff}
 .ver-hdr-block.obsoleta .ver-hdr-lbl{color:var(--text2)}
 .ver-hdr-right{display:flex;flex-direction:column;align-items:flex-end;gap:3px}
@@ -694,7 +698,10 @@ textarea{resize:none;line-height:1.5;width:100%}
 
     <!-- HISTÓRICO DETALHE -->
     <div id="s-hist-det" class="sc">
-      <button class="bb" onclick="navegarTela('s-hist')"><i class="ti ti-arrow-left"></i> Histórico</button>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <button class="bb" style="margin-bottom:0" onclick="navegarTela('s-hist')"><i class="ti ti-arrow-left"></i> Todas as receitas</button>
+        <button class="bb" style="margin-bottom:0;font-weight:600" id="hist-ver-rec" onclick="verReceitaDoHist()">Ver receita <i class="ti ti-arrow-right"></i></button>
+      </div>
       <div class="fcs">
         <div class="fc fa" onclick="setFH(this,'todos')">Todos</div>
         <div class="fc" onclick="setFH(this,'ok')">Sem desvio</div>
@@ -1049,7 +1056,7 @@ function renderLista(lista) {
     return;
   }
   document.getElementById('lw').innerHTML = lista.length
-    ? lista.map(r=>{const obs=r.STATUS==='OBSOLETA';return `<div class="li${obs?' li-obs':''}" onclick="abrirRec('${r.ID}')"><div class="lic"><i class="ti ti-file-description"></i></div><div class="lb"><div class="lt">${r.CLIENTE} — ${formatarCodPAExibicao(r.COD_PA)}</div><div class="ls">${r.SERVICO} · ${r.MAQUINA}${r.OP_CRIACAO?` · OP ${r.OP_CRIACAO}`:''}</div>${r.ITENS_CONJUGACAO?`<div style="margin-top:4px"><span style="display:inline-flex;align-items:center;gap:4px;background:var(--amber-light);color:var(--amber);font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;border:0.5px solid #E8D5A8"><i class="ti ti-layers-linked" style="font-size:11px"></i> ${r.ITENS_CONJUGACAO}</span></div>`:''}</div><span class="${obs?'bobs':'bok'}">${obs?'<i class="ti ti-archive" style="font-size:10px;vertical-align:-1px"></i> Obsoleta':'Aprovada'}</span></div>`;}).join('')
+    ? lista.map(r=>{const obs=r.STATUS==='OBSOLETA';return `<div class="li${obs?' li-obs':''}" onclick="abrirRec('${r.ID}')"><div class="lic"><i class="ti ti-file-description"></i></div><div class="lb"><div class="lt">${escH(r.CLIENTE)} — ${formatarCodPAExibicao(r.COD_PA)}</div><div class="ls">${escH(r.SERVICO)} · ${escH(r.MAQUINA)}${r.OP_CRIACAO?` · OP ${escH(r.OP_CRIACAO)}`:''}</div>${conjChipHist(r.ITENS_CONJUGACAO)}</div><span class="${obs?'bobs':'bok'}">${obs?'<i class="ti ti-archive" style="font-size:10px;vertical-align:-1px"></i> Obsoleta':'Aprovada'}</span></div>`;}).join('')
     : '<div style="padding:20px 0;text-align:center;font-size:13px;color:var(--text3)">Nenhuma receita encontrada</div>';
 }
 
@@ -1115,7 +1122,7 @@ async function abrirRec(id) {
     }
   }
 
-  document.getElementById('rec-id').innerHTML=`<div class="sl">Identificação</div><div class="hg"><div><div class="fl">Cliente</div><div class="fv fvac">${r.CLIENTE}</div></div><div><div class="fl">Máquina</div><div class="fv">${r.MAQUINA}</div></div><div><div class="fl">Cód. PA</div><div class="fv">${formatarCodPAExibicao(r.COD_PA)}</div></div><div><div class="fl">OP Criação</div><div class="fv">${r.OP_CRIACAO||'—'}</div></div></div><div><div class="fl">Serviço</div><div class="fv" style="font-size:12px;margin-top:2px">${r.SERVICO}</div></div><div style="margin-top:10px;display:flex;gap:8px"><div style="flex:1"><div class="fl">Operador</div><div class="fv" style="font-size:12px">${r.OPERADOR||'—'}</div></div><div style="flex:1"><div class="fl">Aprovador</div><div class="fv" style="font-size:12px">${r.APROVADOR||'—'}</div></div></div>`;
+  document.getElementById('rec-id').innerHTML=`<div class="sl">Identificação</div><div class="hg"><div><div class="fl">Cliente</div><div class="fv fvac">${escH(r.CLIENTE)}</div></div><div><div class="fl">Máquina</div><div class="fv">${escH(r.MAQUINA)}</div></div><div><div class="fl">Cód. PA</div><div class="fv">${formatarCodPAExibicao(r.COD_PA)}</div></div><div><div class="fl">OP Criação</div><div class="fv">${escH(r.OP_CRIACAO||'—')}</div></div></div><div><div class="fl">Serviço</div><div class="fv" style="font-size:12px;margin-top:2px">${escH(r.SERVICO)}</div></div><div style="margin-top:10px;display:flex;gap:8px"><div style="flex:1"><div class="fl">Operador</div><div class="fv" style="font-size:12px">${escH(r.OPERADOR||'—')}</div></div><div style="flex:1"><div class="fl">Aprovador</div><div class="fv" style="font-size:12px">${escH(r.APROVADOR||'—')}</div></div></div>`;
 
   const tintas = Array.isArray(r.tintas) ? r.tintas : (r.tintas ? [r.tintas] : []);
   const p = Array.isArray(r.parametros) ? (r.parametros[0]||{}) : (r.parametros||{});
@@ -1129,7 +1136,7 @@ async function abrirRec(id) {
   }
   const recTintasEl = document.getElementById('rec-tintas');
   recTintasEl.style.display = 'block';
-  recTintasEl.innerHTML=`<div class="sl">Tintas por estação</div>${tintas.filter(t=>t.NOME_COR).map(t=>`<div class="tr2"><div class="nc">${t.ESTACAO}</div><div><div style="font-size:13px;font-weight:600;color:var(--text)">${t.NOME_COR}</div><div style="font-size:11px;color:var(--text3);margin-top:1px">${t.COD_TINTA}${t.ID_CAMISA?' · Camisa: '+t.ID_CAMISA:''}</div><div class="chips"><div class="chip">Visc. <b>${t.VISCOSIDADE} s</b></div><div class="chip">Sec. <b>${formatarSecagem(t.SECAGEM_MIN,t.SECAGEM_SEG)}</b></div></div></div></div>`).join('')}`;
+  recTintasEl.innerHTML=`<div class="sl">Tintas por estação</div>${tintas.filter(t=>t.NOME_COR).map(t=>`<div class="tr2"><div class="nc">${t.ESTACAO}</div><div><div style="font-size:13px;font-weight:600;color:var(--text)">${escH(t.NOME_COR)}</div><div style="font-size:11px;color:var(--text3);margin-top:1px">${escH(t.COD_TINTA)}${t.ID_CAMISA?' · Camisa: '+escH(t.ID_CAMISA):''}</div><div class="chips"><div class="chip">Visc. <b>${t.VISCOSIDADE} s</b></div><div class="chip">Sec. <b>${formatarSecagem(t.SECAGEM_MIN,t.SECAGEM_SEG)}</b></div></div></div></div>`).join('')}`;
 
   document.getElementById('rec-params-box').innerHTML=`<div class="pbox"><div class="pl">Tensão Freio Desbob.</div><div class="pv">${p.TENSAO_FREIO||'—'} <span class="pu">N</span></div></div><div class="pbox"><div class="pl">Pressão Compactador</div><div class="pv">${p.PRESSAO_COMPACTADOR||'—'} <span class="pu">Bar</span></div></div><div class="pbox"><div class="pl">Avanço CR</div><div class="pv">${p.AVANCO_CR||'—'} <span class="pu">N</span></div></div><div class="pbox"><div class="pl">Velocidade</div><div class="pv">${p.VELOCIDADE||'—'} <span class="pu">m/min</span></div></div><div class="pbox"><div class="pl">Taxa de Redução</div><div class="pv">${p.TAXA_REDUCAO||'—'} <span class="pu">%</span></div></div><div class="pbox"><div class="pl">Tensão Rebobinador</div><div class="pv">${p.TENSAO_REBOBINADOR||'—'} <span class="pu">N</span></div></div><div class="pbox"><div class="pl">Avanço</div><div class="pv">${p.AVANCO||'—'} <span class="pu">N</span></div></div><div class="pbox"><div class="pl">Posição Compactador</div><div class="pv" style="font-size:13px">${p.POSICAO_COMPACTADOR||'—'}</div></div><div class="pbox"><div class="pl">Temp. Ambiente</div><div class="pv">${p.TEMP_AMBIENTE||'—'} <span class="pu">°C</span></div></div><div class="pbox"><div class="pl">Temp. Embobinamento</div><div class="pv">${p.TEMP_EMBOBINAMENTO||'—'} <span class="pu">°C</span></div></div><div class="pbox"><div class="pl">Largura do Filme</div><div class="pv">${p.LARGURA_FILME||'—'} <span class="pu">mm</span></div></div><div class="pbox"><div class="pl">Pressão Cil. Borracha</div><div class="pv">${p.PRESSAO_CIL_BORRACHA||'—'}</div></div>${p.MATERIAL?`<div class="pbox" style="grid-column:span 2"><div class="pl">Material</div><div class="pv" style="font-size:13px">${p.MATERIAL}</div></div>`:''}`;
 
@@ -1158,7 +1165,7 @@ async function abrirRec(id) {
   if(obsEl){
     if(r.OBSERVACOES){
       obsEl.style.display='';
-      obsEl.innerHTML=`<div class="sl">Observações técnicas</div>${String(r.OBSERVACOES).split('\n').filter(l=>l.trim()).map(l=>`<div class="oi"><div class="od"></div><div class="ot">${l.trim()}</div></div>`).join('')}`;
+      obsEl.innerHTML=`<div class="sl">Observações técnicas</div>${String(r.OBSERVACOES).split('\n').filter(l=>l.trim()).map(l=>`<div class="oi"><div class="od"></div><div class="ot">${escH(l.trim())}</div></div>`).join('')}`;
     } else {
       obsEl.style.display='none';
     }
@@ -1215,7 +1222,7 @@ function iniciarRepeticao() {
   if (!r) return;
   const n = new Date();
   document.getElementById('rep-dt').textContent = n.toLocaleDateString('pt-BR')+' · '+n.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
-  document.getElementById('rep-id-grid').innerHTML=`<div><div class="fl">Cliente</div><div class="fv fvac">${r.CLIENTE}</div></div><div><div class="fl">Cód. PA</div><div class="fv">${formatarCodPAExibicao(r.COD_PA)}</div></div><div><div class="fl">Máquina</div><div class="fv">${r.MAQUINA}</div></div>`;
+  document.getElementById('rep-id-grid').innerHTML=`<div><div class="fl">Cliente</div><div class="fv fvac">${escH(r.CLIENTE)}</div></div><div><div class="fl">Cód. PA</div><div class="fv">${formatarCodPAExibicao(r.COD_PA)}</div></div><div><div class="fl">Máquina</div><div class="fv">${escH(r.MAQUINA)}</div></div>`;
   document.getElementById('rpctx').textContent=`${r.CLIENTE} · ${formatarCodPAExibicao(r.COD_PA)}`;
 
   document.getElementById('rep-conj-sel-wrap').style.display = 'none';
@@ -1771,7 +1778,7 @@ let histReceita=null;
 
 function renderHistSel(lista){
   document.getElementById('hist-sel-list').innerHTML=lista.length
-    ?lista.map(r=>`<div class="li" onclick="abrirHistorico('${r.ID}')"><div class="lic"><i class="ti ti-history"></i></div><div class="lb"><div class="lt">${r.CLIENTE} — ${formatarCodPAExibicao(r.COD_PA)}</div><div class="ls">${r.SERVICO} · ${r.MAQUINA}${r.OP_CRIACAO?` · OP ${r.OP_CRIACAO}`:''}</div>${r.ITENS_CONJUGACAO?`<div style="margin-top:4px"><span style="display:inline-flex;align-items:center;gap:4px;background:var(--amber-light);color:var(--amber);font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;border:0.5px solid #E8D5A8"><i class="ti ti-layers-linked" style="font-size:11px"></i> ${r.ITENS_CONJUGACAO}</span></div>`:''}</div></div>`).join('')
+    ?lista.map(r=>`<div class="li" onclick="abrirHistorico('${r.ID}')"><div class="lic"><i class="ti ti-history"></i></div><div class="lb"><div class="lt">${escH(r.CLIENTE)} — ${formatarCodPAExibicao(r.COD_PA)}</div><div class="ls">${escH(r.SERVICO)} · ${escH(r.MAQUINA)}${r.OP_CRIACAO?` · OP ${escH(r.OP_CRIACAO)}`:''}</div>${conjChipHist(r.ITENS_CONJUGACAO)}</div></div>`).join('')
     :'<div style="padding:20px 0;text-align:center;font-size:13px;color:var(--text3)">Nenhuma receita encontrada</div>';
 }
 
@@ -1788,9 +1795,11 @@ async function abrirHistorico(id){
   document.getElementById('tpp').style.display='none';
   document.getElementById('sbw').innerHTML='';
   mostrarTela('s-hist-det');
+  histReceita=null;document.getElementById('hist-ver-rec').style.visibility='hidden';
   document.getElementById('hres').innerHTML='<div style="padding:40px 0;text-align:center"><div class="spinner"></div></div>';
   try{
     histReceita=await apiGet('getHistoricoReceita',`&id=${id}`);
+    document.getElementById('hist-ver-rec').style.visibility='';
     document.getElementById('tps').textContent=`${histReceita.CLIENTE} · ${formatarCodPAExibicao(histReceita.COD_PA)}`;
     filtroH='todos';
     document.querySelectorAll('#s-hist-det .fc').forEach((c,i)=>c.classList.toggle('fa',i===0));
@@ -1992,33 +2001,49 @@ function montarImpressao(r){
   document.getElementById('print-area').innerHTML=html;
 }
 
+function verReceitaDoHist(){
+  const id=histReceita&&histReceita.ID;
+  if(!id||!receitas.find(x=>mesmoId(x.ID,id)))return;
+  adminDesbloqueado=false;
+  document.querySelectorAll('.tab-item').forEach(x=>x.classList.remove('ta'));document.getElementById('tab-r')?.classList.add('ta');
+  abrirRec(String(id)); // receita obsoleta cai no fluxo de PIN admin normalmente
+}
+function conjChipHist(itens){return itens?`<div style="margin-top:4px"><span style="display:inline-flex;align-items:center;gap:4px;background:var(--amber-light);color:var(--amber);font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;border:0.5px solid #E8D5A8"><i class="ti ti-layers-linked" style="font-size:11px"></i> ${escH(itens)}</span></div>`:''}
 function renderH(){
   if(!histReceita)return;
-  let versoes=histReceita.versoes||[];
-  if(filtroH==='ok')versoes=versoes.map(v=>({...v,reps:(v.reps||[]).filter(rep=>!(rep.TEM_DESVIO===true||rep.TEM_DESVIO==='TRUE'))})).filter(v=>v.reps.length>0);
-  if(filtroH==='desvio')versoes=versoes.map(v=>({...v,reps:(v.reps||[]).filter(rep=>rep.TEM_DESVIO===true||rep.TEM_DESVIO==='TRUE')})).filter(v=>v.reps.length>0);
+  const r=histReceita,ehDv=rep=>rep.TEM_DESVIO===true||rep.TEM_DESVIO==='TRUE';
+  let versoes=JSON.parse(JSON.stringify(histReceita.versoes||[]));
+  if(filtroH==='ok')versoes=versoes.map(v=>({...v,reps:(v.reps||[]).filter(rep=>!ehDv(rep))})).filter(v=>v.reps.length>0);
+  if(filtroH==='desvio')versoes=versoes.map(v=>({...v,reps:(v.reps||[]).filter(ehDv)})).filter(v=>v.reps.length>0);
+  const totalReps=(histReceita.versoes||[]).reduce((n,v)=>n+(v.reps||[]).length,0);
   const wrap=document.getElementById('hres');
-  if(!versoes.length){wrap.innerHTML='<div class="card" style="text-align:center;font-size:13px;color:var(--text3);padding:20px">Nenhuma repetição encontrada</div>';return;}
-  wrap.innerHTML=versoes.map((v,vi)=>`
+  const cab=`<div style="background:var(--blue-light);border:0.5px solid var(--border);border-radius:var(--rad-lg) var(--rad-lg) 0 0;padding:10px 14px;display:flex;justify-content:space-between;align-items:flex-start;gap:10px"><div style="min-width:0"><div style="font-size:13px;font-weight:700;color:var(--blue)">${escH(r.CLIENTE)} — ${formatarCodPAExibicao(r.COD_PA)}</div>${r.SERVICO?`<div style="font-size:12px;font-weight:600;color:var(--text);margin-top:3px">${escH(r.SERVICO)}</div>`:''}<div style="font-size:11px;color:var(--blue);opacity:.7;margin-top:2px">${escH(r.MAQUINA||'')}${r.STATUS==='OBSOLETA'?' · <b>Obsoleta</b>':''}</div>${conjChipHist(r.ITENS_CONJUGACAO)}</div><span style="font-size:11px;color:var(--blue);font-weight:600;white-space:nowrap;flex-shrink:0">${totalReps} rep.</span></div>`;
+  if(!versoes.length){wrap.innerHTML=`<div style="margin-bottom:14px">${cab}<div class="card" style="border-radius:0 0 var(--rad-lg) var(--rad-lg);text-align:center;font-size:13px;color:var(--text3);padding:20px">Nenhuma repetição encontrada</div></div>`;return;}
+  wrap.innerHTML=`<div style="margin-bottom:14px">${cab}${versoes.map((v,vi)=>{const isV=v.ATIVA===true||v.ATIVA==='TRUE',cls=isV?'vigente':'obsoleta',n=parseInt(v.NUMERO_VERSAO)||1;return`
     <div>
-      <div class="ver-hdr-block ${v.ATIVA===true||v.ATIVA==='TRUE'?'vigente':'obsoleta'}" style="${vi===0?'':'border-radius:0'}">
-        <div class="ver-hdr-lbl"><i class="ti ti-${v.ATIVA===true||v.ATIVA==='TRUE'?'check-circle':'history'}"></i>v${v.NUMERO_VERSAO} · ${v.ATIVA===true||v.ATIVA==='TRUE'?'Receita vigente':'Receita anterior'}</div>
+      <div class="ver-hdr-block ${cls}" style="border-radius:0">
+        <div style="min-width:0">
+          <div class="ver-hdr-lbl"><i class="ti ti-${isV?'check-circle':'history'}"></i>v${v.NUMERO_VERSAO} · ${isV?'Receita vigente':'Receita anterior'}</div>
+          <div class="ver-hdr-op">${n<=1?`OP de criação: ${escH(r.OP_CRIACAO||'—')}`:`OP de origem: ${escH(v.OP_ORIGEM||'—')}`}</div>
+          ${(v.ALTERACOES||[]).map(a=>`<div class="ver-hdr-alt">• ${escH(a.PARAMETRO)}: ${escH(a.DE||'—')} → ${escH(a.PARA||'—')}</div>`).join('')}
+          ${v.REJEITADAS?`<div class="ver-hdr-alt" style="opacity:.75">${v.REJEITADAS} alteração(ões) rejeitada(s) na mesma decisão</div>`:''}
+        </div>
         <div class="ver-hdr-right">
-          <span class="ver-hdr-date">${v.DATA_CRIACAO||'—'}</span>
-          <span class="ver-aprov">Aprov. 1: ${v.APROVADOR_1||'—'}${v.APROVADOR_2?' · Aprov. 2: '+v.APROVADOR_2:''}</span>
+          <span class="ver-hdr-date">${fmtDataHist(v.DATA_CRIACAO)}</span>
+          <span class="ver-aprov">Aprov. 1: ${escH(v.APROVADOR_1||'—')}</span>${v.APROVADOR_2?`<span class="ver-aprov">Aprov. 2: ${escH(v.APROVADOR_2)}</span>`:''}
         </div>
       </div>
       <div class="ver-body-block" style="${vi<versoes.length-1?'border-radius:0':''}">
-        ${(v.reps||[]).length===0?`<div style="padding:10px 14px;font-size:12px;color:var(--text3);background:var(--${v.ATIVA===true||v.ATIVA==='TRUE'?'card':'bg'})">Nenhuma repetição.</div>`:(v.reps||[]).map(rep=>`
-          <div class="rep-item-hist ${v.ATIVA===true||v.ATIVA==='TRUE'?'vigente':'obsoleta'}">
+        ${(v.reps||[]).length===0?`<div style="padding:10px 14px;font-size:12px;color:var(--text3);background:var(--${isV?'card':'bg'})">Nenhuma repetição.</div>`:(v.reps||[]).map(rep=>`
+          <div class="rep-item-hist ${cls}">
             <div style="flex:1">
-              <div class="rep-num-h">OP ${rep.OP_PRODUCAO||'—'}</div>
-              <div class="rep-meta-h">${rep.OPERADOR||'—'} · ${rep.DATA_HORA||'—'} · Aprov: ${rep.APROVADOR||'—'}</div>
+              <div class="rep-num-h">OP ${escH(rep.OP_PRODUCAO||'—')}</div>
+              <div class="rep-meta-h">${escH(rep.OPERADOR||'—')} · ${fmtDataHist(rep.DATA_HORA)} · Aprov: ${escH(rep.APROVADOR||'—')}</div>
             </div>
-            <span class="rep-pill-h ${rep.TEM_DESVIO===true||rep.TEM_DESVIO==='TRUE'?'pill-dv':'pill-ok'}">${rep.TEM_DESVIO===true||rep.TEM_DESVIO==='TRUE'?'Com desvio':'Sem desvio'}</span>
+            <span class="rep-pill-h ${ehDv(rep)?'pill-dv':'pill-ok'}">${ehDv(rep)?'Com desvio':'Sem desvio'}</span>
           </div>`).join('')}
       </div>
-    </div>`).join('');
+    </div>`}).join('')}</div>`;
 }
 
 function setFH(el,t){document.querySelectorAll('#s-hist-det .fc').forEach(c=>c.classList.remove('fa'));el.classList.add('fa');filtroH=t;renderH();}
