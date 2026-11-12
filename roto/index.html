@@ -321,12 +321,7 @@ textarea{resize:none;line-height:1.5;width:100%}
   .pr-hot b{font-weight:700}
   .pr-hot-on{background:#FCEBEB;border-color:#C89A9A;color:#A32D2D}
   .pr-hot-off{background:#F2F2F2;color:#888}
-  .pr-rep{border:0.75px solid #999;border-radius:4px;padding:5px 8px;margin-bottom:5px;page-break-inside:avoid}
-  .pr-rep-top{display:flex;justify-content:space-between;font-size:11px}
-  .pr-rep-op{font-weight:700}
-  .pr-rep-meta{font-size:9px;color:#555;margin-top:2px}
-  .pr-rep-dv{font-size:9px;color:#A32D2D;margin-top:3px;line-height:1.4}
-  .pr-ver{font-size:11px;font-weight:700;background:#EEE;padding:3px 8px;border-radius:3px;margin:9px 0 6px}
+  .pr-alerta{border:1.5px solid #B00;color:#B00;border-radius:4px;padding:5px 8px;font-size:10px;margin:0 0 10px;font-weight:600}
   .pr-foot{margin-top:16px;padding-top:8px;border-top:0.75px solid #999;font-size:9px;color:#666;display:flex;justify-content:space-between}
   .pr-pill{display:inline-block;font-size:8.5px;padding:1px 6px;border-radius:8px;border:0.75px solid #999}
   .pr-pill-dv{background:#FBEAEA;border-color:#C89A9A;color:#A32D2D}
@@ -395,6 +390,8 @@ textarea{resize:none;line-height:1.5;width:100%}
       <div class="card"><div class="pin-w">
         <div class="pin-t" id="admin-pin-t">Acesso administrativo</div>
         <div class="pin-s" id="admin-pin-s">Digite o PIN de um administrador autorizado.</div>
+        <div class="pin-cx"><div class="pcl">Receita</div><div class="pcv" id="admin-pin-ctx">—</div></div>
+        <div id="admin-motivo-wrap" style="display:none;width:100%;text-align:left;margin-bottom:14px"><div class="fdl" id="admin-motivo-lbl">Motivo <span>*</span></div><textarea id="admin-motivo" rows="3" maxlength="300" style="width:100%"></textarea></div>
         <div class="pin-ds"><div class="pin-d" id="apd0"></div><div class="pin-d" id="apd1"></div><div class="pin-d" id="apd2"></div><div class="pin-d" id="apd3"></div></div>
         <div class="pin-g">
           <button class="pib" onclick="pinAdmin('1')">1</button><button class="pib" onclick="pinAdmin('2')">2</button><button class="pib" onclick="pinAdmin('3')">3</button>
@@ -845,6 +842,10 @@ let adminDesbloqueado=false;
 let pinBufAdmin='', adminAcao='', adminAlvoId='';
 const paramRefs={}, compRefs={};
 
+// "dd/mm/aaaa, HH:MM:SS" → "dd/mm/aaaa às HH:MM"
+function fmtDataHist(s){const m=String(s||'').match(/(\d{1,2})\/(\d{1,2})\/(\d{4})\D+(\d{1,2}):(\d{2})/);if(!m)return s||'—';const p=x=>String(x).padStart(2,'0');return`${p(m[1])}/${p(m[2])}/${m[3]} às ${p(m[4])}:${m[5]}`}
+// Último registro de STATUS_RECEITA com o status pedido (motivo/autor/data)
+function ultimoStatus(r,status){return (Array.isArray(r?.historicoStatus)?r.historicoStatus:[]).filter(h=>h.STATUS===status).slice(-1)[0]||null}
 // Escapa texto vindo da planilha antes de entrar no HTML
 function escH(v){return String(v===null||v===undefined?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 // Normaliza IDs vindos da planilha (podem ter apostrofo, espaco ou vir como numero)
@@ -1179,7 +1180,7 @@ async function abrirRec(id) {
   if (ehObsoleta) {
     // Banner de aviso no topo dos botões
     banner.style.display = 'block';
-    banner.innerHTML = `<div style="background:#F2F2F2;border:0.5px solid #D8D8D8;border-radius:var(--rad);padding:10px 12px;margin-bottom:8px;display:flex;align-items:center;gap:8px"><i class="ti ti-archive" style="font-size:18px;color:#8A8A8A"></i><div style="flex:1"><div style="font-size:12px;font-weight:600;color:#6A6A6A">Receita obsoleta</div><div style="font-size:11px;color:#8A8A8A;margin-top:1px">Não disponível para produção. Visível apenas para administradores.</div></div></div>`;
+    banner.innerHTML = `<div style="background:#F2F2F2;border:0.5px solid #D8D8D8;border-radius:var(--rad);padding:10px 12px;margin-bottom:8px;display:flex;align-items:center;gap:8px"><i class="ti ti-archive" style="font-size:18px;color:#8A8A8A"></i><div style="flex:1"><div style="font-size:12px;font-weight:600;color:#6A6A6A">Receita obsoleta</div><div style="font-size:11px;color:#8A8A8A;margin-top:1px">Não disponível para produção. Visível apenas para administradores.</div>${(()=>{const ult=ultimoStatus(r,'OBSOLETA');return ult?`<div style="font-size:11px;color:#6A6A6A;margin-top:5px;line-height:1.5"><b>Motivo:</b> ${escH(ult.MOTIVO||'—')}<br>Obsoletada por <b>${escH(ult.AUTOR||'—')}</b> em ${fmtDataHist(ult.DATA_HORA)}</div>`:`<div style="font-size:11px;color:#8A8A8A;margin-top:5px">Obsoletada antes do registro de motivo.</div>`})()}</div></div>`;
     // Sem registrar repetição
     btnRep.style.display = 'none';
     // Card admin: reativar
@@ -1192,7 +1193,9 @@ async function abrirRec(id) {
   }
 
   document.getElementById('sbw').innerHTML='';
-  document.getElementById('tpp').style.display='';
+  const tppEl=document.getElementById('tpp');tppEl.style.display='';
+  if(ehObsoleta){tppEl.style.background='#EFEFEF';tppEl.style.color='#8A8A8A';tppEl.innerHTML='<i class="ti ti-archive" style="font-size:10px"></i>Obsoleta';}
+  else{tppEl.style.background='';tppEl.style.color='';tppEl.innerHTML='<div class="spd"></div>Aprovada';}
   navegarTela('s-rec');
 }
 
@@ -1483,13 +1486,13 @@ async function pinNovaReceita(v){
   if(v==='ok'){
     if(pinBufN.length<4){err.textContent='Digite os 4 dígitos';return;}
     const pin=pinBufN;
-    salvando=true;mostrarLoading('Validando PIN...');
+    salvando=true;
     try{
-      const res=await apiPost({action:'validarPin',pin});
-      if(!res.valido){ocultarLoading();salvando=false;err.textContent='PIN incorreto. Tente novamente.';pinBufN='';atualizarDotsNovaReceita();return;}
-      err.textContent='';pinBufN='';atualizarDotsNovaReceita();
-      await salvarNovaReceita(res.nome);
-    }catch(e){ocultarLoading();err.textContent='Erro: '+e.message;pinBufN='';atualizarDotsNovaReceita();}
+      err.textContent='';
+      // O PIN vai junto com o salvamento: o servidor valida e identifica o aprovador (uma chamada só)
+      await salvarNovaReceita(pin);
+    }catch(e){ocultarLoading();err.textContent='Erro: '+e.message;}
+    pinBufN='';atualizarDotsNovaReceita();
     salvando=false;
     return;
   }
@@ -1497,7 +1500,7 @@ async function pinNovaReceita(v){
   atualizarDotsNovaReceita();
 }
 
-async function salvarNovaReceita(aprovador) {
+async function salvarNovaReceita(pin) {
   mostrarLoading('Salvando receita...');
   const cli=document.getElementById('n-cli').value,cod=document.getElementById('n-cod').value;
   const conjVal=document.getElementById('n-conj')?.value||'NAO';
@@ -1524,13 +1527,14 @@ async function salvarNovaReceita(aprovador) {
   const parametros={tensaoFreio:normalizarDecimal(npv('p0')),pressaoCompactador:normalizarDecimal(npv('p1')),avancoCR:normalizarDecimal(npv('p2')),velocidade:normalizarDecimal(npv('p3')),taxaReducao:normalizarDecimal(npv('p4')),tensaoRebobinador:normalizarDecimal(npv('p5')),avanco:normalizarDecimal(npv('p6')),posicaoCompactador:npv('p7'),tempAmbiente:normalizarDecimal(npv('p8')),tempEmbobinamento:normalizarDecimal(npv('p11')),larguraFilme:normalizarDecimal(npv('p9')),pressaoCilBorracha:normalizarDecimal(npv('p10')),material:document.getElementById('n-material')?.value||''};
   try {
     const obsVal=document.getElementById('n-obs')?.value||'';
-    await apiPost({action:'salvarReceita',receita:{cliente:cli,codPA:cod,opCriacao:document.getElementById('n-op').value,servico:document.getElementById('n-serv').value,processo:'Rotogravura',maquina:document.getElementById('n-maq').value,operador:document.getElementById('n-oper').value,observacoes:obsVal,conjugacao:conjVal,itensConjugacao:conjItens},tintas,parametros,aprovador});
+    const resSalvar=await apiPost({action:'salvarReceita',receita:{cliente:cli,codPA:cod,opCriacao:document.getElementById('n-op').value,servico:document.getElementById('n-serv').value,processo:'Rotogravura',maquina:document.getElementById('n-maq').value,operador:document.getElementById('n-oper').value,observacoes:obsVal,conjugacao:conjVal,itensConjugacao:conjItens},tintas,parametros,pin});
+    const aprovador=resSalvar?.aprovador||'—';
     await carregarReceitas();
     ocultarLoading();
     mostrarSucesso('Receita aprovada e salva!',`${cli} · ${cod} está disponível para os operadores.`,[{l:'Produto',v:`${cli} · ${cod}`},{l:'Aprovador',v:aprovador},{l:'Status',v:'Aprovada'}],false,'s-lista');
   } catch(e){
     ocultarLoading();
-    document.getElementById('pne').textContent='Erro ao salvar: '+e.message;
+    document.getElementById('pne').textContent=e.message.includes('PIN inválido')?'PIN incorreto. Tente novamente.':'Erro ao salvar: '+e.message;
   }
 }
 
@@ -1543,13 +1547,12 @@ async function pinRepeticao(v){
   if(v==='ok'){
     if(pinBufR.length<4){err.textContent='Digite os 4 dígitos';return;}
     const pin=pinBufR;
-    salvando=true;mostrarLoading('Validando PIN...');
+    salvando=true;
     try{
-      const res=await apiPost({action:'validarPin',pin});
-      if(!res.valido){ocultarLoading();salvando=false;err.textContent='PIN incorreto. Tente novamente.';pinBufR='';atualizarDotsRepeticao();return;}
-      err.textContent='';pinBufR='';atualizarDotsRepeticao();
-      await salvarRepeticao(res.nome);
-    }catch(e){ocultarLoading();err.textContent='Erro: '+e.message;pinBufR='';atualizarDotsRepeticao();}
+      err.textContent='';
+      await salvarRepeticao(pin); // PIN validado no servidor junto com o salvamento
+    }catch(e){ocultarLoading();err.textContent='Erro: '+e.message;}
+    pinBufR='';atualizarDotsRepeticao();
     salvando=false;
     return;
   }
@@ -1557,7 +1560,7 @@ async function pinRepeticao(v){
   atualizarDotsRepeticao();
 }
 
-async function salvarRepeticao(aprovador) {
+async function salvarRepeticao(pin) {
   mostrarLoading('Salvando repetição...');
   const r=receitas.find(x=>mesmoId(x.ID,recIdx));
   if(!r)return;
@@ -1593,7 +1596,8 @@ async function salvarRepeticao(aprovador) {
     });
     const complementos=Object.values(compPorEstacao);
     const matRep=document.getElementById('rep-material')?.value||'';
-    await apiPost({action:'salvarRepeticao',idReceita:recIdx,opProducao:op,operador:oper,aprovador,temDesvio:dvs.length>0,desvios,pendencias:pends,complementos,material:matRep});
+    const resRep=await apiPost({action:'salvarRepeticao',idReceita:recIdx,opProducao:op,operador:oper,pin,temDesvio:dvs.length>0,desvios,pendencias:pends,complementos,material:matRep});
+    const aprovador=resRep?.aprovador||'—';
     if(altCnt>0)await carregarPendencias();
     await carregarReceitas();
     const rows=[{l:'Cód. PA',v:r.COD_PA},{l:'OP',v:op},{l:'Operador',v:oper},{l:'Aprovador',v:aprovador}];
@@ -1604,7 +1608,7 @@ async function salvarRepeticao(aprovador) {
     mostrarSucesso('Repetição salva!',altCnt>0?`${altCnt} alteração(ões) aguardando aprovação.`:'Todos os parâmetros registrados.',rows,dvs.length-altCnt>0,'s-lista');
   } catch(e){
     ocultarLoading();
-    document.getElementById('pre2').textContent='Erro ao salvar: '+e.message;
+    document.getElementById('pre2').textContent=e.message.includes('PIN inválido')?'PIN incorreto. Tente novamente.':'Erro ao salvar: '+e.message;
   }
 }
 
@@ -1802,9 +1806,16 @@ function abrirAdminPin(acao, id){
   adminAcao=acao; adminAlvoId=id; pinBufAdmin=''; atualizarDotsAdmin();
   document.getElementById('admin-pin-err').textContent='';
   const t=document.getElementById('admin-pin-t'), s=document.getElementById('admin-pin-s');
-  if(acao==='obsoletar'){t.textContent='Obsoletar receita';s.textContent='PIN de administrador. A receita sairá da produção.';}
-  else if(acao==='reativar'){t.textContent='Reativar receita';s.textContent='PIN de administrador para voltar à produção.';}
+  if(acao==='obsoletar'){t.textContent='Obsoletar receita';s.textContent='Informe o motivo e o PIN de administrador. A receita sairá da produção.';}
+  else if(acao==='reativar'){t.textContent='Reativar receita';s.textContent='Informe o motivo e o PIN de administrador para voltar à produção.';}
   else{t.textContent='Acesso administrativo';s.textContent='Esta receita está obsoleta. Digite o PIN de admin para visualizá-la.';}
+  const rAdm=receitas.find(x=>mesmoId(x.ID,id));
+  document.getElementById('admin-pin-ctx').textContent=rAdm?`${rAdm.CLIENTE} · ${formatarCodPAExibicao(rAdm.COD_PA)}`:'—';
+  // Motivo obrigatório para obsoletar e reativar (campo sem texto de exemplo)
+  const mw=document.getElementById('admin-motivo-wrap'),mt=document.getElementById('admin-motivo'),ml=document.getElementById('admin-motivo-lbl');
+  const pedeMotivo=acao==='obsoletar'||acao==='reativar';
+  mw.style.display=pedeMotivo?'block':'none';mt.value='';mt.placeholder='';
+  ml.innerHTML=(acao==='obsoletar'?'Motivo da obsolescência':'Motivo da reativação')+' <span>*</span>';
   document.getElementById('tpt').textContent='Acesso administrativo';
   document.getElementById('tps').textContent='Somente administradores autorizados';
   document.getElementById('tpp').style.display='none';
@@ -1848,24 +1859,26 @@ async function pinAdmin(v){
         return;
       }
 
-      // Obsoletar / reativar: UMA única chamada.
-      // O backend revalida o PIN e a permissão internamente.
+      // Obsoletar / reativar: UMA única chamada, com motivo obrigatório.
+      // O backend revalida o PIN e a permissão e registra em STATUS_RECEITA.
       const novoStatus=adminAcao==='obsoletar'?'OBSOLETA':'ATIVA';
+      const motivo=document.getElementById('admin-motivo').value.trim();
+      if(motivo.length<5){salvando=false;err.textContent='Informe o motivo (mínimo de 5 caracteres).';return;}
       mostrarLoading(novoStatus==='OBSOLETA'?'Obsoletando...':'Reativando...');
-      const res=await apiPost({action:'alterarStatusReceita',idReceita:adminAlvoId,novoStatus,pin});
+      const res=await apiPost({action:'alterarStatusReceita',idReceita:adminAlvoId,novoStatus,pin,motivoStatus:motivo});
 
       const idx=receitas.findIndex(x=>mesmoId(x.ID,adminAlvoId));
-      if(idx>=0)receitas[idx].STATUS=novoStatus;
+      if(idx>=0){receitas[idx].STATUS=novoStatus;receitas[idx]._detalhesCarregados=false;} // força recarga: traz o motivo novo
       ocultarLoading();salvando=false;
       pinBufAdmin='';atualizarDotsAdmin();
       adminDesbloqueado=false;
       renderLista(filtrarPorMaquina(receitas));
-      const msg=novoStatus==='OBSOLETA'?'Receita obsoletada com sucesso.':'Receita reativada com sucesso.';
-      mostrarSucesso(novoStatus==='OBSOLETA'?'Receita obsoletada':'Receita reativada',msg,[{l:'Receita',v:`${receitas[idx]?.CLIENTE||''} · ${formatarCodPAExibicao(receitas[idx]?.COD_PA)}`},{l:'Admin',v:res.aprovador||'—'},{l:'Novo status',v:novoStatus}],false,'s-lista');
+      const msg=res.repetido?'A receita já estava neste status; nada foi alterado.':(novoStatus==='OBSOLETA'?'A receita foi marcada como obsoleta.':'A receita está ativa novamente.');
+      mostrarSucesso(novoStatus==='OBSOLETA'?'Receita obsoletada':'Receita reativada',msg,[{l:'Receita',v:`${receitas[idx]?.CLIENTE||''} · ${formatarCodPAExibicao(receitas[idx]?.COD_PA)}`},{l:'Responsável',v:res.aprovador||'—'},{l:'Motivo',v:motivo},{l:'Novo status',v:novoStatus==='OBSOLETA'?'Obsoleta':'Ativa'}],false,'s-lista');
     }catch(e){
       ocultarLoading();salvando=false;
       // Mensagem de permissão vem do backend como erro
-      err.textContent=e.message.includes('permissão')?'Sem permissão para esta ação':e.message.includes('PIN')?'PIN inválido':'Erro: '+e.message;
+      err.textContent=e.message.includes('permissão')?'Sem permissão para esta ação':e.message.includes('PIN inválido')?'PIN inválido':e.message;
       pinBufAdmin='';atualizarDotsAdmin();
     }
     return;
@@ -1889,10 +1902,7 @@ async function imprimirReceita(id){
       if(idx>=0)receitas[idx]=detalhe;
       r=detalhe;
     }
-    // Carrega histórico
-    let hist=null;
-    try{hist=await apiGet('getHistoricoReceita',`&id=${id}`);}catch(e){hist=null;}
-    montarImpressao(r,hist);
+    montarImpressao(r);
     ocultarLoading();
     // Pequeno atraso para o DOM renderizar antes do print
     setTimeout(()=>window.print(),150);
@@ -1902,7 +1912,7 @@ async function imprimirReceita(id){
   }
 }
 
-function montarImpressao(r,hist){
+function montarImpressao(r){
   const tintas=(Array.isArray(r.tintas)?r.tintas:[]).slice().sort((a,b)=>parseInt(a.ESTACAO)-parseInt(b.ESTACAO));
   const comTinta=tintas.filter(t=>t.NOME_COR);
   const p=r.parametros||{};
@@ -1911,6 +1921,10 @@ function montarImpressao(r,hist){
   // Identificação
   let html=`<div class="pr-h1">${r.CLIENTE||''} — ${formatarCodPAExibicao(r.COD_PA)}</div>`;
   html+=`<div class="pr-sub">${r.SERVICO||''} · ${r.MAQUINA||''} · Rotogravura</div>`;
+  if(r.STATUS==='OBSOLETA'){
+    const ult=ultimoStatus(r,'OBSOLETA');
+    html+=`<div class="pr-alerta"><b>RECEITA OBSOLETA</b> — não usar para produção.${ult?` Motivo: ${escH(ult.MOTIVO||'—')} · Por ${escH(ult.AUTOR||'—')} em ${fmtDataHist(ult.DATA_HORA)}`:''}</div>`;
+  }
 
   if(r.ITENS_CONJUGACAO){
     html+=`<div class="pr-conj"><div class="pr-conj-l">Conjugação</div><div class="pr-conj-v">${r.ITENS_CONJUGACAO}</div></div>`;
@@ -1971,25 +1985,6 @@ function montarImpressao(r,hist){
       html+=`<tr><td>${t.ESTACAO}</td><td>${t.NOME_COR||'(sem tinta)'}</td><td>${t.PRESSAO_ROLO||'—'}</td><td>${t.PRESSAO_FACA||'—'}</td><td>${t.TEMP_ESTUFA||'—'}</td></tr>`;
     });
     html+=`</tbody></table>`;
-  }
-
-  // Histórico de repetições
-  if(hist&&Array.isArray(hist.versoes)&&hist.versoes.length){
-    html+=`<div class="pr-sec">Histórico de repetições</div>`;
-    hist.versoes.forEach(v=>{
-      const vigente=v.ATIVA===true||v.ATIVA==='TRUE';
-      html+=`<div class="pr-ver">v${v.NUMERO_VERSAO} · ${vigente?'Vigente':'Anterior'} · ${v.DATA_CRIACAO||'—'} · Aprov. 1: ${v.APROVADOR_1||'—'}${v.APROVADOR_2?' · Aprov. 2: '+v.APROVADOR_2:''}</div>`;
-      const reps=v.reps||[];
-      if(reps.length===0){html+=`<div style="font-size:10px;color:#777;margin-bottom:6px">Nenhuma repetição.</div>`;return;}
-      reps.forEach(rep=>{
-        const temDv=rep.TEM_DESVIO===true||rep.TEM_DESVIO==='TRUE';
-        html+=`<div class="pr-rep"><div class="pr-rep-top"><span class="pr-rep-op">OP ${rep.OP_PRODUCAO||'—'}</span><span class="pr-pill ${temDv?'pr-pill-dv':'pr-pill-ok'}">${temDv?'Com desvio':'Sem desvio'}</span></div><div class="pr-rep-meta">${rep.OPERADOR||'—'} · ${rep.DATA_HORA||'—'} · Aprov: ${rep.APROVADOR||'—'}${rep.MATERIAL?' · Material: '+rep.MATERIAL:''}</div>`;
-        if(temDv&&Array.isArray(rep.desvios)&&rep.desvios.length){
-          html+=`<div class="pr-rep-dv">`+rep.desvios.map(d=>`• ${d.PARAMETRO}: ${d.VALOR_RECEITA} → ${d.VALOR_REAL}${d.JUSTIFICATIVA?' ('+d.JUSTIFICATIVA+')':''}`).join('<br>')+`</div>`;
-        }
-        html+=`</div>`;
-      });
-    });
   }
 
   html+=`<div class="pr-foot"><span>Finepack · Sistema de Receitas — Rotogravura</span><span>Impresso em ${agora}</span></div>`;
@@ -2265,7 +2260,7 @@ function mostrarSucesso(t,s,rows,w,dest){
   document.getElementById('suc-ic').style.background=w?'var(--amber-light)':'var(--green-light)';
   document.getElementById('suc-ic').innerHTML=w?`<i class="ti ti-alert-triangle" style="font-size:28px;color:var(--amber)"></i>`:`<i class="ti ti-check" style="font-size:30px;color:var(--green)"></i>`;
   document.getElementById('suc-t').textContent=t;document.getElementById('suc-s').textContent=s;
-  document.getElementById('suc-tr').innerHTML=rows.map(r=>`<div class="trr"><span class="trl">${r.l}</span><span class="trv" style="color:${r.b?'var(--blue)':'var(--text)'}">${r.v}</span></div>`).join('');
+  document.getElementById('suc-tr').innerHTML=rows.map(r=>`<div class="trr"><span class="trl">${r.l}</span><span class="trv" style="color:${r.b?'var(--blue)':'var(--text)'}">${escH(r.v)}</span></div>`).join('');
   document.getElementById('suc-btn').onclick=()=>{navegarTela(dest||'s-lista');resetState();};
   navegarTela('s-suc');
 }
