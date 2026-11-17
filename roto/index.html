@@ -1068,19 +1068,26 @@ function renderLista(lista) {
     : '<div style="padding:20px 0;text-align:center;font-size:13px;color:var(--text3)">Nenhuma receita encontrada</div>';
 }
 
+// Texto de busca de uma receita. Todo campo passa por String(): a planilha devolve
+// número quando a célula é numérica (ex.: cliente "3", serviço "4500"), e um único
+// campo numérico com .toLowerCase() derrubava a busca inteira.
+function semAcento(v){return String(v==null?'':v).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')}
+function textoBusca(r){
+  if(!r)return'';
+  return [r.CLIENTE,r.SERVICO,r.COD_PA,formatarCodPAExibicao(r.COD_PA),r.OP_CRIACAO,r.OPS_REP,r.ITENS_CONJUGACAO].map(semAcento).join(' ');
+}
+function casaBusca(r,q){
+  const txt=textoBusca(r);
+  if(txt.includes(q))return true;
+  // Cód. PA digitado com ou sem pontos: compara só os dígitos
+  const qd=q.replace(/\D/g,'');
+  return qd.length>=3&&qd===q.replace(/[.\s-]/g,'')&&String(r.COD_PA==null?'':r.COD_PA).replace(/\D/g,'').includes(qd);
+}
 function filtrarReceitas() {
-  const q = document.getElementById('si').value.toLowerCase().trim();
+  const q = semAcento(document.getElementById('si').value).trim();
   const base = filtrarPorMaquina(receitas);
   if(!q){renderLista(base);return;}
-  renderLista(base.filter(r=>{
-    const cli=(r.CLIENTE||'').toLowerCase();
-    const cod=formatarCodPAExibicao(r.COD_PA).toLowerCase();
-    const cod2=String(r.COD_PA||'').toLowerCase();
-    const serv=(r.SERVICO||'').toLowerCase();
-    const op=String(r.OP_CRIACAO||'').toLowerCase();
-    const opsRep=String(r.OPS_REP||'').toLowerCase(); // OPs das repetições já registradas
-    return cli.includes(q)||cod.includes(q)||cod2.includes(q)||serv.includes(q)||op.includes(q)||opsRep.includes(q);
-  }));
+  renderLista(base.filter(r=>casaBusca(r,q)));
 }
 
 // ── DETALHE RECEITA ──────────────────────────────────────
@@ -1757,10 +1764,10 @@ function renderHistSel(lista){
 }
 
 function filtrarHistSel(){
-  const q=document.getElementById('hs').value.toLowerCase().trim();
+  const q=semAcento(document.getElementById('hs').value).trim();
   const base=filtrarPorMaquina(receitas);
   if(!q){renderHistSel(base);return;}
-  renderHistSel(base.filter(r=>(r.CLIENTE||'').toLowerCase().includes(q)||formatarCodPAExibicao(r.COD_PA).toLowerCase().includes(q)||String(r.COD_PA||'').toLowerCase().includes(q)||String(r.OP_CRIACAO||'').toLowerCase().includes(q)||String(r.OPS_REP||'').toLowerCase().includes(q)));
+  renderHistSel(base.filter(r=>casaBusca(r,q)));
 }
 
 async function abrirHistorico(id){
