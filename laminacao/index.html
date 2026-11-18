@@ -1174,11 +1174,11 @@ function listaDoCampo(campo, tipo){
   if(ehCampoGravacao(campo)) return GRAVACOES;
   return null;
 }
-// Opções de um campo com lista; inclui o valor atual se for antigo (fora da lista)
+// Opções de um campo com lista; inclui no fim o valor atual se for antigo (fora da lista)
 function opcoesCampo(campo, tipo, atual){
   const ops=(listaDoCampo(campo, tipo)||[]).slice();
   const a=String(atual==null?'':atual).trim();
-  if(a && !ops.some(o=>normTxt(o)===normTxt(a))) ops.unshift(a);
+  if(a && !ops.some(o=>normTxt(o)===normTxt(a))) ops.push(a);
   return ops;
 }
 // Variação aceita sem gerar desvio (mesma unidade da receita)
@@ -1237,7 +1237,7 @@ function irRep(){
       : `<input class="param-inp" type="text" inputmode="${modoTeclado(it.campo)}" autocapitalize="characters" autocomplete="off" id="rinp-${it.k}" oninput="chkP('${it.k}')">`;
     return `<div class="param-row" id="rprow-${it.k}">
       <div class="param-top">
-        <div class="param-lbl">${escH(it.campo)}<div style="font-size:10px;color:var(--text3);margin-top:2px">Receita: ${escH(it.ref||'—')}${tol?` <span style="color:var(--green)">· tolerância ${fmtTol(tol)}</span>`:''}</div></div>
+        <div class="param-lbl">${escH(it.campo)}${tol?`<div style="font-size:10px;color:var(--green);margin-top:2px">Tolerância ${fmtTol(tol)}</div>`:''}</div>
         ${entrada}
       </div>
       <div class="tol-hint" id="rtol-${it.k}" style="display:none"><i class="ti ti-check"></i> Dentro da tolerância</div>
@@ -1321,7 +1321,7 @@ function irRevisar(){
   const linha = it => {
     const val=valRep(it.k), est=compararLam(it.campo, it.ref, val);
     if(est==='novo'){
-      return `<div class="rev-row"><div class="rev-row-top"><div class="rev-lbl">${escH(it.campo)}<div style="font-size:10px;color:var(--text3);margin-top:2px">Receita: —</div></div><div class="rev-right"><div class="rev-real">${escH(val)} <span class="rev-novo">incluir na receita</span></div></div></div></div>`;
+      return `<div class="rev-row"><div class="rev-row-top"><div class="rev-lbl">${escH(it.campo)}</div><div class="rev-right"><div class="rev-real">${escH(val)} <span class="rev-novo">incluir na receita</span></div></div></div></div>`;
     }
     if(est!=='desvio'){
       return `<div class="rev-row"><div class="rev-row-top"><div class="rev-lbl">${escH(it.campo)}</div><div class="rev-right"><div class="rev-real">${escH(val||'—')}${est==='tol'?' <span class="rev-tol">tolerância</span>':''}</div></div></div></div>`;
@@ -1329,7 +1329,7 @@ function irRevisar(){
     const d=dvs.find(x=>x.k===it.k), op=altOpts[it.k];
     return `<div class="rev-row">
       <div class="rev-row-top">
-        <div class="rev-lbl">${escH(it.campo)}<div style="font-size:10px;color:var(--text3);margin-top:2px">Receita: ${escH(it.ref)}</div></div>
+        <div class="rev-lbl">${escH(it.campo)}</div>
         <div class="rev-right"><div class="rev-real dv">${escH(val)} <span class="rev-dv-pill">desvio</span></div></div>
       </div>
       <div class="rev-just"><div class="rev-just-lbl">Justificativa</div>${escH(d.justificativa)}</div>
